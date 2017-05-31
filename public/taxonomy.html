@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="d in data">
+            <tr ng-repeat="d in data | orderBy : ['classificationName','categoryName','subtypeName','sizeClassName','manufacturerName','modelName']">
                 <td><button ng-click="editClassification(d.classificationId)" class="btn btn-link">{{d.classificationName}}</button></td>
                 <td><button ng-click="editCategory(d.categoryId)" class="btn btn-link">{{d.categoryName}}</button></td>
                 <td><button ng-click="editSubtype(d.subtypeId)" class="btn btn-link">{{d.subtypeName}}</button></td>

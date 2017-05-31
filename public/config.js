@@ -75,7 +75,21 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/options', {
+            templateUrl: 'options.html',
+            controller: 'OptionsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/specs', {
+            templateUrl: 'specs.html',
+            controller: 'SpecsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .otherwise({
-            redirectTo: '/values'
+            redirectTo: '/taxonomy'
         });
 }]);

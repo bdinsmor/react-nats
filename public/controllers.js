@@ -1,6 +1,7 @@
 angular.module('PriceDigests')
     .controller('LoginController', ['ENV', '$scope', '$location', 'LoginService', loginController])
     .controller('LogoutController', ['ENV', '$scope', '$location', 'SessionService', logoutController])
+    .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', OptionsController])
     .controller('SpecsController', ['ENV', '$scope', '$http', '$q', SpecsController])
@@ -31,7 +32,7 @@ function ManufacturerVinsController(ENV, $scope, $http, $q) {
     });
 
     $scope.load = function(manufacturerId) {
-        $http.get(ENV['API_URL'] + '/data/manufacturer/vins', {
+        $http.get(ENV['API_URL'] + '/analyst/manufacturer/vins', {
                 timeout: canceler.promise,
                 params: {
                     "manufacturerId": manufacturerId
@@ -61,7 +62,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
     });
 
     $scope.load = function(manufacturerId) {
-        $http.get(ENV['API_URL'] + '/data/manufacturer/alias', {
+        $http.get(ENV['API_URL'] + '/analyst/manufacturer/alias', {
                 timeout: canceler.promise,
                 params: {
                     "manufacturerId": manufacturerId
@@ -89,7 +90,7 @@ function ModelAliasesController(ENV, $scope, $http, $q) {
     });
 
     $scope.load = function(modelId) {
-        $http.get(ENV['API_URL'] + '/data/model/alias', {
+        $http.get(ENV['API_URL'] + '/analyst/model/alias', {
                 timeout: canceler.promise,
                 params: {
                     "modelId": modelId
@@ -103,15 +104,16 @@ function ModelAliasesController(ENV, $scope, $http, $q) {
 
 function SpecsController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false
+        gridMenuShowHideColumns: false,
+        enableFiltering: true
     };
     $scope.gridOptions.columnDefs = [
-        { name: "specName" },
+        { name: "specFamily" },
         { name: "specNameFriendly" },
+        { name: "specName" },
         { name: "specValue" },
         { name: "specUom" },
         { name: "specDescription" },
-        { name: "specFamily" },
         { name: "revisionDate" }
     ];
     var canceler = $q.defer();
@@ -121,7 +123,7 @@ function SpecsController(ENV, $scope, $http, $q) {
     });
 
     $scope.load = function(configId) {
-        $http.get(ENV['API_URL'] + '/data/specs', {
+        $http.get(ENV['API_URL'] + '/analyst/specs', {
                 timeout: canceler.promise,
                 params: {
                     "configurationId": configId
@@ -138,7 +140,8 @@ function SpecsController(ENV, $scope, $http, $q) {
 
 function OptionsController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false
+        gridMenuShowHideColumns: false,
+        enableFiltering: true
     };
     $scope.gridOptions.columnDefs = [
         { name: "optionFamilyName" },
@@ -153,7 +156,7 @@ function OptionsController(ENV, $scope, $http, $q) {
     });
 
     $scope.load = function(sizeClassId, modelYear) {
-        $http.get(ENV['API_URL'] + '/data/options', {
+        $http.get(ENV['API_URL'] + '/analyst/options', {
                 timeout: canceler.promise,
                 params: {
                     "sizeClassId": sizeClassId,
@@ -192,7 +195,7 @@ function ValuesController(ENV, $scope, $http, $q) {
     });
 
     $scope.load = function(configId) {
-        $http.get(ENV['API_URL'] + '/data/values', {
+        $http.get(ENV['API_URL'] + '/analyst/values', {
                 timeout: canceler.promise,
                 params: {
                     "configurationId": configId
@@ -230,7 +233,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
-        $http.get(ENV['API_URL'] + "/data/taxonomy/classifications", {
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
                 timeout: canceler.promise,
             })
             .then(function(response) {
@@ -244,7 +247,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
-        $http.get(ENV['API_URL'] + "/data/taxonomy/categories", {
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
                 timeout: canceler.promise,
                 params: {
                     "classificationId": $scope.selection.classification
@@ -260,7 +263,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
-        $http.get(ENV['API_URL'] + "/data/taxonomy/subtypes", {
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
                 timeout: canceler.promise,
                 params: {
                     "classificationId": $scope.selection.classification,
@@ -276,7 +279,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.getSizeClasses = function getSizeClasses() {
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
-        $http.get(ENV['API_URL'] + "/data/taxonomy/sizes", {
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
                 timeout: canceler.promise,
                 params: {
                     "classificationId": $scope.selection.classification,
@@ -292,7 +295,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
 
     $scope.getManufacturers = function getManufacturers() {
         $scope.selection.manufacturer = null;
-        $http.get(ENV['API_URL'] + "/data/taxonomy/manufacturers", {
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", {
                 timeout: canceler.promise,
                 params: {
                     "sizeClassId": $scope.selection.sizeclass
@@ -304,7 +307,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
     $scope.getModels = function getModels() {
-        $http.get(ENV['API_URL'] + "/data/taxonomy/models", {
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/models", {
                 timeout: canceler.promise,
                 params: {
                     "sizeClassId": $scope.selection.sizeclass,
@@ -330,6 +333,30 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.getClassifications();
 }
 
+
+function MainController(ENV, $scope, $location, SessionService) {
+    $scope.getUser = SessionService.getUser;
+    $scope.getTitle = function() {
+        switch ($location.path()) {
+            case '/taxonomy':
+                return "Taxonomy";
+            case '/model/alias':
+                return "Model Aliases";
+            case '/manufacturer/alias':
+                return "Manufacturer Aliases";
+            case '/manufacturer/vins':
+                return "Manufacturer VINs";
+            case '/options':
+                return "Options";
+            case '/specs':
+                return "Specifications";
+            case '/values':
+                return "Values";
+            default:
+                return "PriceDigests Analyst";
+        }
+    }
+}
 
 function loginController(ENV, $scope, $location, LoginService) {
     $scope.user = '';

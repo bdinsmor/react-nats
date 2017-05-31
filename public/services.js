@@ -8,7 +8,7 @@ angular.module('PriceDigests')
 function loginService(ENV, $http, SessionService) {
     var self = this;
     self.login = function(credentials) {
-        return $http.post(ENV['API_URL'] + "/admin/login", {
+        return $http.post(ENV['API_URL'] + "/analyst/login", {
             username: credentials.username,
             password: credentials.password,
         }).then(function(response) {
@@ -37,12 +37,15 @@ function sessionService($window) {
         if ($window.Storage && $window.localStorage) {
             try {
                 var token = $window.localStorage.getItem("token");
-                return jwt_decode(token);
+                if (token) return jwt_decode(token);
+                else return null;
             } catch (e) {
-                return jwt_decode(memToken);
+                if (memToken) return jwt_decode(memToken);
+                else return null;
             }
         } else {
-            return jwt_decode(memToken);
+            if (memToken) return jwt_decode(memToken);
+            else return null;
         }
     }
     self.getToken = function() {
