@@ -1,0 +1,1 @@
+angular.module('PriceDigests', ['ngRoute', 'ui.bootstrap', 'ui.grid']);

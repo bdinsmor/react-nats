@@ -1,0 +1,10 @@
+<div class="container-fluid">
+    <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
+        <div class="form-group">
+            <label>Manufacturer Id</label>
+            <input ng-model="manufacturerId" type="text" class="form-control" />
+            <button ng-click="load(manufacturerId)" class="btn btn-default">Search</button>
+        </div>
+    </div>
+    <div ui-grid="gridOptions"></div>
+</div>

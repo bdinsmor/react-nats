@@ -1,0 +1,14 @@
+<div class="container-fluid">
+    <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
+        <div class="form-group">
+            <label>Size Class Id</label>
+            <input ng-model="sizeClassId" type="text" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Model Year</label>
+            <input ng-model="modelYear" type="text" class="form-control" />
+        </div>
+        <button ng-click="load(sizeClassId,modelYear)" class="btn btn-default">Search</button>
+    </div>
+    <div ui-grid="gridOptions"></div>
+</div>
