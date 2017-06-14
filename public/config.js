@@ -20,7 +20,7 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
         // Initialize a new promise
         var deferred = $q.defer();
         // Make an AJAX call to check if the user is logged in
-        var url = ENV['API_URL'] + "/admin/";
+        var url = ENV['API_URL'] + "/analyst/";
         $http.get(url, {
                 "withCredentials": true
             })

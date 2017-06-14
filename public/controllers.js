@@ -211,7 +211,31 @@ function ValuesController(ENV, $scope, $http, $q) {
 }
 
 function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
-    $scope.data = []
+    $scope.data = [];
+
+    $scope.getHeader = function() {
+        return [
+            "classificationId",
+            "classificationName",
+            "categoryId",
+            "categoryName",
+            "subtypeId",
+            "subtypeName",
+            "sizeClassId",
+            "sizeClassName",
+            "sizeClassMin",
+            "sizeClassMax",
+            "sizeClassUom",
+            "manufacturerId",
+            "manufacturerName",
+            "modelId",
+            "modelName",
+            "configurationId",
+            "modelYear",
+            "vinModelNumber"
+        ]
+    }
+
     $scope.selection = {};
 
     $scope.taxonomy = {};
@@ -228,25 +252,28 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.getClassifications = function getClassifications() {
+        $scope.data = [];
         $scope.selection.classification = null;
         $scope.selection.category = null;
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
+        $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
                 timeout: canceler.promise,
             })
             .then(function(response) {
-                $scope.taxonomy.classifications = response.data
-                $scope.data = response.data;
+                $scope.taxonomy.classifications = response.data;
             });
     }
 
     $scope.getCategories = function getCategories() {
+        $scope.data = [];
         $scope.selection.category = null;
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
+        $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
                 timeout: canceler.promise,
                 params: {
@@ -254,15 +281,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.categories = response.data
-                $scope.data = response.data;
+                $scope.taxonomy.categories = response.data;
             });
     }
 
     $scope.getSubtypes = function getSubtypes() {
+        $scope.data = [];
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
+        $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
                 timeout: canceler.promise,
                 params: {
@@ -271,14 +299,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.subtypes = response.data
-                $scope.data = response.data;
+                $scope.taxonomy.subtypes = response.data;
             });
     }
 
     $scope.getSizeClasses = function getSizeClasses() {
+        $scope.data = [];
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
+        $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
                 timeout: canceler.promise,
                 params: {
@@ -288,13 +317,14 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.sizeclasses = response.data
-                $scope.data = response.data;
+                $scope.taxonomy.sizeclasses = response.data;
             });
     }
 
     $scope.getManufacturers = function getManufacturers() {
+        $scope.data = [];
         $scope.selection.manufacturer = null;
+        $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", {
                 timeout: canceler.promise,
                 params: {
@@ -302,16 +332,34 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.manufacturers = response.data
-                $scope.data = response.data;
+                $scope.taxonomy.manufacturers = response.data;
             });
     }
     $scope.getModels = function getModels() {
+        $scope.data = [];
+        $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/models", {
                 timeout: canceler.promise,
                 params: {
                     "sizeClassId": $scope.selection.sizeclass,
                     "manufacturerId": $scope.selection.manufacturer
+                }
+            })
+            .then(function(response) {
+                $scope.taxonomy.models = response.data;
+            });
+    }
+    $scope.update = function update() {
+        $scope.data = [];
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/configurations", {
+                timeout: canceler.promise,
+                params: {
+                    "classificationId": $scope.selection.classification,
+                    "categoryId": $scope.selection.category,
+                    "subtypeId": $scope.selection.subtype,
+                    "sizeClassId": $scope.selection.sizeclass,
+                    "manufacturerId": $scope.selection.manufacturer,
+                    "modelId": $scope.selection.model
                 }
             })
             .then(function(response) {

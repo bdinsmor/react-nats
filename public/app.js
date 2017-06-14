@@ -1,1 +1,1 @@
-angular.module('PriceDigests', ['ngRoute', 'ui.bootstrap', 'ui.grid']);
+angular.module('PriceDigests', ['ngRoute', 'ui.bootstrap', 'ui.grid', 'ngCsv']);

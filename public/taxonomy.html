@@ -1,5 +1,10 @@
-<div>
-    <table class="table">
+<div class="container-fluid" style="margin-top:10px;">
+    <div class="pull-right">
+        <button class="btn btn-success">Add</button>
+        <button ng-disabled="!data || data.length===0" class="btn btn-primary" ng-csv="data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="export.csv">Export</button>
+    </div>
+
+    <table class="table" style="margin-top:10px;">
         <thead>
             <tr>
                 <th>Classification</th>
@@ -8,24 +13,32 @@
                 <th>SizeClass</th>
                 <th>Manufacturer</th>
                 <th>Model</th>
+                <th>Year</th>
+                <th>WMI</th>
             </tr>
             <tr>
                 <th><select class="form-control" ng-change="getCategories()" ng-model="selection.classification" ng-options="c.classificationId as c.classificationName for c in taxonomy.classifications"></select></th>
                 <th><select class="form-control" ng-change="getSubtypes()" ng-model="selection.category" ng-disabled="!selection.classification" ng-options="c.categoryId as c.categoryName for c in taxonomy.categories"></select></th>
                 <th><select class="form-control" ng-change="getSizeClasses()" ng-model="selection.subtype" ng-disabled="!selection.category" ng-options="c.subtypeId as c.subtypeName for c in taxonomy.subtypes"></select></th>
-                <th><select class="form-control" ng-change="getManufacturers()" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as c.sizeClassName for c in taxonomy.sizeclasses"></select></th>
+                <th><select class="form-control" ng-change="getManufacturers()" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as (c.sizeClassName+' ('+c.sizeClassMin+'-'+c.sizeClassMax+' '+c.sizeClassUom+')') for c in taxonomy.sizeclasses"></select></th>
                 <th><select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in taxonomy.manufacturers"></select></th>
+                <th><select class="form-control" ng-change="update()" ng-model="selection.model" ng-disabled="!selection.manufacturer" ng-options="c.modelId as c.modelName for c in taxonomy.models"></select></th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="d in data | orderBy : ['classificationName','categoryName','subtypeName','sizeClassName','manufacturerName','modelName']">
-                <td><button ng-click="editClassification(d.classificationId)" class="btn btn-link">{{d.classificationName}}</button></td>
-                <td><button ng-click="editCategory(d.categoryId)" class="btn btn-link">{{d.categoryName}}</button></td>
-                <td><button ng-click="editSubtype(d.subtypeId)" class="btn btn-link">{{d.subtypeName}}</button></td>
-                <td><button ng-click="editSizeClass(d.sizeClassId)" class="btn btn-link">{{d.sizeClassName}}</button></td>
-                <td><button ng-click="editManufacturer(d.manufacturerId)" class="btn btn-link">{{d.manufacturerName}}</button></td>
-                <td><button ng-click="editModel(d.modelId)" class="btn btn-link">{{d.modelName}}</button></td>
+                <td>
+                    <div uib-tooltip="Classification Id: {{d.classificationId}}">{{d.classificationName}}</div>
+                </td>
+                <td>{{d.categoryName}}</td>
+                <td>{{d.subtypeName}}</td>
+                <td>{{d.sizeClassName}} ({{d.sizeClassMin}}-{{d.sizeClassMax}} {{d.sizeClassUom}})</td>
+                <td>{{d.manufacturerName}}</td>
+                <td>{{d.modelName}}</td>
+                <td>{{d.modelYear}}</td>
+                <td>{{d.vinModelNumber}}</td>
             </tr>
         </tbody>
     </table>
