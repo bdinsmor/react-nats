@@ -1,10 +1,5 @@
 <div class="container-fluid" style="margin-top:10px;">
-    <div class="pull-right">
-        <button class="btn btn-success">Add</button>
-        <button ng-disabled="!data || data.length===0" class="btn btn-primary" ng-csv="data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="export.csv">Export</button>
-    </div>
-
-    <table class="table" style="margin-top:10px;">
+    <!--<table class="table" style="margin-top:10px;">
         <thead>
             <tr>
                 <th>Classification</th>
@@ -13,8 +8,6 @@
                 <th>SizeClass</th>
                 <th>Manufacturer</th>
                 <th>Model</th>
-                <th>Year</th>
-                <th>WMI</th>
             </tr>
             <tr>
                 <th><select class="form-control" ng-change="getCategories()" ng-model="selection.classification" ng-options="c.classificationId as c.classificationName for c in taxonomy.classifications"></select></th>
@@ -23,8 +16,6 @@
                 <th><select class="form-control" ng-change="getManufacturers()" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as (c.sizeClassName+' ('+c.sizeClassMin+'-'+c.sizeClassMax+' '+c.sizeClassUom+')') for c in taxonomy.sizeclasses"></select></th>
                 <th><select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in taxonomy.manufacturers"></select></th>
                 <th><select class="form-control" ng-change="update()" ng-model="selection.model" ng-disabled="!selection.manufacturer" ng-options="c.modelId as c.modelName for c in taxonomy.models"></select></th>
-                <th></th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -37,9 +28,52 @@
                 <td>{{d.sizeClassName}} ({{d.sizeClassMin}}-{{d.sizeClassMax}} {{d.sizeClassUom}})</td>
                 <td>{{d.manufacturerName}}</td>
                 <td>{{d.modelName}}</td>
-                <td>{{d.modelYear}}</td>
-                <td>{{d.vinModelNumber}}</td>
             </tr>
         </tbody>
-    </table>
+    </table>-->
+    <div class="row">
+        <div class="col-xs-2">
+            <label>Classification</label>
+            <select aria-placeholder="Classification" class="form-control" ng-change="getCategories()" ng-model="selection.classification" ng-options="c.classificationId as c.classificationName for c in classificationsGrid.data | orderBy:'classificationName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Category</label>
+            <select class="form-control" ng-change="getSubtypes()" ng-model="selection.category" ng-disabled="!selection.classification" ng-options="c.categoryId as c.categoryName for c in categoriesGrid.data | orderBy:'categoryName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Subtype</label>
+            <select class="form-control" ng-change="getSizeClasses()" ng-model="selection.subtype" ng-disabled="!selection.category" ng-options="c.subtypeId as c.subtypeName for c in subtypesGrid.data | orderBy:'subtypeName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Size Class</label>
+            <select class="form-control" ng-change="getManufacturers()" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as (c.sizeClassName+' ('+c.sizeClassMin+'-'+c.sizeClassMax+' '+c.sizeClassUom+')') for c in sizeclassesGrid.data | orderBy:'sizeClassName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Manufacturer</label>
+            <select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in manufacturersGrid.data | orderBy:'manufacturerName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Model</label>
+            <select class="form-control" ng-change="update()" ng-model="selection.model" ng-disabled="!selection.manufacturer" ng-options="c.modelId as c.modelName for c in modelsGrid.data | orderBy:'modelName'"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div ng-if="!selection.classification">
+                <div style="margin-bottom:15px;margin-top:15px;">
+                    <button class="btn btn-default">Add</button>
+                    <button ng-disabled="!selectedClassification()" class="btn btn-default">Edit</button>
+                    <button class="btn btn-default">Import</button>
+                    <button ng-disabled="!classificationsGrid.data || classificationsGrid.data.length===0" class="btn btn-default" ng-csv="data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="export.csv">Export</button>
+                </div>
+                <div ui-grid="classificationsGrid" ui-grid-auto-resize ui-grid-selection></div>
+            </div>
+            <div ng-if="!selection.category&&selection.classification" ui-grid="categoriesGrid" ui-grid-auto-resize></div>
+            <div ng-if="!selection.subtype&&selection.category" ui-grid="subtypesGrid" ui-grid-auto-resize></div>
+            <div ng-if="!selection.sizeclass&&selection.subtype" ui-grid="sizeclassesGrid" ui-grid-auto-resize></div>
+            <div ng-if="!selection.manufacturer&&selection.sizeclass" ui-grid="manufacturersGrid" ui-grid-auto-resize></div>
+            <div ng-if="!selection.model&&selection.manufacturer" ui-grid="modelsGrid" ui-grid-auto-resize></div>
+            <div ng-if="selection.model" ui-grid="configurationsGrid" ui-grid-auto-resize></div>
+        </div>
+    </div>
 </div>

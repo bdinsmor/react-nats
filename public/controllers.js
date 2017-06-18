@@ -211,7 +211,101 @@ function ValuesController(ENV, $scope, $http, $q) {
 }
 
 function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
-    $scope.data = [];
+    $scope.classificationsGrid = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        enableSelectionBatchEvent: false,
+        onRegisterApi: function(gridApi) {
+            $scope.classificationsGridApi = gridApi;
+        }
+    };
+    $scope.selectedClassification = function() {
+        if ($scope.classificationsGridApi) {
+            var rows = $scope.classificationsGridApi.selection.getSelectedRows();
+            if (rows && rows.length > 0) return rows[0];
+            else return null;
+        } else return null;
+    }
+    $scope.classificationsGrid.columnDefs = [
+        { name: "classificationId" },
+        { name: "classificationName" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.classificationsGrid.data = [];
+
+    $scope.categoriesGrid = {
+        gridMenuShowHideColumns: false
+    };
+    $scope.categoriesGrid.columnDefs = [
+        { name: "categoryId" },
+        { name: "categoryName" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.categoriesGrid.data = [];
+
+    $scope.subtypesGrid = {
+        gridMenuShowHideColumns: false
+    };
+    $scope.subtypesGrid.columnDefs = [
+        { name: "subtypeId" },
+        { name: "subtypeName" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.subtypesGrid.data = [];
+
+    $scope.sizeclassesGrid = {
+        gridMenuShowHideColumns: false
+    };
+    $scope.sizeclassesGrid.columnDefs = [
+        { name: "sizeClassId" },
+        { name: "sizeClassName" },
+        { name: "sizeClassMin" },
+        { name: "sizeClassMax" },
+        { name: "sizeClassUom" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.sizeclassesGrid.data = [];
+
+    $scope.manufacturersGrid = {
+        gridMenuShowHideColumns: false
+    };
+    $scope.manufacturersGrid.columnDefs = [
+        { name: "manufacturerId" },
+        { name: "manufacturerName" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.manufacturersGrid.data = [];
+
+    $scope.modelsGrid = {
+        gridMenuShowHideColumns: false
+    };
+    $scope.modelsGrid.columnDefs = [
+        { name: "modelId" },
+        { name: "modelName" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.modelsGrid.data = [];
+
+    $scope.configurationsGrid = {
+        gridMenuShowHideColumns: false
+    };
+    $scope.configurationsGrid.columnDefs = [
+        { name: "configurationId" },
+        { name: "modelId" },
+        { name: "sizeClassId" },
+        { name: "modelYear" },
+        { name: "vinModelNumber" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.configurationsGrid.data = [];
 
     $scope.getHeader = function() {
         return [
@@ -238,13 +332,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
 
     $scope.selection = {};
 
-    $scope.taxonomy = {};
-    $scope.taxonomy.classifications = [];
-    $scope.taxonomy.categories = [];
-    $scope.taxonomy.subtypes = [];
-    $scope.taxonomy.sizeclasses = [];
-    $scope.taxonomy.manufacturers = [];
-
     var canceler = $q.defer();
 
     $scope.$on('$destroy', function() {
@@ -252,7 +339,13 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.getClassifications = function getClassifications() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
+        $scope.classificationsGrid.data = [];
+        $scope.categoriesGrid.data = [];
+        $scope.subtypesGrid.data = [];
+        $scope.sizeclassesGrid.data = [];
+        $scope.manufacturersGrid.data = [];
+        $scope.modelsGrid.data = [];
         $scope.selection.classification = null;
         $scope.selection.category = null;
         $scope.selection.subtype = null;
@@ -263,12 +356,17 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 timeout: canceler.promise,
             })
             .then(function(response) {
-                $scope.taxonomy.classifications = response.data;
+                $scope.classificationsGrid.data = response.data;
             });
     }
 
     $scope.getCategories = function getCategories() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
+        $scope.categoriesGrid.data = [];
+        $scope.subtypesGrid.data = [];
+        $scope.sizeclassesGrid.data = [];
+        $scope.manufacturersGrid.data = [];
+        $scope.modelsGrid.data = [];
         $scope.selection.category = null;
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
@@ -281,12 +379,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.categories = response.data;
+                $scope.categoriesGrid.data = response.data;
             });
     }
 
     $scope.getSubtypes = function getSubtypes() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
+        $scope.subtypesGrid.data = [];
+        $scope.sizeclassesGrid.data = [];
+        $scope.manufacturersGrid.data = [];
+        $scope.modelsGrid.data = [];
         $scope.selection.subtype = null;
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
@@ -299,12 +401,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.subtypes = response.data;
+                $scope.subtypesGrid.data = response.data;
             });
     }
 
     $scope.getSizeClasses = function getSizeClasses() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
+        $scope.sizeclassesGrid.data = [];
+        $scope.manufacturersGrid.data = [];
+        $scope.modelsGrid.data = [];
         $scope.selection.sizeclass = null;
         $scope.selection.manufacturer = null;
         $scope.selection.model = null;
@@ -317,12 +422,14 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.sizeclasses = response.data;
+                $scope.sizeclassesGrid.data = response.data;
             });
     }
 
     $scope.getManufacturers = function getManufacturers() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
+        $scope.manufacturersGrid.data = [];
+        $scope.modelsGrid.data = [];
         $scope.selection.manufacturer = null;
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", {
@@ -332,11 +439,12 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.manufacturers = response.data;
+                $scope.manufacturersGrid.data = response.data;
             });
     }
     $scope.getModels = function getModels() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
+        $scope.modelsGrid.data = [];
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/models", {
                 timeout: canceler.promise,
@@ -346,11 +454,11 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.taxonomy.models = response.data;
+                $scope.modelsGrid.data = response.data;
             });
     }
     $scope.update = function update() {
-        $scope.data = [];
+        $scope.configurationsGrid.data = [];
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/configurations", {
                 timeout: canceler.promise,
                 params: {
@@ -363,7 +471,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 }
             })
             .then(function(response) {
-                $scope.data = response.data;
+                $scope.configurationsGrid.data = response.data;
             });
     }
 
