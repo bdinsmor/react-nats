@@ -1,0 +1,8 @@
+<div class="container-fluid" style="margin-top:10px;">
+    <button class="btn btn-primary" ng-click="sync()">Sync</button>
+    <div>
+        <div ng-repeat="item in history">
+            {{item.status}} {{item.user}} {{item.ts}} {{item.id}}
+        </div>
+    </div>
+</div>

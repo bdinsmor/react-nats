@@ -9,7 +9,30 @@ angular.module('PriceDigests')
     .controller('ManufacturerVinsController', ['ENV', '$scope', '$http', '$q', ManufacturerVinsController])
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', ModelAliasesController])
     .controller('TaxonomyController', ['ENV', '$scope', '$http', '$q', '$uibModal', TaxonomyController])
+    .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
 
+function SyncController(ENV, $scope, $http, $q) {
+    var canceler = $q.defer();
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $http.get(ENV['API_URL'] + '/analyst/sync', {
+            timeout: canceler.promise,
+        })
+        .success(function(data) {
+            $scope.history = data;
+        });
+
+    $scope.sync = function() {
+        $http.post(ENV['API_URL'] + '/analyst/sync', null, {
+                timeout: canceler.promise
+            })
+            .success(function(data) {
+                console.log(data);
+            });
+    }
+}
 
 function ManufacturerVinsController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
@@ -475,15 +498,35 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
-    $scope.editModel = function(id) {
+    $scope.editClassification = function(classification) {
         var modalInstance = $uibModal.open({
-            templateUrl: 'edit-model.tpl.html'
+            templateUrl: 'edit-classification.html',
+            controller: function($scope, $http) {
+                $scope.classification = {
+                    classificationId: classification.classificationId,
+                    classificationName: classification.classificationName
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/classifications", $scope.classification, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
         });
-        modalInstance.result.then(function() {
-            console.info('Modal dismissed at: ' + new Date());
-        }, function() {
-            console.info('Modal dismissed at: ' + new Date());
-        });
+        modalInstance.result
+            .then(function(result) {
+                console.log(result);
+                if (result) $scope.getClassifications();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
     }
 
     $scope.getClassifications();

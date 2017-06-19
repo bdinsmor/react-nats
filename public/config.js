@@ -89,6 +89,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/sync', {
+            templateUrl: 'sync.html',
+            controller: 'SyncController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .otherwise({
             redirectTo: '/taxonomy'
         });
