@@ -1,8 +1,11 @@
 <div class="container-fluid" style="margin-top:10px;">
-    <button class="btn btn-primary" ng-click="sync()">Sync</button>
+    <button ng-disabled="history && history.length>0 && history[0].status!=='complete'" class="btn btn-primary" ng-click="sync()">Sync</button>
     <div>
-        <div ng-repeat="item in history">
-            {{item.status}} {{item.user}} {{item.ts}} {{item.id}}
+        <h3>Production Sync History</h3>
+        <div class="well" ng-repeat="item in history">
+            <h4>{{item.status==='started'?'Processing':(item.status==='complete'?'Complete':'Error')}} <small>{{item.ts | date:'medium'}}</small></h4>
+            <div>{{item.user}}</div>
+            <div>{{item.id}}</div>
         </div>
     </div>
 </div>

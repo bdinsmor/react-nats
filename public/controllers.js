@@ -16,13 +16,7 @@ function SyncController(ENV, $scope, $http, $q) {
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
-
-    $http.get(ENV['API_URL'] + '/analyst/sync', {
-            timeout: canceler.promise,
-        })
-        .success(function(data) {
-            $scope.history = data;
-        });
+    getHistory();
 
     $scope.sync = function() {
         $http.post(ENV['API_URL'] + '/analyst/sync', null, {
@@ -30,6 +24,16 @@ function SyncController(ENV, $scope, $http, $q) {
             })
             .success(function(data) {
                 console.log(data);
+                getHistory();
+            });
+    }
+
+    function getHistory() {
+        $http.get(ENV['API_URL'] + '/analyst/sync', {
+                timeout: canceler.promise,
+            })
+            .success(function(data) {
+                $scope.history = data;
             });
     }
 }
