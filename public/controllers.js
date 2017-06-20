@@ -76,17 +76,85 @@ function ManufacturerVinsController(ENV, $scope, $http, $q) {
 
 function ManufacturerAliasesController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
     };
     $scope.gridOptions.columnDefs = [
         { name: "manufacturer" },
-        { name: "alias" }
+        { name: "alias" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
     ];
     var canceler = $q.defer();
-
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
+
+    $scope.edit = function(alias) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-manufacturer-alias.html',
+            controller: function($scope, $http) {
+                $scope.alias = {
+                    "manufacturerId": alias.manufacturerId,
+                    "manufacturerAlias": alias.manufacturerAlias
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/manufacturer/alias", $scope.configuration, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.update();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(manufacturerId) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-manufacturer-alias.html',
+            controller: function($scope, $http) {
+                $scope.alias = {
+                    "manufacturerId": momanufacturerIddelId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/manufacturer/alias", $scope.configuration, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.update();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
 
     $scope.load = function(manufacturerId) {
         $http.get(ENV['API_URL'] + '/analyst/manufacturer/alias', {
@@ -103,7 +171,15 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
 
 function ModelAliasesController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
     };
     $scope.gridOptions.columnDefs = [
         { name: "manufacturer" },
@@ -277,7 +353,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.categoriesGrid.data = [];
 
     $scope.subtypesGrid = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedSubtype = null;
+                if (row.isSelected === true) $scope.selectedSubtype = row.entity;
+            });
+        }
     };
     $scope.subtypesGrid.columnDefs = [
         { name: "subtypeId" },
@@ -288,7 +372,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.subtypesGrid.data = [];
 
     $scope.sizeclassesGrid = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedSizeClass = null;
+                if (row.isSelected === true) $scope.selectedSizeClass = row.entity;
+            });
+        }
     };
     $scope.sizeclassesGrid.columnDefs = [
         { name: "sizeClassId" },
@@ -302,7 +394,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.sizeclassesGrid.data = [];
 
     $scope.manufacturersGrid = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedManufacturer = null;
+                if (row.isSelected === true) $scope.selectedManufacturer = row.entity;
+            });
+        }
     };
     $scope.manufacturersGrid.columnDefs = [
         { name: "manufacturerId" },
@@ -313,7 +413,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.manufacturersGrid.data = [];
 
     $scope.modelsGrid = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedModel = null;
+                if (row.isSelected === true) $scope.selectedModel = row.entity;
+            });
+        }
     };
     $scope.modelsGrid.columnDefs = [
         { name: "modelId" },
@@ -558,6 +666,163 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         modalInstance.result
             .then(function(result) {
                 if (result) $scope.getClassifications();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.editCategory = function(category) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-category.html',
+            controller: function($scope, $http) {
+                $scope.category = {
+                    classificationId: category.classificationId,
+                    categoryId: category.categoryId,
+                    categoryName: category.categoryName
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/categories", $scope.category, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.getCategories();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.editSubtype = function(subtype) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-subtype.html',
+            controller: function($scope, $http) {
+                $scope.subtype = {
+                    categoryId: subtype.categoryId,
+                    subtypeId: subtype.subtypeId,
+                    subtypeName: subtype.subtypeName
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/subtypes", $scope.subtype, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.getSubtypes();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.editSizeClass = function(sizeClass) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-sizeclass.html',
+            controller: function($scope, $http) {
+                $scope.sizeClass = {
+                    subtypeId: sizeClass.subtypeId,
+                    sizeClassId: sizeClass.sizeClassId,
+                    sizeClassName: sizeClass.sizeClassName,
+                    sizeClassMin: sizeClass.sizeClassMin,
+                    sizeClassMax: sizeClass.sizeClassMax,
+                    sizeClassUom: sizeClass.sizeClassUom
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/sizes", $scope.sizeClass, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.getSizeClasses();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.editManufacturer = function(manufacturer) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-manufacturer.html',
+            controller: function($scope, $http) {
+                $scope.manufacturer = {
+                    manufacturerId: manufacturer.manufacturerId,
+                    manufacturerName: manufacturer.manufacturerName
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", $scope.manufacturer, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.getManufacturers();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.editModel = function(model) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-model.html',
+            controller: function($scope, $http) {
+                $scope.model = {
+                    manufacturerId: model.manufacturerId,
+                    modelId: model.modelId,
+                    modelName: model.modelName
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/models", $scope.model, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.getModels();
             })
             .catch(function(err) {
                 console.log(err)

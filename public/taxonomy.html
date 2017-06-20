@@ -30,7 +30,7 @@
             <div ng-if="!selection.classification">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editClassification(selectedClassification)" ng-disabled="!selectedClassification" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!classificationsGrid.data || classificationsGrid.data.length===0" class="btn btn-default" ng-csv="classificationsGrid.data" csv-header="getHeader('classifications')" csv-column-order="getHeader('classifications')" quote-strings filename="classifications.csv">Export</button>
                 </div>
                 <div ui-grid="classificationsGrid" ui-grid-auto-resize ui-grid-selection></div>
@@ -38,7 +38,7 @@
             <div ng-if="!selection.category&&selection.classification">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editCategory(selectedCategory)" ng-disabled="!selectedCategory" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!categoriesGrid.data || categoriesGrid.data.length===0" class="btn btn-default" ng-csv="categoriesGrid.data" csv-header="getHeader('categories')" csv-column-order="getHeader('categories')" quote-strings filename="categories.csv">Export</button>
                 </div>
                 <div ui-grid="categoriesGrid" ui-grid-auto-resize ui-grid-selection></div>
@@ -46,15 +46,15 @@
             <div ng-if="!selection.subtype&&selection.category">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editSubtype(selectedSubtype)" ng-disabled="!selectedSubtype" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!subtypesGrid.data || subtypesGrid.data.length===0" class="btn btn-default" ng-csv="subtypesGrid.data" csv-header="getHeader('subtypes')" csv-column-order="getHeader('subtypes')" quote-strings filename="subtypes.csv">Export</button>
                 </div>
                 <div ui-grid="subtypesGrid" ui-grid-auto-resize ui-grid-selection></div>
             </div>
             <div ng-if="!selection.sizeclass&&selection.subtype">
                 <div style="margin-bottom:15px;margin-top:15px;">
-                    <button ng-click="editSizeClasses(selectedSizeClass)" ng-disabled="!selectedSizeClass" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button ng-click="editSizeClass(selectedSizeClass)" ng-disabled="!selectedSizeClass" class="btn btn-default">Edit</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!sizeclassesGrid.data || sizeclassesGrid.data.length===0" class="btn btn-default" ng-csv="sizeclassesGrid.data" csv-header="getHeader('sizes')" csv-column-order="getHeader('sizes')" quote-strings filename="sizes.csv">Export</button>
                 </div>
                 <div ui-grid="sizeclassesGrid" ui-grid-auto-resize ui-grid-selection></div>
@@ -62,7 +62,7 @@
             <div ng-if="!selection.manufacturer&&selection.sizeclass">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editManufacturer(selectedManufacturer)" ng-disabled="!selectedManufacturer" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!manufacturersGrid.data || manufacturersGrid.data.length===0" class="btn btn-default" ng-csv="manufacturersGrid.data" csv-header="getHeader('manufacturers')" csv-column-order="getHeader('manufacturers')" quote-strings filename="manufacturers.csv">Export</button>
                 </div>
                 <div ui-grid="manufacturersGrid" ui-grid-auto-resize ui-grid-selection></div>
@@ -70,7 +70,7 @@
             <div ng-if="!selection.model&&selection.manufacturer">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editModel(selectedModel)" ng-disabled="!selectedModel" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!modelsGrid.data || modelsGrid.data.length===0" class="btn btn-default" ng-csv="modelsGrid.data" csv-header="getHeader('models')" csv-column-order="getHeader('models')" quote-strings filename="models.csv">Export</button>
                 </div>
                 <div ui-grid="modelsGrid" ui-grid-auto-resize ui-grid-selection></div>
@@ -79,7 +79,7 @@
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="addConfiguration(selection.sizeclass,selection.model)" class="btn btn-default">Add</button>
                     <button ng-click="editConfiguration(selectedConfiguration)" ng-disabled="!selectedConfiguration" class="btn btn-default">Edit</button>
-                    <button class="btn btn-default">Import</button>
+                    <button disabled class="btn btn-default">Import</button>
                     <button ng-disabled="!configurationsGrid.data || configurationsGrid.data.length===0" class="btn btn-default" ng-csv="configurationsGrid.data" csv-header="getHeader('configurations')" csv-column-order="getHeader('configurations')" quote-strings filename="configurations.csv">Export</button>
                 </div>
                 <div ui-grid="configurationsGrid" ui-grid-auto-resize ui-grid-selection></div>
