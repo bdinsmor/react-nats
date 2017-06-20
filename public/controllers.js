@@ -242,18 +242,13 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
         multiSelect: false,
-        enableSelectionBatchEvent: false,
         onRegisterApi: function(gridApi) {
-            $scope.classificationsGridApi = gridApi;
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedClassification = null;
+                if (row.isSelected === true) $scope.selectedClassification = row.entity;
+            });
         }
     };
-    $scope.selectedClassification = function() {
-        if ($scope.classificationsGridApi) {
-            var rows = $scope.classificationsGridApi.selection.getSelectedRows();
-            if (rows && rows.length > 0) return rows[0];
-            else return null;
-        } else return null;
-    }
     $scope.classificationsGrid.columnDefs = [
         { name: "classificationId" },
         { name: "classificationName" },
@@ -263,7 +258,15 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.classificationsGrid.data = [];
 
     $scope.categoriesGrid = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedCategory = null;
+                if (row.isSelected === true) $scope.selectedCategory = row.entity;
+            });
+        }
     };
     $scope.categoriesGrid.columnDefs = [
         { name: "categoryId" },
@@ -321,12 +324,20 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     $scope.modelsGrid.data = [];
 
     $scope.configurationsGrid = {
-        gridMenuShowHideColumns: false
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedConfiguration = null;
+                if (row.isSelected === true) $scope.selectedConfiguration = row.entity;
+            });
+        }
     };
     $scope.configurationsGrid.columnDefs = [
         { name: "configurationId" },
-        { name: "modelId" },
         { name: "sizeClassId" },
+        { name: "modelId" },
         { name: "modelYear" },
         { name: "vinModelNumber" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -334,27 +345,48 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     ];
     $scope.configurationsGrid.data = [];
 
-    $scope.getHeader = function() {
-        return [
-            "classificationId",
-            "classificationName",
-            "categoryId",
-            "categoryName",
-            "subtypeId",
-            "subtypeName",
-            "sizeClassId",
-            "sizeClassName",
-            "sizeClassMin",
-            "sizeClassMax",
-            "sizeClassUom",
-            "manufacturerId",
-            "manufacturerName",
-            "modelId",
-            "modelName",
-            "configurationId",
-            "modelYear",
-            "vinModelNumber"
-        ]
+    $scope.getHeader = function(key) {
+        var headers = {
+            "classifications": [
+                "classificationId",
+                "classificationName"
+            ],
+            "categories": [
+                "categoryId",
+                "categoryName",
+                "classificationId"
+            ],
+            "subtypes": [
+                "subtypeId",
+                "subtypeName",
+                "categoryId"
+            ],
+            "sizes": [
+                "sizeClassId",
+                "sizeClassName",
+                "sizeClassMin",
+                "sizeClassMax",
+                "sizeClassUom",
+                "subtypeId"
+            ],
+            "manufacturers": [
+                "manufacturerId",
+                "manufacturerName"
+            ],
+            "models": [
+                "modelId",
+                "modelName",
+                "manufacturerId"
+            ],
+            "configurations": [
+                "configurationId",
+                "sizeClassId",
+                "modelId",
+                "modelYear",
+                "vinModelNumber"
+            ]
+        }
+        return headers[key];
     }
 
     $scope.selection = {};
@@ -525,8 +557,70 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         });
         modalInstance.result
             .then(function(result) {
-                console.log(result);
                 if (result) $scope.getClassifications();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.editConfiguration = function(configuration) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-configuration.html',
+            controller: function($scope, $http) {
+                $scope.configuration = {
+                    "configurationId": configuration.configurationId,
+                    "modelId": configuration.modelId,
+                    "sizeClassId": configuration.sizeClassId,
+                    "modelYear": configuration.modelYear,
+                    "vinModelNumber": configuration.vinModelNumber
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/configurations", $scope.configuration, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.update();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.addConfiguration = function(sizeClassId, modelId) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-configuration.html',
+            controller: function($scope, $http) {
+                $scope.configuration = {
+                    "modelId": modelId,
+                    "sizeClassId": sizeClassId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/taxonomy/configurations", $scope.configuration, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.update();
             })
             .catch(function(err) {
                 console.log(err)

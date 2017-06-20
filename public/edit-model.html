@@ -1,0 +1,21 @@
+<div class="container-fluid" style="padding-top:15px;padding-bottom:15px;">
+    <form name="frm">
+        <div class="form-group">
+            <label>Model Id</label>
+            <p class="form-control-static">{{model.modelId}}</p>
+        </div>
+        <div class="form-group">
+            <label>Model Name</label>
+            <input required name="modelName" type="text" class="form-control" ng-model="model.modelName">
+        </div>
+        <div class="form-group">
+            <label>Manufacturer Id</label>
+            <input required name="manufacturerId" type="number" class="form-control" ng-model="model.manufacturerId">
+        </div>
+        <hr>
+        <div class="pull-right">
+            <button class="btn btn-primary" ng-click="save()">Save</button>
+            <button class="btn btn-default" ng-click="$close()">Cancel</button>
+        </div>
+    </form>
+</div>

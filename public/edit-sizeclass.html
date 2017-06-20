@@ -1,0 +1,33 @@
+<div class="container-fluid" style="padding-top:15px;padding-bottom:15px;">
+    <form name="frm">
+        <div class="form-group">
+            <label>Size Class Id</label>
+            <p class="form-control-static">{{sizeClass.sizeClassId}}</p>
+        </div>
+        <div class="form-group">
+            <label>Size Class Name</label>
+            <input required name="sizeClassName" type="text" class="form-control" ng-model="sizeClass.sizeClassName">
+        </div>
+        <div class="form-group">
+            <label>Size Class Min</label>
+            <input required name="sizeClassMin" type="number" class="form-control" ng-model="sizeClass.sizeClassMin">
+        </div>
+        <div class="form-group">
+            <label>Size Class Max</label>
+            <input required name="sizeClassMax" type="number" class="form-control" ng-model="sizeClass.sizeClassMax">
+        </div>
+        <div class="form-group">
+            <label>Size Class Uom</label>
+            <input required name="sizeClassUom" type="text" class="form-control" ng-model="sizeClass.sizeClassUom">
+        </div>
+        <div class="form-group">
+            <label>Subtype Id</label>
+            <input required name="subtypeId" type="number" class="form-control" ng-model="sizeClass.subtypeId">
+        </div>
+        <hr>
+        <div class="pull-right">
+            <button class="btn btn-primary" ng-click="save()">Save</button>
+            <button class="btn btn-default" ng-click="$close()">Cancel</button>
+        </div>
+    </form>
+</div>
