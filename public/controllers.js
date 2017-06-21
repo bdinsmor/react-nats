@@ -22,18 +22,25 @@ function SyncController(ENV, $scope, $http, $q) {
         $http.post(ENV['API_URL'] + '/analyst/sync', null, {
                 timeout: canceler.promise
             })
-            .success(function(data) {
-                console.log(data);
+            .then(function(response) {
                 getHistory();
             });
     }
 
     function getHistory() {
+        $scope.staged = null;
+        $scope.history = [];
         $http.get(ENV['API_URL'] + '/analyst/sync', {
                 timeout: canceler.promise,
             })
-            .success(function(data) {
-                $scope.history = data;
+            .then(function(response) {
+                $scope.history = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/staged', {
+                    timeout: canceler.promise
+                })
+            })
+            .then(function(response) {
+                $scope.staged = response.data;
             });
     }
 }

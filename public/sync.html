@@ -1,11 +1,59 @@
 <div class="container-fluid" style="margin-top:10px;">
     <button ng-disabled="history && history.length>0 && history[0].status!=='complete'" class="btn btn-primary" ng-click="sync()">Sync</button>
-    <div>
-        <h3>Production Sync History</h3>
-        <div class="well" ng-repeat="item in history">
-            <h4>{{item.status==='started'?'Processing':(item.status==='complete'?'Complete':'Error')}} <small>{{item.ts | date:'medium'}}</small></h4>
-            <div>{{item.user}}</div>
-            <div>{{item.id}}</div>
+    <div class="row">
+        <div class="col-xs-6">
+            <h3>Production Sync History</h3>
+            <div class="well" ng-repeat="item in history">
+                <h4>{{item.status==='started'?'Processing':(item.status==='complete'?'Complete':'Error')}} <small>{{item.ts | date:'medium'}}</small></h4>
+                <div>{{item.user}}</div>
+                <div>{{item.id}}</div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <h3>Staged Items</h3>
+            <h3 ng-if="staged.classifications"><small>As of last {{staged.last_sync_status}} sync on {{staged.last_sync}}</small></h3>
+            <div ng-if="staged.classifications" style="margin-left:15px">
+                <dl class="dl-horizontal">
+                    <dt>Classifications</dt>
+                    <dd>{{staged.classifications}}</dd>
+                    <dt>Categories</dt>
+                    <dd>{{staged.categories}}</dd>
+                    <dt>Subtypes</dt>
+                    <dd>{{staged.subtypes}}</dd>
+                    <dt>Size Classes</dt>
+                    <dd>{{staged.sizeclasses}}</dd>
+                    <dt>Manufacturers</dt>
+                    <dd>{{staged.manufacturers}}</dd>
+                    <dt>Manufacturer Aliases</dt>
+                    <dd>{{staged.manufacturerAliases}}</dd>
+                    <dt>Manufacturer VINS</dt>
+                    <dd>{{staged.manufacturerVins}}</dd>
+                    <dt>Models</dt>
+                    <dd>{{staged.models}}</dd>
+                    <dt>Model Aliases</dt>
+                    <dd>{{staged.modelAliases}}</dd>
+                    <dt>Configurations</dt>
+                    <dd>{{staged.configurations}}</dd>
+                    <dt>Specs</dt>
+                    <dd>{{staged.specs}}</dd>
+                    <dt>Values</dt>
+                    <dd>{{staged.values}}</dd>
+                    <dt>Option Families</dt>
+                    <dd>{{staged.optionFamilies}}</dd>
+                    <dt>Options</dt>
+                    <dd>{{staged.options}}</dd>
+                    <dt>Region Adjustments</dt>
+                    <dd>{{staged.regionAdjustments}}</dd>
+                    <dt>Utilization Adjustments</dt>
+                    <dd>{{staged.utilizationAdjustments}}</dd>
+                    <dt>Condition Adjustments</dt>
+                    <dd>{{staged.conditionAdjustments}}</dd>
+                    <dt>Usage</dt>
+                    <dd>{{staged.usage}}</dd>
+                    <dt>Popularity</dt>
+                    <dd>{{staged.popularity}}</dd>
+                </dl>
+            </div>
         </div>
     </div>
 </div>
