@@ -73,11 +73,15 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.item = {
                     "id": item.id,
                     "manufacturerId": item.manufacturerId,
-                    "manufacturerName": item.manufacturer,
-                    "manufacturerAlias": item.alias
+                    "manufacturerName": item.manufacturerName,
+                    "vinManufacturerCode": item.vinManufacturerCode,
+                    "vinYearCode": item.vinYearCode,
+                    "shortVin": item.shortVin,
+                    "modelYear": item.modelYear,
+                    "cicCode": item.cicCode
                 };
                 $scope.save = function() {
-                    $http.put(ENV['API_URL'] + "/analyst/manufacturer-vin", $scope.item, {
+                    $http.put(ENV['API_URL'] + "/analyst/manufacturer-vins", $scope.item, {
                             timeout: canceler.promise,
                         })
                         .then(function(response) {
@@ -434,34 +438,48 @@ function SpecsController(ENV, $scope, $http, $q) {
 
 function OptionsController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false,
-        enableFiltering: true
+        enableFiltering: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
     };
     $scope.gridOptions.columnDefs = [
         { name: "optionFamilyName" },
         { name: "optionName" },
         { name: "optionValue" },
-        { name: "revisionDate" }
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
     ];
     var canceler = $q.defer();
 
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
-
     $scope.load = function(sizeClassId, modelYear) {
-        $http.get(ENV['API_URL'] + '/analyst/options', {
-                timeout: canceler.promise,
-                params: {
-                    "sizeClassId": sizeClassId,
-                    "modelYear": modelYear
-                },
+        $scope.modelYearSelected = null;
+        $scope.sizeClass = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
+                timeout: canceler.promise
             })
-            .success(function(data) {
-                data.forEach(function(element) {
-                    element.revisionDate = element.revisionDate.split('T')[0]
-                }, this);
-                $scope.gridOptions.data = data;
+            .then(function(response) {
+                $scope.sizeClass = response.data;
+                $scope.modelYearSelected = modelYear;
+                return $http.get(ENV['API_URL'] + '/analyst/options', {
+                    timeout: canceler.promise,
+                    params: {
+                        "sizeClassId": sizeClassId,
+                        "modelYear": modelYear
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
             });
     }
 }
