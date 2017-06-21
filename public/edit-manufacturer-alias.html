@@ -1,0 +1,22 @@
+<div class="container-fluid" style="padding-top:15px;padding-bottom:15px;">
+    <form name="frm">
+        <div class="form-group">
+            <label>Manufacturer Id</label>
+            <p class="form-control-static">{{item.manufacturerId}}</p>
+        </div>
+        <div class="form-group">
+            <label>Manufacturer Name</label>
+            <p class="form-control-static">{{item.manufacturerName}}</p>
+        </div>
+        <div class="form-group">
+            <label>Manufacturer Alias</label>
+            <input required name="manufacturerAlias" type="text" class="form-control" ng-model="item.manufacturerAlias">
+        </div>
+        <hr>
+        <button ng-if="item.id" class="btn btn-danger" ng-click="delete()">Delete</button>
+        <div class="pull-right">
+            <button class="btn btn-primary" ng-click="save()">Save</button>
+            <button class="btn btn-default" ng-click="$close()">Cancel</button>
+        </div>
+    </form>
+</div>

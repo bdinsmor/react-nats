@@ -5,9 +5,9 @@ angular.module('PriceDigests')
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', OptionsController])
     .controller('SpecsController', ['ENV', '$scope', '$http', '$q', SpecsController])
-    .controller('ManufacturerAliasesController', ['ENV', '$scope', '$http', '$q', ManufacturerAliasesController])
-    .controller('ManufacturerVinsController', ['ENV', '$scope', '$http', '$q', ManufacturerVinsController])
-    .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', ModelAliasesController])
+    .controller('ManufacturerAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerAliasesController])
+    .controller('ManufacturerVinsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerVinsController])
+    .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
     .controller('TaxonomyController', ['ENV', '$scope', '$http', '$q', '$uibModal', TaxonomyController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
 
@@ -38,19 +38,27 @@ function SyncController(ENV, $scope, $http, $q) {
     }
 }
 
-function ManufacturerVinsController(ENV, $scope, $http, $q) {
+function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false,
-        enableFiltering: true
+        enableFiltering: true,
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
     };
     $scope.gridOptions.columnDefs = [
-        { name: "manufacturer" },
         { name: "modelYear" },
         { name: "vinManufacturerCode" },
         { name: "vinYearCode" },
         { name: "shortVin" },
         { name: "cicCode" },
-        { name: "revisionDate" }
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
     ];
     var canceler = $q.defer();
 
@@ -58,23 +66,100 @@ function ManufacturerVinsController(ENV, $scope, $http, $q) {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
 
-    $scope.load = function(manufacturerId) {
-        $http.get(ENV['API_URL'] + '/analyst/manufacturer/vins', {
-                timeout: canceler.promise,
-                params: {
-                    "manufacturerId": manufacturerId
-                },
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-manufacturer-vin.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "id": item.id,
+                    "manufacturerId": item.manufacturerId,
+                    "manufacturerName": item.manufacturer,
+                    "manufacturerAlias": item.alias
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/manufacturer-vin", $scope.item, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/manufacturer-vins/" + $scope.item.id, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.manufacturerId);
             })
-            .success(function(data) {
-                data.forEach(function(element) {
-                    element.revisionDate = element.revisionDate.split('T')[0]
-                }, this);
-                $scope.gridOptions.data = data;
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(manufacturer) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-manufacturer-vin.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "manufacturerId": manufacturer.manufacturerId,
+                    "manufacturerName": manufacturer.manufacturerName,
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/manufacturer-vins", $scope.item, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.manufacturerId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+    $scope.load = function(manufacturerId) {
+        $scope.manufacturer = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
+                timeout: canceler.promise
+            })
+            .then(function(response) {
+                $scope.manufacturer = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/manufacturer-vins', {
+                    timeout: canceler.promise,
+                    params: {
+                        "manufacturerId": manufacturerId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
             });
     }
 }
 
-function ManufacturerAliasesController(ENV, $scope, $http, $q) {
+function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
@@ -87,6 +172,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
         }
     };
     $scope.gridOptions.columnDefs = [
+        { name: "manufacturerId" },
         { name: "manufacturer" },
         { name: "alias" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -97,16 +183,29 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
 
-    $scope.edit = function(alias) {
+    $scope.edit = function(item) {
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-manufacturer-alias.html',
             controller: function($scope, $http) {
-                $scope.alias = {
-                    "manufacturerId": alias.manufacturerId,
-                    "manufacturerAlias": alias.manufacturerAlias
+                $scope.item = {
+                    "id": item.id,
+                    "manufacturerId": item.manufacturerId,
+                    "manufacturerName": item.manufacturer,
+                    "manufacturerAlias": item.alias
                 };
                 $scope.save = function() {
-                    $http.put(ENV['API_URL'] + "/analyst/manufacturer/alias", $scope.configuration, {
+                    $http.put(ENV['API_URL'] + "/analyst/manufacturer-aliases", $scope.item, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/manufacturer-aliases/" + $scope.item.id, {
                             timeout: canceler.promise,
                         })
                         .then(function(response) {
@@ -120,22 +219,23 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
         });
         modalInstance.result
             .then(function(result) {
-                if (result) $scope.update();
+                if (result) $scope.load(result.manufacturerId);
             })
             .catch(function(err) {
                 console.log(err)
             });
     }
 
-    $scope.add = function(manufacturerId) {
+    $scope.add = function(manufacturer) {
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-manufacturer-alias.html',
             controller: function($scope, $http) {
-                $scope.alias = {
-                    "manufacturerId": momanufacturerIddelId
+                $scope.item = {
+                    "manufacturerId": manufacturer.manufacturerId,
+                    "manufacturerName": manufacturer.manufacturerName,
                 };
                 $scope.save = function() {
-                    $http.post(ENV['API_URL'] + "/analyst/manufacturer/alias", $scope.configuration, {
+                    $http.post(ENV['API_URL'] + "/analyst/manufacturer-aliases", $scope.item, {
                             timeout: canceler.promise,
                         })
                         .then(function(response) {
@@ -149,7 +249,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
         });
         modalInstance.result
             .then(function(result) {
-                if (result) $scope.update();
+                if (result) $scope.load(result.manufacturerId);
             })
             .catch(function(err) {
                 console.log(err)
@@ -157,19 +257,27 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q) {
     }
 
     $scope.load = function(manufacturerId) {
-        $http.get(ENV['API_URL'] + '/analyst/manufacturer/alias', {
-                timeout: canceler.promise,
-                params: {
-                    "manufacturerId": manufacturerId
-                },
+        $scope.manufacturer = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
+                timeout: canceler.promise
             })
-            .success(function(data) {
-                $scope.gridOptions.data = data;
+            .then(function(response) {
+                $scope.manufacturer = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/manufacturer-aliases', {
+                    timeout: canceler.promise,
+                    params: {
+                        "manufacturerId": manufacturerId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
             });
     }
 }
 
-function ModelAliasesController(ENV, $scope, $http, $q) {
+function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
@@ -182,9 +290,11 @@ function ModelAliasesController(ENV, $scope, $http, $q) {
         }
     };
     $scope.gridOptions.columnDefs = [
-        { name: "manufacturer" },
+        { name: "modelId" },
         { name: "model" },
-        { name: "alias" }
+        { name: "alias" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
     ];
     var canceler = $q.defer();
 
@@ -192,17 +302,98 @@ function ModelAliasesController(ENV, $scope, $http, $q) {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
 
-    $scope.load = function(modelId) {
-        $http.get(ENV['API_URL'] + '/analyst/model/alias', {
-                timeout: canceler.promise,
-                params: {
-                    "modelId": modelId
-                },
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-model-alias.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "id": item.id,
+                    "modelId": item.modelId,
+                    "modelName": item.model,
+                    "modelAlias": item.alias
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/model-aliases", $scope.item, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/model-aliases/" + $scope.item.id, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.modelId);
             })
-            .success(function(data) {
-                $scope.gridOptions.data = data;
+            .catch(function(err) {
+                console.log(err)
             });
     }
+
+    $scope.add = function(model) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-model-alias.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "modelId": model.modelId,
+                    "modelName": model.modelName,
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/model-aliases", $scope.item, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.modelId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+    $scope.load = function(modelId) {
+        $scope.model = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/model/' + modelId, {
+                timeout: canceler.promise
+            })
+            .then(function(response) {
+                $scope.model = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/model-aliases', {
+                    timeout: canceler.promise,
+                    params: {
+                        "modelId": modelId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
 }
 
 function SpecsController(ENV, $scope, $http, $q) {
@@ -894,7 +1085,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
 
     $scope.getClassifications();
 }
-
 
 function MainController(ENV, $scope, $location, SessionService) {
     $scope.getUser = SessionService.getUser;

@@ -5,6 +5,15 @@
             <input ng-model="manufacturerId" type="text" class="form-control" />
             <button ng-click="load(manufacturerId)" class="btn btn-default">Search</button>
         </div>
+        <div class="pull-right">
+            <h3>{{manufacturer.manufacturerName}} ({{manufacturer.manufacturerId}})</h3>
+        </div>
     </div>
-    <div ui-grid="gridOptions" ui-grid-selection></div>
+    <div style="margin-bottom:15px;margin-top:15px;">
+        <button ng-disabled="!manufacturer" ng-click="add(manufacturer)" class="btn btn-default">Add</button>
+        <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
+        <button disabled class="btn btn-default">Import</button>
+        <button ng-disabled="!grid.data || grid.data.length===0" class="btn btn-default" ng-csv="grid.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="manufacturer-vins.csv">Export</button>
+    </div>
+    <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection></div>
 </div>
