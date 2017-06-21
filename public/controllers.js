@@ -402,8 +402,15 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
 
 function SpecsController(ENV, $scope, $http, $q) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false,
-        enableFiltering: true
+        enableFiltering: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
     };
     $scope.gridOptions.columnDefs = [
         { name: "specFamily" },
@@ -412,7 +419,8 @@ function SpecsController(ENV, $scope, $http, $q) {
         { name: "specValue" },
         { name: "specUom" },
         { name: "specDescription" },
-        { name: "revisionDate" }
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
     ];
     var canceler = $q.defer();
 
@@ -420,18 +428,24 @@ function SpecsController(ENV, $scope, $http, $q) {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
 
-    $scope.load = function(configId) {
-        $http.get(ENV['API_URL'] + '/analyst/specs', {
-                timeout: canceler.promise,
-                params: {
-                    "configurationId": configId
-                },
+
+    $scope.load = function(configurationId) {
+        $scope.configuration = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/configurations/' + configurationId, {
+                timeout: canceler.promise
             })
-            .success(function(data) {
-                data.forEach(function(element) {
-                    element.revisionDate = element.revisionDate.split('T')[0]
-                }, this);
-                $scope.gridOptions.data = data;
+            .then(function(response) {
+                $scope.configuration = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/specs', {
+                    timeout: canceler.promise,
+                    params: {
+                        "configurationId": configurationId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
             });
     }
 }
