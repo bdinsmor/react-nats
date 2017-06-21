@@ -2,7 +2,7 @@ angular.module('PriceDigests')
     .controller('LoginController', ['ENV', '$scope', '$location', 'LoginService', loginController])
     .controller('LogoutController', ['ENV', '$scope', '$location', 'SessionService', logoutController])
     .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
-    .controller('ValuesController', ['ENV', '$scope', '$http', '$q', ValuesController])
+    .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', OptionsController])
     .controller('SpecsController', ['ENV', '$scope', '$http', '$q', SpecsController])
     .controller('ManufacturerAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerAliasesController])
@@ -484,21 +484,30 @@ function OptionsController(ENV, $scope, $http, $q) {
     }
 }
 
-function ValuesController(ENV, $scope, $http, $q) {
+function ValuesController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
-        gridMenuShowHideColumns: false
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
     };
     $scope.gridOptions.columnDefs = [
-        { name: "askingPrice" },
-        { name: "auctionPrice" },
         { name: "msrp" },
-        { name: "low" },
-        { name: "high" },
         { name: "finance" },
         { name: "retail" },
         { name: "wholesale" },
         { name: "tradeIn" },
-        { name: "revisionDate" }
+        { name: "askingPrice" },
+        { name: "auctionPrice" },
+        { name: "low" },
+        { name: "high" },
+        { name: "revisionDate" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
     ];
     var canceler = $q.defer();
 
@@ -506,18 +515,62 @@ function ValuesController(ENV, $scope, $http, $q) {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
 
-    $scope.load = function(configId) {
-        $http.get(ENV['API_URL'] + '/analyst/values', {
-                timeout: canceler.promise,
-                params: {
-                    "configurationId": configId
-                },
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-value.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "configurationId": item.configurationId,
+                    "msrp": item.msrp,
+                    "finance": item.finance,
+                    "retail": item.retail,
+                    "wholesale": item.wholesale,
+                    "tradeIn": item.tradeIn,
+                    "askingPrice": item.askingPrice,
+                    "auctionPrice": item.auctionPrice,
+                    "low": item.low,
+                    "high": item.high,
+                    "revisionDate": item.revisionDate
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/values", $scope.item, {
+                            timeout: canceler.promise,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.configurationId);
             })
-            .success(function(data) {
-                data.forEach(function(element) {
-                    element.revisionDate = element.revisionDate.split('T')[0]
-                }, this);
-                $scope.gridOptions.data = data;
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function(configurationId) {
+        $scope.configuration = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/configurations/' + configurationId, {
+                timeout: canceler.promise
+            })
+            .then(function(response) {
+                $scope.configuration = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/values', {
+                    timeout: canceler.promise,
+                    params: {
+                        "configurationId": configurationId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
             });
     }
 }
