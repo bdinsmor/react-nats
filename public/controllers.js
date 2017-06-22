@@ -35,6 +35,13 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "append": ["manufacturerName"],
             "update": ["manufacturerId", "manufacturerName"]
         }
+    }, {
+        name: "classifications",
+        title: "Classifications",
+        header: {
+            "append": ["classificationName"],
+            "update": ["classificationId", "classificationName"]
+        }
     }]
     $scope.alerts = [];
     $scope.closeAlert = function(index) {
