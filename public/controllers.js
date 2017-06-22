@@ -28,6 +28,13 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "append": ["modelId", "vinModelNumber", "modelYear", "sizeClassId"],
             "update": ["configurationId", "modelId", "vinModelNumber", "modelYear", "sizeClassId"]
         }
+    }, {
+        name: "manufacturers",
+        title: "Manufacturers",
+        header: {
+            "append": ["manufacturerName"],
+            "update": ["manufacturerId", "manufacturerName"]
+        }
     }]
     $scope.alerts = [];
     $scope.closeAlert = function(index) {
