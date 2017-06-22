@@ -1,5 +1,4 @@
 angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider", function(ENV, $routeProvider, $httpProvider) {
-    $httpProvider.defaults.withCredentials = true;
     $httpProvider.interceptors.push(function($q, $location) {
         return {
             response: function(response) {

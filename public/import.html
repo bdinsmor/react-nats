@@ -1,17 +1,31 @@
-<div class="container-fluid">
-    <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
-        <div class="form-group">
-            <label>Table</label>
-            <select ng-model="table" class="form-control" ng-options="tbl as tbl.title for tbl in tables">{{tbl}}</select>
+<div class="container">
+    <div class="row" style="width:600px;margin-left:auto;margin-right:auto;">
+        <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
+            <div class="form-group">
+                <label>Table</label>
+                <select ng-model="table" class="form-control" ng-options="tbl as tbl.title for tbl in tables">{{tbl}}</select>
+            </div>
+            <div class="form-group">
+                <label>Import Type</label>
+                <select ng-model="importType" class="form-control" ng-options="k as v for (k,v) in importTypes">{{v}}</select>
+            </div>
+            <button ng-disabled="processing===true||!table||!importType||!file" ng-click="import()" class="btn btn-success">Import</button>
         </div>
-        <div class="form-group">
-            <label>Import Type</label>
-            <select ng-model="importType" class="form-control" ng-options="k as v for (k,v) in importTypes">{{v}}</select>
+        <div ngf-drop ngf-select ng-model="file" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="false" ngf-allow-dir="false">
+            <span ng-hide="file">Drop file here or click to select</span>
+            <span class="ng-hide" ng-show="file">{{file.name}}</span>
         </div>
-        <button ng-disabled="!table||!importType" ng-click="import()" class="btn btn-success">Import</button>
-    </div>
-    <div ng-if="table&&importType" class="alert alert-info">
-        <p>CSV file must contain a header of the form:</p>
-        <p>{{table.header[importType].join(', ')}}</p>
+        <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+        <uib-progressbar ng-if="processing===true" value="progress" type="success"><b>{{progress}}%</b></uib-progressbar>
+        <div ng-if="table&&importType" class="alert alert-info">
+            <p>CSV file must contain a header of the form:</p>
+            <p>{{table.header[importType].join(', ')}}</p>
+        </div>
+        <div style="margin-top:25px;">
+            <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">
+                <div><strong>{{alert.title}}</strong></div>
+                <div ng-bind-html="alert.msg"></div>
+            </div>
+        </div>
     </div>
 </div>

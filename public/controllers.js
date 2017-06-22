@@ -10,9 +10,9 @@ angular.module('PriceDigests')
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
     .controller('TaxonomyController', ['ENV', '$scope', '$http', '$q', '$uibModal', TaxonomyController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
-    .controller('ImportController', ['ENV', '$scope', '$http', '$q', ImportController])
+    .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
 
-function ImportController(ENV, $scope, $http, $q) {
+function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
     var canceler = $q.defer();
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
@@ -29,15 +29,54 @@ function ImportController(ENV, $scope, $http, $q) {
             "update": ["configurationId", "modelId", "vinModelNumber", "modelYear", "sizeClassId"]
         }
     }]
+    $scope.alerts = [];
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
     $scope.import = function() {
+        $scope.progress = 0;
+        $scope.processing = true;
         $http.post(ENV['API_URL'] + '/analyst/import', {
                 "table": $scope.table.name,
-                "type": $scope.importType
+                "type": $scope.importType,
+                "contentType": $scope.file.type
             }, {
-                "timeout": canceler.promise
+                "timeout": canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
-                console.log(response.data)
+                if (!$scope.file.$error && response.data.url) {
+                    Upload.http({
+                        withCredentials: false,
+                        method: "PUT",
+                        url: response.data.url,
+                        headers: {
+                            "Content-Type": $scope.file.type
+                        },
+                        data: $scope.file
+                    }).progress(function(evt) {
+                        $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        $scope.processing = false;
+                        $timeout(function() {
+                            $scope.alerts.unshift({
+                                type: "success",
+                                title: "Upload Successful",
+                                msg: 'A status email will be sent shortly.<br>Import Id assigned: <a target="_blank" href="#/import/' + response.data.id + ' ">' + response.data.id + '</a>'
+                            });
+                            $scope.file = null;
+                        });
+                    }).error(function(data, status, headers, config) {
+                        $timeout(function() {
+                            $scope.processing = false;
+                            $scope.alerts.unshift({
+                                type: "danger",
+                                title: "Upload Error!",
+                                msg: 'Error uploading file. Please retry.'
+                            });
+                        });
+                    });
+                }
             });
     }
 }
@@ -51,7 +90,8 @@ function SyncController(ENV, $scope, $http, $q) {
 
     $scope.sync = function() {
         $http.post(ENV['API_URL'] + '/analyst/sync', null, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 getHistory();
@@ -63,11 +103,13 @@ function SyncController(ENV, $scope, $http, $q) {
         $scope.history = [];
         $http.get(ENV['API_URL'] + '/analyst/sync', {
                 timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.history = response.data;
                 return $http.get(ENV['API_URL'] + '/analyst/staged', {
-                    timeout: canceler.promise
+                    timeout: canceler.promise,
+                    "withCredentials": true
                 })
             })
             .then(function(response) {
@@ -121,6 +163,7 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/manufacturer-vins", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -132,6 +175,7 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.delete = function() {
                     $http.delete(ENV['API_URL'] + "/analyst/manufacturer-vins/" + $scope.item.id, {
                             timeout: canceler.promise,
+                            "withCredentials": true
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -162,6 +206,7 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.post(ENV['API_URL'] + "/analyst/manufacturer-vins", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -190,6 +235,7 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.manufacturer = response.data;
                 return $http.get(ENV['API_URL'] + '/analyst/manufacturer-vins', {
                     timeout: canceler.promise,
+                    "withCredentials": true,
                     params: {
                         "manufacturerId": manufacturerId
                     },
@@ -238,6 +284,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/manufacturer-aliases", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -249,6 +296,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.delete = function() {
                     $http.delete(ENV['API_URL'] + "/analyst/manufacturer-aliases/" + $scope.item.id, {
                             timeout: canceler.promise,
+                            "withCredentials": true
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -279,6 +327,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.post(ENV['API_URL'] + "/analyst/manufacturer-aliases", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -308,6 +357,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.manufacturer = response.data;
                 return $http.get(ENV['API_URL'] + '/analyst/manufacturer-aliases', {
                     timeout: canceler.promise,
+                    "withCredentials": true,
                     params: {
                         "manufacturerId": manufacturerId
                     },
@@ -357,6 +407,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/model-aliases", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -368,6 +419,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.delete = function() {
                     $http.delete(ENV['API_URL'] + "/analyst/model-aliases/" + $scope.item.id, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -398,6 +450,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.post(ENV['API_URL'] + "/analyst/model-aliases", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -420,12 +473,14 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
         $scope.model = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/model/' + modelId, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.model = response.data;
                 return $http.get(ENV['API_URL'] + '/analyst/model-aliases', {
                     timeout: canceler.promise,
+                    "withCredentials": true,
                     params: {
                         "modelId": modelId
                     },
@@ -471,12 +526,14 @@ function SpecsController(ENV, $scope, $http, $q) {
         $scope.configuration = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/taxonomy/configurations/' + configurationId, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.configuration = response.data;
                 return $http.get(ENV['API_URL'] + '/analyst/specs', {
                     timeout: canceler.promise,
+                    "withCredentials": true,
                     params: {
                         "configurationId": configurationId
                     },
@@ -517,13 +574,15 @@ function OptionsController(ENV, $scope, $http, $q) {
         $scope.sizeClass = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.sizeClass = response.data;
                 $scope.modelYearSelected = modelYear;
                 return $http.get(ENV['API_URL'] + '/analyst/options', {
                     timeout: canceler.promise,
+                    "withCredentials": true,
                     params: {
                         "sizeClassId": sizeClassId,
                         "modelYear": modelYear
@@ -587,6 +646,7 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/values", $scope.item, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -610,12 +670,14 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
         $scope.configuration = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/taxonomy/configurations/' + configurationId, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.configuration = response.data;
                 return $http.get(ENV['API_URL'] + '/analyst/values', {
                     timeout: canceler.promise,
+                    "withCredentials": true,
                     params: {
                         "configurationId": configurationId
                     },
@@ -835,6 +897,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
                 timeout: canceler.promise,
+                "withCredentials": true,
             })
             .then(function(response) {
                 $scope.classificationsGrid.data = response.data;
@@ -855,6 +918,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
                 timeout: canceler.promise,
+                "withCredentials": true,
                 params: {
                     "classificationId": $scope.selection.classification
                 }
@@ -876,6 +940,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
                 timeout: canceler.promise,
+                "withCredentials": true,
                 params: {
                     "classificationId": $scope.selection.classification,
                     "categoryId": $scope.selection.category
@@ -896,6 +961,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
                 timeout: canceler.promise,
+                "withCredentials": true,
                 params: {
                     "classificationId": $scope.selection.classification,
                     "categoryId": $scope.selection.category,
@@ -915,6 +981,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", {
                 timeout: canceler.promise,
+                "withCredentials": true,
                 params: {
                     "sizeClassId": $scope.selection.sizeclass
                 }
@@ -929,6 +996,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/models", {
                 timeout: canceler.promise,
+                "withCredentials": true,
                 params: {
                     "sizeClassId": $scope.selection.sizeclass,
                     "manufacturerId": $scope.selection.manufacturer
@@ -942,6 +1010,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
         $scope.configurationsGrid.data = [];
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/configurations", {
                 timeout: canceler.promise,
+                "withCredentials": true,
                 params: {
                     "classificationId": $scope.selection.classification,
                     "categoryId": $scope.selection.category,
@@ -967,6 +1036,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/classifications", $scope.classification, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -998,6 +1068,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/categories", $scope.category, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -1029,6 +1100,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/subtypes", $scope.subtype, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -1063,6 +1135,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/sizes", $scope.sizeClass, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -1093,6 +1166,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", $scope.manufacturer, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -1124,6 +1198,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/models", $scope.model, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -1157,6 +1232,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/taxonomy/configurations", $scope.configuration, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
@@ -1187,6 +1263,7 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.save = function() {
                     $http.post(ENV['API_URL'] + "/analyst/taxonomy/configurations", $scope.configuration, {
                             timeout: canceler.promise,
+                            "withCredentials": true,
                         })
                         .then(function(response) {
                             $scope.$close(response.data);
