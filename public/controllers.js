@@ -17,14 +17,22 @@ function ImportController(ENV, $scope, $http, $q) {
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
+    $scope.importTypes = {
+        "append": "Append New",
+        "update": "Update Existing"
+    }
     $scope.tables = [{
         name: "configurations",
         title: "Configurations",
-        header: ["modelId", "vinModelNumber", "modelYear", "sizeClassId"]
+        header: {
+            "append": ["modelId", "vinModelNumber", "modelYear", "sizeClassId"],
+            "update": ["configurationId", "modelId", "vinModelNumber", "modelYear", "sizeClassId"]
+        }
     }]
     $scope.import = function() {
         $http.post(ENV['API_URL'] + '/analyst/import', {
-                "table": $scope.table.name
+                "table": $scope.table.name,
+                "type": $scope.importType
             }, {
                 "timeout": canceler.promise
             })
