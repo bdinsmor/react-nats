@@ -19,7 +19,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
     });
     $scope.importTypes = {
         "append": "Append New",
-        "update": "Update Existing"
+        //"update": "Update Existing"
     }
     $scope.tables = [{
         name: "configurations",
@@ -62,7 +62,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
                             $scope.alerts.unshift({
                                 type: "success",
                                 title: "Upload Successful",
-                                msg: 'A status email will be sent shortly.<br>Import Id assigned: <a target="_blank" href="#/import/' + response.data.id + ' ">' + response.data.id + '</a>'
+                                msg: 'A status email will be sent shortly.<br>Import Id assigned:' + response.data.id
                             });
                             $scope.file = null;
                         });

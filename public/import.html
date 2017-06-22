@@ -17,8 +17,8 @@
         </div>
         <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
         <uib-progressbar ng-if="processing===true" value="progress" type="success"><b>{{progress}}%</b></uib-progressbar>
-        <div ng-if="table&&importType" class="alert alert-info">
-            <p>CSV file must contain a header of the form:</p>
+        <div ng-if="table&&importType" class="alert alert-info" style="text-align:center;">
+            <p>Required CSV Header</p>
             <p>{{table.header[importType].join(', ')}}</p>
         </div>
         <div style="margin-top:25px;">
