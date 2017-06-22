@@ -1,0 +1,17 @@
+<div class="container-fluid">
+    <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
+        <div class="form-group">
+            <label>Table</label>
+            <select ng-model="table" class="form-control" ng-options="tbl as tbl.title for tbl in tables">{{tbl}}</select>
+        </div>
+        <div class="form-group">
+            <label>Import Type</label>
+            <select ng-model="importType" class="form-control" ng-options="t for t in ['Append','Update']">{{t}}</select>
+        </div>
+    </div>
+    <div ng-if="table" class="alert alert-info">
+        <p>CSV file must contain a header of the form:</p>
+        <p>{{table.header.join(', ')}}</p>
+    </div>
+    <button ng-disabled="!table" ng-click="import()" class="btn btn-success">Import</button>
+</div>

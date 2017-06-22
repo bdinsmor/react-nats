@@ -96,6 +96,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/import', {
+            templateUrl: 'import.html',
+            controller: 'ImportController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .otherwise({
             redirectTo: '/taxonomy'
         });

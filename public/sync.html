@@ -1,5 +1,5 @@
 <div class="container-fluid" style="margin-top:10px;">
-    <button ng-disabled="history && history.length>0 && history[0].status!=='complete'" class="btn btn-primary" ng-click="sync()">Sync</button>
+    <button ng-disabled="history && history.length>0 && history[0].status=='started'" class="btn btn-primary" ng-click="sync()">Sync</button>
     <div class="row">
         <div class="col-xs-6">
             <h3>Production Sync History</h3>
@@ -10,8 +10,8 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <h3>Staged Items</h3>
-            <h3 ng-if="staged.classifications"><small>As of last {{staged.last_sync_status}} sync on {{staged.last_sync}}</small></h3>
+            <h3>Staged Changes</h3>
+            <h3 ng-if="staged.classifications"><small>As of last {{staged.last_sync_status}} sync on {{staged.last_sync | date:'medium'}}</small></h3>
             <div ng-if="staged.classifications" style="margin-left:15px">
                 <dl class="dl-horizontal">
                     <dt>Classifications</dt>
@@ -52,6 +52,8 @@
                     <dd>{{staged.usage}}</dd>
                     <dt>Popularity</dt>
                     <dd>{{staged.popularity}}</dd>
+                    <dt>Deleted Items</dt>
+                    <dd>{{staged.deletedItems}}</dd>
                 </dl>
             </div>
         </div>

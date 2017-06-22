@@ -10,6 +10,29 @@ angular.module('PriceDigests')
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
     .controller('TaxonomyController', ['ENV', '$scope', '$http', '$q', '$uibModal', TaxonomyController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
+    .controller('ImportController', ['ENV', '$scope', '$http', '$q', ImportController])
+
+function ImportController(ENV, $scope, $http, $q) {
+    var canceler = $q.defer();
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+    $scope.tables = [{
+        name: "configurations",
+        title: "Configurations",
+        header: ["modelId", "vinModelNumber", "modelYear", "sizeClassId"]
+    }]
+    $scope.import = function() {
+        $http.post(ENV['API_URL'] + '/analyst/import', {
+                "table": $scope.table.name
+            }, {
+                "timeout": canceler.promise
+            })
+            .then(function(response) {
+                console.log(response.data)
+            });
+    }
+}
 
 function SyncController(ENV, $scope, $http, $q) {
     var canceler = $q.defer();
@@ -112,8 +135,8 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
             }
         });
         modalInstance.result
-            .then(function(result) {
-                if (result) $scope.load(result.manufacturerId);
+            .then(function() {
+                $scope.load(item.manufacturerId);
             })
             .catch(function(err) {
                 console.log(err)
@@ -229,8 +252,8 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
             }
         });
         modalInstance.result
-            .then(function(result) {
-                if (result) $scope.load(result.manufacturerId);
+            .then(function() {
+                $scope.load(item.manufacturerId);
             })
             .catch(function(err) {
                 console.log(err)
@@ -348,8 +371,8 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
             }
         });
         modalInstance.result
-            .then(function(result) {
-                if (result) $scope.load(result.modelId);
+            .then(function() {
+                $scope.load(item.modelId);
             })
             .catch(function(err) {
                 console.log(err)
