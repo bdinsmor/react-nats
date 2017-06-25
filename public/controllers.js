@@ -243,7 +243,8 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
         $scope.manufacturer = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.manufacturer = response.data;
@@ -365,7 +366,8 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
         $scope.manufacturer = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
-                timeout: canceler.promise
+                timeout: canceler.promise,
+                "withCredentials": true
             })
             .then(function(response) {
                 $scope.manufacturer = response.data;

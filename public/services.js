@@ -91,6 +91,7 @@ function sessionService($window) {
 function jwtInjector(SessionService) {
     var jwtInjector = {
         request: function(config) {
+            if (config.withCredentials == null) config.withCredentials = true;
             if (config.withCredentials === true) config.headers.Authorization = 'Bearer ' + SessionService.getToken();
             return config;
         }
