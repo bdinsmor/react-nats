@@ -145,7 +145,16 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.gridOptions.columnDefs = [
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "modelYear" },
         { name: "vinManufacturerCode" },
         { name: "vinYearCode" },
@@ -274,7 +283,16 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.gridOptions.columnDefs = [
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "manufacturerId" },
         { name: "manufacturer" },
         { name: "alias" },
@@ -397,7 +415,16 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.gridOptions.columnDefs = [
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "modelId" },
         { name: "model" },
         { name: "alias" },
@@ -521,13 +548,22 @@ function SpecsController(ENV, $scope, $http, $q) {
             });
         }
     };
-    $scope.gridOptions.columnDefs = [
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "specFamily" },
         { name: "specNameFriendly" },
         { name: "specName" },
-        { name: "specValue" },
+        { name: "specValue", cellTooltip: true },
         { name: "specUom" },
-        { name: "specDescription" },
+        { name: "specDescription", cellTooltip: true },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
         { name: "lastModifiedBy", field: "user" }
     ];
@@ -573,7 +609,16 @@ function OptionsController(ENV, $scope, $http, $q) {
             });
         }
     };
-    $scope.gridOptions.columnDefs = [
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "optionFamilyName" },
         { name: "optionName" },
         { name: "optionValue" },
@@ -622,7 +667,16 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.gridOptions.columnDefs = [
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "msrp" },
         { name: "finance" },
         { name: "retail" },
