@@ -7,54 +7,115 @@
                 <h4>{{item.status==='started'?'Processing':(item.status==='complete'?'Complete':'Error')}} <small>{{item.ts | date:'medium'}}</small></h4>
                 <div>{{item.user}}</div>
                 <div>{{item.id}}</div>
+                <button class="btn btn-link" ng-click="item.isCollapsed=!item.isCollapsed">Show/Hide Changes</button>
+                <div uib-collapse="!item.isCollapsed">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <dl class="dl-horizontal">
+                                <dt>Classifications</dt>
+                                <dd>{{item.changes.classifications}}</dd>
+                                <dt>Categories</dt>
+                                <dd>{{item.changes.categories}}</dd>
+                                <dt>Subtypes</dt>
+                                <dd>{{item.changes.subtypes}}</dd>
+                                <dt>Size Classes</dt>
+                                <dd>{{item.changes.sizeclasses}}</dd>
+                                <dt>Manufacturers</dt>
+                                <dd>{{item.changes.manufacturers}}</dd>
+                                <dt>Manufacturer Aliases</dt>
+                                <dd>{{item.changes.manufacturerAliases}}</dd>
+                                <dt>Manufacturer VINS</dt>
+                                <dd>{{item.changes.manufacturerVins}}</dd>
+                                <dt>Models</dt>
+                                <dd>{{item.changes.models}}</dd>
+                                <dt>Model Aliases</dt>
+                                <dd>{{item.changes.modelAliases}}</dd>
+                                <dt>Configurations</dt>
+                                <dd>{{item.changes.configurations}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-xs-6">
+                            <dl class="dl-horizontal">
+                                <dt>Specs</dt>
+                                <dd>{{item.changes.specs}}</dd>
+                                <dt>Values</dt>
+                                <dd>{{item.changes.values}}</dd>
+                                <dt>Option Families</dt>
+                                <dd>{{item.changes.optionFamilies}}</dd>
+                                <dt>Options</dt>
+                                <dd>{{item.changes.options}}</dd>
+                                <dt>Region Adjustments</dt>
+                                <dd>{{item.changes.regionAdjustments}}</dd>
+                                <dt>Utilization Adjustments</dt>
+                                <dd>{{item.changes.utilizationAdjustments}}</dd>
+                                <dt>Condition Adjustments</dt>
+                                <dd>{{item.changes.conditionAdjustments}}</dd>
+                                <dt>Usage</dt>
+                                <dd>{{item.changes.usage}}</dd>
+                                <dt>Popularity</dt>
+                                <dd>{{item.changes.popularity}}</dd>
+                                <dt>Deleted Items</dt>
+                                <dd>{{item.changes.deletedItems}}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-xs-6">
             <h3>Staged Changes</h3>
             <h3 ng-if="staged.classifications"><small>As of last {{staged.last_sync_status}} sync on {{staged.last_sync | date:'medium'}}</small></h3>
             <div ng-if="staged.classifications" style="margin-left:15px">
-                <dl class="dl-horizontal">
-                    <dt>Classifications</dt>
-                    <dd>{{staged.classifications}}</dd>
-                    <dt>Categories</dt>
-                    <dd>{{staged.categories}}</dd>
-                    <dt>Subtypes</dt>
-                    <dd>{{staged.subtypes}}</dd>
-                    <dt>Size Classes</dt>
-                    <dd>{{staged.sizeclasses}}</dd>
-                    <dt>Manufacturers</dt>
-                    <dd>{{staged.manufacturers}}</dd>
-                    <dt>Manufacturer Aliases</dt>
-                    <dd>{{staged.manufacturerAliases}}</dd>
-                    <dt>Manufacturer VINS</dt>
-                    <dd>{{staged.manufacturerVins}}</dd>
-                    <dt>Models</dt>
-                    <dd>{{staged.models}}</dd>
-                    <dt>Model Aliases</dt>
-                    <dd>{{staged.modelAliases}}</dd>
-                    <dt>Configurations</dt>
-                    <dd>{{staged.configurations}}</dd>
-                    <dt>Specs</dt>
-                    <dd>{{staged.specs}}</dd>
-                    <dt>Values</dt>
-                    <dd>{{staged.values}}</dd>
-                    <dt>Option Families</dt>
-                    <dd>{{staged.optionFamilies}}</dd>
-                    <dt>Options</dt>
-                    <dd>{{staged.options}}</dd>
-                    <dt>Region Adjustments</dt>
-                    <dd>{{staged.regionAdjustments}}</dd>
-                    <dt>Utilization Adjustments</dt>
-                    <dd>{{staged.utilizationAdjustments}}</dd>
-                    <dt>Condition Adjustments</dt>
-                    <dd>{{staged.conditionAdjustments}}</dd>
-                    <dt>Usage</dt>
-                    <dd>{{staged.usage}}</dd>
-                    <dt>Popularity</dt>
-                    <dd>{{staged.popularity}}</dd>
-                    <dt>Deleted Items</dt>
-                    <dd>{{staged.deletedItems}}</dd>
-                </dl>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <dl class="dl-horizontal">
+                            <dt>Classifications</dt>
+                            <dd>{{staged.classifications}}</dd>
+                            <dt>Categories</dt>
+                            <dd>{{staged.categories}}</dd>
+                            <dt>Subtypes</dt>
+                            <dd>{{staged.subtypes}}</dd>
+                            <dt>Size Classes</dt>
+                            <dd>{{staged.sizeclasses}}</dd>
+                            <dt>Manufacturers</dt>
+                            <dd>{{staged.manufacturers}}</dd>
+                            <dt>Manufacturer Aliases</dt>
+                            <dd>{{staged.manufacturerAliases}}</dd>
+                            <dt>Manufacturer VINS</dt>
+                            <dd>{{staged.manufacturerVins}}</dd>
+                            <dt>Models</dt>
+                            <dd>{{staged.models}}</dd>
+                            <dt>Model Aliases</dt>
+                            <dd>{{staged.modelAliases}}</dd>
+                            <dt>Configurations</dt>
+                            <dd>{{staged.configurations}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-6">
+                        <dl class="dl-horizontal">
+                            <dt>Specs</dt>
+                            <dd>{{staged.specs}}</dd>
+                            <dt>Values</dt>
+                            <dd>{{staged.values}}</dd>
+                            <dt>Option Families</dt>
+                            <dd>{{staged.optionFamilies}}</dd>
+                            <dt>Options</dt>
+                            <dd>{{staged.options}}</dd>
+                            <dt>Region Adjustments</dt>
+                            <dd>{{staged.regionAdjustments}}</dd>
+                            <dt>Utilization Adjustments</dt>
+                            <dd>{{staged.utilizationAdjustments}}</dd>
+                            <dt>Condition Adjustments</dt>
+                            <dd>{{staged.conditionAdjustments}}</dd>
+                            <dt>Usage</dt>
+                            <dd>{{staged.usage}}</dd>
+                            <dt>Popularity</dt>
+                            <dd>{{staged.popularity}}</dd>
+                            <dt>Deleted Items</dt>
+                            <dd>{{staged.deletedItems}}</dd>
+                        </dl>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

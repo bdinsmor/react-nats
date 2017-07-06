@@ -1,28 +1,31 @@
 <div class="container-fluid" style="margin-top:10px;">
     <div class="row">
-        <div class="col-xs-2">
+        <div class="col-xs-3">
+            <label>Manufacturer</label>
+            <!--<select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in manufacturersGrid.data | orderBy:'manufacturerName'"></select>-->
+            <input required name="manufacturer" type="text" ng-model="selection.manufacturer" placeholder="Manufacturer" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3" class="form-control">
+        </div>
+        <div class="col-xs-3">
+            <label>Model</label>
+            <select class="form-control" ng-change="update()" ng-model="selection.model" ng-disabled="!selection.manufacturer" ng-options="c.modelId as c.modelName for c in modelsGrid.data | orderBy:'modelName'"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
             <label>Classification</label>
             <select aria-placeholder="Classification" class="form-control" ng-change="getCategories()" ng-model="selection.classification" ng-options="c.classificationId as c.classificationName for c in classificationsGrid.data | orderBy:'classificationName'"></select>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
             <label>Category</label>
             <select class="form-control" ng-change="getSubtypes()" ng-model="selection.category" ng-disabled="!selection.classification" ng-options="c.categoryId as c.categoryName for c in categoriesGrid.data | orderBy:'categoryName'"></select>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
             <label>Subtype</label>
             <select class="form-control" ng-change="getSizeClasses()" ng-model="selection.subtype" ng-disabled="!selection.category" ng-options="c.subtypeId as c.subtypeName for c in subtypesGrid.data | orderBy:'subtypeName'"></select>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
             <label>Size Class</label>
             <select class="form-control" ng-change="getManufacturers()" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as (c.sizeClassName+' ('+c.sizeClassMin+'-'+c.sizeClassMax+' '+c.sizeClassUom+')') for c in sizeclassesGrid.data | orderBy:'sizeClassName'"></select>
-        </div>
-        <div class="col-xs-2">
-            <label>Manufacturer</label>
-            <select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in manufacturersGrid.data | orderBy:'manufacturerName'"></select>
-        </div>
-        <div class="col-xs-2">
-            <label>Model</label>
-            <select class="form-control" ng-change="update()" ng-model="selection.model" ng-disabled="!selection.manufacturer" ng-options="c.modelId as c.modelName for c in modelsGrid.data | orderBy:'modelName'"></select>
         </div>
     </div>
     <div class="row">

@@ -771,7 +771,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.classificationsGrid.columnDefs = [
+    $scope.classificationsGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "classificationId" },
         { name: "classificationName" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -790,7 +799,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.categoriesGrid.columnDefs = [
+    $scope.categoriesGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "categoryId" },
         { name: "categoryName" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -809,7 +827,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.subtypesGrid.columnDefs = [
+    $scope.subtypesGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "subtypeId" },
         { name: "subtypeName" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -828,7 +855,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.sizeclassesGrid.columnDefs = [
+    $scope.sizeclassesGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "sizeClassId" },
         { name: "sizeClassName" },
         { name: "sizeClassMin" },
@@ -850,7 +886,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.manufacturersGrid.columnDefs = [
+    $scope.manufacturersGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "manufacturerId" },
         { name: "manufacturerName" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -869,7 +914,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.modelsGrid.columnDefs = [
+    $scope.modelsGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "modelId" },
         { name: "modelName" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
@@ -888,7 +942,16 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
-    $scope.configurationsGrid.columnDefs = [
+    $scope.configurationsGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
         { name: "configurationId" },
         { name: "sizeClassId" },
         { name: "modelId" },
@@ -1350,6 +1413,22 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             })
             .catch(function(err) {
                 console.log(err)
+            });
+    }
+
+    var canceler = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        canceler.resolve();
+        canceler = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
+            })
+            .then(function(response) {
+                return response.data;
             });
     }
 
