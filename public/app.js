@@ -1,1 +1,1 @@
-angular.module('PriceDigests', ['ngRoute', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ngCsv', 'ngFileUpload']);
+angular.module('PriceDigests', ['ngRoute', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ngCsv', 'ngFileUpload']);

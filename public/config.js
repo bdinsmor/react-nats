@@ -46,6 +46,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/configurations', {
+            templateUrl: 'configurations.html',
+            controller: 'ConfigurationsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .when('/model/alias', {
             templateUrl: 'model-aliases.html',
             controller: 'ModelAliasesController',

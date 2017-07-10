@@ -1,12 +1,8 @@
 <div class="container-fluid">
     <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
         <div class="form-group">
-            <label>Manufacturer Id</label>
-            <input ng-model="manufacturerId" type="text" class="form-control" />
-            <button ng-click="load(manufacturerId)" class="btn btn-default">Search</button>
-        </div>
-        <div class="pull-right">
-            <h3>{{manufacturer.manufacturerName}}</h3>
+            <input style="width:300px;" typeahead-on-select="load()" required name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3"
+                class="form-control">
         </div>
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
@@ -14,5 +10,5 @@
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
         <button ng-disabled="!grid.data || grid.data.length===0" class="btn btn-default" ng-csv="grid.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="manufacturer-aliases.csv">Export</button>
     </div>
-    <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection></div>
+    <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
 </div>

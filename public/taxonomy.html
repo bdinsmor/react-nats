@@ -1,31 +1,24 @@
 <div class="container-fluid" style="margin-top:10px;">
     <div class="row">
-        <div class="col-xs-3">
-            <label>Manufacturer</label>
-            <!--<select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in manufacturersGrid.data | orderBy:'manufacturerName'"></select>-->
-            <input required name="manufacturer" type="text" ng-model="selection.manufacturer" placeholder="Manufacturer" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3" class="form-control">
-        </div>
-        <div class="col-xs-3">
-            <label>Model</label>
-            <select class="form-control" ng-change="update()" ng-model="selection.model" ng-disabled="!selection.manufacturer" ng-options="c.modelId as c.modelName for c in modelsGrid.data | orderBy:'modelName'"></select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <label>Classification</label>
             <select aria-placeholder="Classification" class="form-control" ng-change="getCategories()" ng-model="selection.classification" ng-options="c.classificationId as c.classificationName for c in classificationsGrid.data | orderBy:'classificationName'"></select>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <label>Category</label>
             <select class="form-control" ng-change="getSubtypes()" ng-model="selection.category" ng-disabled="!selection.classification" ng-options="c.categoryId as c.categoryName for c in categoriesGrid.data | orderBy:'categoryName'"></select>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <label>Subtype</label>
             <select class="form-control" ng-change="getSizeClasses()" ng-model="selection.subtype" ng-disabled="!selection.category" ng-options="c.subtypeId as c.subtypeName for c in subtypesGrid.data | orderBy:'subtypeName'"></select>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <label>Size Class</label>
             <select class="form-control" ng-change="getManufacturers()" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as (c.sizeClassName+' ('+c.sizeClassMin+'-'+c.sizeClassMax+' '+c.sizeClassUom+')') for c in sizeclassesGrid.data | orderBy:'sizeClassName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Manufacturer</label>
+            <select class="form-control" ng-change="getModels()" ng-model="selection.manufacturer" ng-disabled="!selection.sizeclass" ng-options="c.manufacturerId as c.manufacturerName for c in manufacturersGrid.data | orderBy:'manufacturerName'"></select>
         </div>
     </div>
     <div class="row">
@@ -35,42 +28,42 @@
                     <button ng-click="editClassification(selectedClassification)" ng-disabled="!selectedClassification" class="btn btn-default">Edit</button>
                     <button ng-disabled="!classificationsGrid.data || classificationsGrid.data.length===0" class="btn btn-default" ng-csv="classificationsGrid.data" csv-header="getHeader('classifications')" csv-column-order="getHeader('classifications')" quote-strings filename="classifications.csv">Export</button>
                 </div>
-                <div ui-grid="classificationsGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="classificationsGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
             <div ng-if="!selection.category&&selection.classification">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editCategory(selectedCategory)" ng-disabled="!selectedCategory" class="btn btn-default">Edit</button>
                     <button ng-disabled="!categoriesGrid.data || categoriesGrid.data.length===0" class="btn btn-default" ng-csv="categoriesGrid.data" csv-header="getHeader('categories')" csv-column-order="getHeader('categories')" quote-strings filename="categories.csv">Export</button>
                 </div>
-                <div ui-grid="categoriesGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="categoriesGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
             <div ng-if="!selection.subtype&&selection.category">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editSubtype(selectedSubtype)" ng-disabled="!selectedSubtype" class="btn btn-default">Edit</button>
                     <button ng-disabled="!subtypesGrid.data || subtypesGrid.data.length===0" class="btn btn-default" ng-csv="subtypesGrid.data" csv-header="getHeader('subtypes')" csv-column-order="getHeader('subtypes')" quote-strings filename="subtypes.csv">Export</button>
                 </div>
-                <div ui-grid="subtypesGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="subtypesGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
             <div ng-if="!selection.sizeclass&&selection.subtype">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editSizeClass(selectedSizeClass)" ng-disabled="!selectedSizeClass" class="btn btn-default">Edit</button>
                     <button ng-disabled="!sizeclassesGrid.data || sizeclassesGrid.data.length===0" class="btn btn-default" ng-csv="sizeclassesGrid.data" csv-header="getHeader('sizes')" csv-column-order="getHeader('sizes')" quote-strings filename="sizes.csv">Export</button>
                 </div>
-                <div ui-grid="sizeclassesGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="sizeclassesGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
             <div ng-if="!selection.manufacturer&&selection.sizeclass">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editManufacturer(selectedManufacturer)" ng-disabled="!selectedManufacturer" class="btn btn-default">Edit</button>
                     <button ng-disabled="!manufacturersGrid.data || manufacturersGrid.data.length===0" class="btn btn-default" ng-csv="manufacturersGrid.data" csv-header="getHeader('manufacturers')" csv-column-order="getHeader('manufacturers')" quote-strings filename="manufacturers.csv">Export</button>
                 </div>
-                <div ui-grid="manufacturersGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="manufacturersGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
             <div ng-if="!selection.model&&selection.manufacturer">
                 <div style="margin-bottom:15px;margin-top:15px;">
                     <button ng-click="editModel(selectedModel)" ng-disabled="!selectedModel" class="btn btn-default">Edit</button>
                     <button ng-disabled="!modelsGrid.data || modelsGrid.data.length===0" class="btn btn-default" ng-csv="modelsGrid.data" csv-header="getHeader('models')" csv-column-order="getHeader('models')" quote-strings filename="models.csv">Export</button>
                 </div>
-                <div ui-grid="modelsGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="modelsGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
             <div ng-if="selection.model">
                 <div style="margin-bottom:15px;margin-top:15px;">
@@ -78,7 +71,7 @@
                     <button ng-click="editConfiguration(selectedConfiguration)" ng-disabled="!selectedConfiguration" class="btn btn-default">Edit</button>
                     <button ng-disabled="!configurationsGrid.data || configurationsGrid.data.length===0" class="btn btn-default" ng-csv="configurationsGrid.data" csv-header="getHeader('configurations')" csv-column-order="getHeader('configurations')" quote-strings filename="configurations.csv">Export</button>
                 </div>
-                <div ui-grid="configurationsGrid" ui-grid-auto-resize ui-grid-selection></div>
+                <div ui-grid="configurationsGrid" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
             </div>
         </div>
     </div>

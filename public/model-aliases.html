@@ -1,12 +1,12 @@
 <div class="container-fluid">
-    <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
-        <div class="form-group">
-            <label>Model Id</label>
-            <input ng-model="modelId" type="text" class="form-control" />
-            <button ng-click="load(modelId)" class="btn btn-default">Search</button>
-        </div>
-        <div class="pull-right">
-            <h3>{{model.manufacturerName}} {{model.modelName}}</h3>
+    <div style="margin-top:25px;margin-bottom:25px;">
+        <div class="row">
+            <div class="col-xs-3">
+                <input required name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3" class="form-control">
+            </div>
+            <div class="col-xs-3">
+                <input typeahead-on-select="load()" ng-disabled="!manufacturer" required name="model" type="text" ng-model="model" placeholder="Search Models" uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="3" class="form-control">
+            </div>
         </div>
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
@@ -14,5 +14,5 @@
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
         <button ng-disabled="!grid.data || grid.data.length===0" class="btn btn-default" ng-csv="grid.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="model-aliases.csv">Export</button>
     </div>
-    <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection></div>
+    <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
 </div>

@@ -9,6 +9,7 @@ angular.module('PriceDigests')
     .controller('ManufacturerVinsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerVinsController])
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
     .controller('TaxonomyController', ['ENV', '$scope', '$http', '$q', '$uibModal', TaxonomyController])
+    .controller('ConfigurationsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConfigurationsController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
     .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
 
@@ -248,22 +249,31 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
                 console.log(err)
             });
     }
-    $scope.load = function(manufacturerId) {
-        $scope.manufacturer = null;
-        $scope.gridOptions.data = [];
-        $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
-                timeout: canceler.promise,
-                "withCredentials": true
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
             })
             .then(function(response) {
-                $scope.manufacturer = response.data;
-                return $http.get(ENV['API_URL'] + '/analyst/manufacturer-vins', {
-                    timeout: canceler.promise,
-                    "withCredentials": true,
-                    params: {
-                        "manufacturerId": manufacturerId
-                    },
-                })
+                return response.data;
+            });
+    }
+
+    $scope.load = function(manufacturerId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/manufacturer-vins', {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturerId": $scope.manufacturer.manufacturerId
+                },
             })
             .then(function(response) {
                 $scope.gridOptions.data = response.data;
@@ -272,6 +282,8 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
 }
 
 function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.manufacturer = null;
+
     $scope.gridOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
@@ -283,6 +295,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
+
     $scope.gridOptions.columnDefs = [{
             name: '',
             field: 'name',
@@ -299,6 +312,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
         { name: "lastModifiedBy", field: "user" }
     ];
+
     var canceler = $q.defer();
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
@@ -380,22 +394,30 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
-    $scope.load = function(manufacturerId) {
-        $scope.manufacturer = null;
-        $scope.gridOptions.data = [];
-        $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
-                timeout: canceler.promise,
-                "withCredentials": true
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
             })
             .then(function(response) {
-                $scope.manufacturer = response.data;
-                return $http.get(ENV['API_URL'] + '/analyst/manufacturer-aliases', {
-                    timeout: canceler.promise,
-                    "withCredentials": true,
-                    params: {
-                        "manufacturerId": manufacturerId
-                    },
-                })
+                return response.data;
+            });
+    }
+
+    $scope.load = function() {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/manufacturer-aliases', {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturerId": $scope.manufacturer.manufacturerId
+                },
             })
             .then(function(response) {
                 $scope.gridOptions.data = response.data;
@@ -425,11 +447,10 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
             width: '50',
             cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
         },
-        { name: "modelId" },
-        { name: "model" },
-        { name: "alias" },
-        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
-        { name: "lastModifiedBy", field: "user" }
+        { name: "modelId", width: 100 },
+        { name: "alias", width: '*' },
+        { name: "lastModified", width: 200, field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", width: 200, field: "user" }
     ];
     var canceler = $q.defer();
 
@@ -512,25 +533,50 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 console.log(err)
             });
     }
-    $scope.load = function(modelId) {
-        $scope.model = null;
+    $scope.load = function() {
         $scope.gridOptions.data = [];
-        $http.get(ENV['API_URL'] + '/analyst/model/' + modelId, {
+        $http.get(ENV['API_URL'] + '/analyst/model-aliases', {
                 timeout: canceler.promise,
-                "withCredentials": true
-            })
-            .then(function(response) {
-                $scope.model = response.data;
-                return $http.get(ENV['API_URL'] + '/analyst/model-aliases', {
-                    timeout: canceler.promise,
-                    "withCredentials": true,
-                    params: {
-                        "modelId": modelId
-                    },
-                })
+                "withCredentials": true,
+                params: {
+                    "modelId": $scope.model.modelId
+                },
             })
             .then(function(response) {
                 $scope.gridOptions.data = response.data;
+            });
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function(model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+                timeout: cancelSearchModel.promise,
+                "withCredentials": true,
+                params: {
+                    "model": model,
+                    "manufacturerId": $scope.manufacturer.manufacturerId
+                }
+            })
+            .then(function(response) {
+                return response.data;
             });
     }
 
@@ -658,6 +704,7 @@ function OptionsController(ENV, $scope, $http, $q) {
 
 function ValuesController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
+        enableFiltering: true,
         enableRowHeaderSelection: false,
         multiSelect: false,
         onRegisterApi: function(gridApi) {
@@ -677,18 +724,20 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
             width: '50',
             cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
         },
-        { name: "msrp" },
-        { name: "finance" },
-        { name: "retail" },
-        { name: "wholesale" },
-        { name: "tradeIn" },
-        { name: "askingPrice" },
-        { name: "auctionPrice" },
-        { name: "low" },
-        { name: "high" },
-        { name: "revisionDate" },
-        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
-        { name: "lastModifiedBy", field: "user" }
+        { name: "configurationId", width: 150 },
+        { name: "modelYear", width: 150 },
+        { name: "revisionDate", width: 150 },
+        { name: "msrp", width: 100, enableFiltering: false },
+        { name: "finance", width: 100, enableFiltering: false },
+        { name: "retail", width: 100, enableFiltering: false },
+        { name: "wholesale", width: 100, enableFiltering: false },
+        { name: "tradeIn", width: 100, enableFiltering: false },
+        { name: "askingPrice", width: 150, enableFiltering: false },
+        { name: "auctionPrice", width: 150, enableFiltering: false },
+        { name: "low", width: 100, enableFiltering: false },
+        { name: "high", width: 100, enableFiltering: false },
+        { name: "lastModified", width: 250, field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", width: 250, field: "user" }
     ];
     var canceler = $q.defer();
 
@@ -697,9 +746,12 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.edit = function(item) {
+        var model = $scope.model.modelName;
+        var manufacturer = $scope.manufacturer.manufacturerName;
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-value.html',
             controller: function($scope, $http) {
+                $scope.title = [item.modelYear, manufacturer, model].join(' ');
                 $scope.item = {
                     "configurationId": item.configurationId,
                     "msrp": item.msrp,
@@ -736,30 +788,57 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
-    $scope.load = function(configurationId) {
+    $scope.load = function() {
         $scope.configuration = null;
         $scope.gridOptions.data = [];
-        $http.get(ENV['API_URL'] + '/analyst/taxonomy/configurations/' + configurationId, {
+        $http.get(ENV['API_URL'] + '/analyst/values', {
                 timeout: canceler.promise,
-                "withCredentials": true
-            })
-            .then(function(response) {
-                $scope.configuration = response.data;
-                return $http.get(ENV['API_URL'] + '/analyst/values', {
-                    timeout: canceler.promise,
-                    "withCredentials": true,
-                    params: {
-                        "configurationId": configurationId
-                    },
-                })
+                "withCredentials": true,
+                params: {
+                    "modelId": $scope.model.modelId
+                },
             })
             .then(function(response) {
                 $scope.gridOptions.data = response.data;
             });
     }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function(model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+                timeout: cancelSearchModel.promise,
+                "withCredentials": true,
+                params: {
+                    "model": model,
+                    "manufacturerId": $scope.manufacturer.manufacturerId
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
 }
 
 function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.selection = {};
     $scope.classificationsGrid = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
@@ -931,36 +1010,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     ];
     $scope.modelsGrid.data = [];
 
-    $scope.configurationsGrid = {
-        enableRowSelection: true,
-        enableRowHeaderSelection: false,
-        multiSelect: false,
-        onRegisterApi: function(gridApi) {
-            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
-                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedConfiguration = null;
-                if (row.isSelected === true) $scope.selectedConfiguration = row.entity;
-            });
-        }
-    };
-    $scope.configurationsGrid.columnDefs = [{
-            name: '',
-            field: 'name',
-            enableColumnMenu: false,
-            enableFiltering: false,
-            enableHiding: false,
-            enableSorting: false,
-            width: '50',
-            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
-        },
-        { name: "configurationId" },
-        { name: "sizeClassId" },
-        { name: "modelId" },
-        { name: "modelYear" },
-        { name: "vinModelNumber" },
-        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
-        { name: "lastModifiedBy", field: "user" }
-    ];
-    $scope.configurationsGrid.data = [];
 
     $scope.getHeader = function(key) {
         var headers = {
@@ -994,13 +1043,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
                 "modelId",
                 "modelName",
                 "manufacturerId"
-            ],
-            "configurations": [
-                "configurationId",
-                "sizeClassId",
-                "modelId",
-                "modelYear",
-                "vinModelNumber"
             ]
         }
         return headers[key];
@@ -1015,7 +1057,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.getClassifications = function getClassifications() {
-        $scope.configurationsGrid.data = [];
         $scope.classificationsGrid.data = [];
         $scope.categoriesGrid.data = [];
         $scope.subtypesGrid.data = [];
@@ -1038,7 +1079,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     }
 
     $scope.getCategories = function getCategories() {
-        $scope.configurationsGrid.data = [];
         $scope.categoriesGrid.data = [];
         $scope.subtypesGrid.data = [];
         $scope.sizeclassesGrid.data = [];
@@ -1062,7 +1102,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     }
 
     $scope.getSubtypes = function getSubtypes() {
-        $scope.configurationsGrid.data = [];
         $scope.subtypesGrid.data = [];
         $scope.sizeclassesGrid.data = [];
         $scope.manufacturersGrid.data = [];
@@ -1085,7 +1124,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     }
 
     $scope.getSizeClasses = function getSizeClasses() {
-        $scope.configurationsGrid.data = [];
         $scope.sizeclassesGrid.data = [];
         $scope.manufacturersGrid.data = [];
         $scope.modelsGrid.data = [];
@@ -1107,7 +1145,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
     }
 
     $scope.getManufacturers = function getManufacturers() {
-        $scope.configurationsGrid.data = [];
         $scope.manufacturersGrid.data = [];
         $scope.modelsGrid.data = [];
         $scope.selection.manufacturer = null;
@@ -1124,7 +1161,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
     $scope.getModels = function getModels() {
-        $scope.configurationsGrid.data = [];
         $scope.modelsGrid.data = [];
         $scope.selection.model = null;
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/models", {
@@ -1137,24 +1173,6 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             })
             .then(function(response) {
                 $scope.modelsGrid.data = response.data;
-            });
-    }
-    $scope.update = function update() {
-        $scope.configurationsGrid.data = [];
-        $http.get(ENV['API_URL'] + "/analyst/taxonomy/configurations", {
-                timeout: canceler.promise,
-                "withCredentials": true,
-                params: {
-                    "classificationId": $scope.selection.classification,
-                    "categoryId": $scope.selection.category,
-                    "subtypeId": $scope.selection.subtype,
-                    "sizeClassId": $scope.selection.sizeclass,
-                    "manufacturerId": $scope.selection.manufacturer,
-                    "modelId": $scope.selection.model
-                }
-            })
-            .then(function(response) {
-                $scope.configurationsGrid.data = response.data;
             });
     }
 
@@ -1351,37 +1369,86 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
-    $scope.editConfiguration = function(configuration) {
-        var modalInstance = $uibModal.open({
-            templateUrl: 'edit-configuration.html',
-            controller: function($scope, $http) {
-                $scope.configuration = {
-                    "configurationId": configuration.configurationId,
-                    "modelId": configuration.modelId,
-                    "sizeClassId": configuration.sizeClassId,
-                    "modelYear": configuration.modelYear,
-                    "vinModelNumber": configuration.vinModelNumber
-                };
-                $scope.save = function() {
-                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/configurations", $scope.configuration, {
-                            timeout: canceler.promise,
-                            "withCredentials": true,
-                        })
-                        .then(function(response) {
-                            $scope.$close(response.data);
-                        })
-                        .catch(function(err) {
-                            $scope.$dismiss(err);
-                        });
+    $scope.getClassifications();
+}
+
+function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.selection = {};
+    $scope.configurationsGrid = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selectedConfiguration = null;
+                if (row.isSelected === true) $scope.selectedConfiguration = row.entity;
+            });
+        }
+    };
+    $scope.configurationsGrid.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
+        { name: "configurationId" },
+        { name: "sizeClassId" },
+        { name: "modelId" },
+        { name: "modelYear" },
+        { name: "vinModelNumber" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.configurationsGrid.data = [];
+    var canceler = $q.defer();
+    $scope.update = function update() {
+        $scope.configurationsGrid.data = [];
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/configurations", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "modelId": $scope.selection.model.modelId
                 }
-            }
-        });
-        modalInstance.result
-            .then(function(result) {
-                if (result) $scope.update();
             })
-            .catch(function(err) {
-                console.log(err)
+            .then(function(response) {
+                $scope.configurationsGrid.data = response.data;
+            });
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function(model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+                timeout: cancelSearchModel.promise,
+                "withCredentials": true,
+                params: {
+                    "model": model,
+                    "manufacturerId": $scope.selection.manufacturer.manufacturerId
+                }
+            })
+            .then(function(response) {
+                return response.data;
             });
     }
 
@@ -1416,23 +1483,50 @@ function TaxonomyController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
-    var canceler = $q.defer();
-    $scope.searchManufacturer = function(manufacturer) {
-        canceler.resolve();
-        canceler = $q.defer();
-        return $http.get(ENV['API_URL'] + "/analyst/taxonomy/manufacturers", {
-                timeout: canceler.promise,
-                "withCredentials": true,
-                params: {
-                    "manufacturer": manufacturer
+    $scope.editConfiguration = function(configuration) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-configuration.html',
+            controller: function($scope, $http) {
+                $scope.configuration = {
+                    "configurationId": configuration.configurationId,
+                    "modelId": configuration.modelId,
+                    "sizeClassId": configuration.sizeClassId,
+                    "modelYear": configuration.modelYear,
+                    "vinModelNumber": configuration.vinModelNumber
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/taxonomy/configurations", $scope.configuration, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
                 }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.update();
             })
-            .then(function(response) {
-                return response.data;
+            .catch(function(err) {
+                console.log(err)
             });
     }
 
-    $scope.getClassifications();
+
+    $scope.getHeader = function() {
+        return [
+            "configurationId",
+            "sizeClassId",
+            "modelId",
+            "modelYear",
+            "vinModelNumber"
+        ]
+    }
 }
 
 function MainController(ENV, $scope, $location, SessionService) {
@@ -1441,6 +1535,8 @@ function MainController(ENV, $scope, $location, SessionService) {
         switch ($location.path()) {
             case '/taxonomy':
                 return "Taxonomy";
+            case '/configurations':
+                return "Configurations";
             case '/model/alias':
                 return "Model Aliases";
             case '/manufacturer/alias':
