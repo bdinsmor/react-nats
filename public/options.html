@@ -9,11 +9,12 @@
             <input ng-model="modelYear" type="text" class="form-control" />
         </div>
         <button ng-click="load(sizeClassId,modelYear)" class="btn btn-default">Search</button>
-        <div class="pull-right">
+        <!--<div class="pull-right">
             <h3>{{modelYearSelected}} {{sizeClass.sizeClassName}}</h3>
-        </div>
+        </div>-->
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
+        <button ng-disabled="!modelYearSelected || !sizeClassId" ng-click="add(sizeClassId,modelYearSelected)" class="btn btn-default">Add</button>
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
         <button ng-disabled="!grid.data || grid.data.length===0" class="btn btn-default" ng-csv="grid.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="manufacturer-vins.csv">Export</button>
     </div>

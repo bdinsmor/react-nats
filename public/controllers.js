@@ -3,8 +3,8 @@ angular.module('PriceDigests')
     .controller('LogoutController', ['ENV', '$scope', '$location', 'SessionService', logoutController])
     .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ValuesController])
-    .controller('OptionsController', ['ENV', '$scope', '$http', '$q', OptionsController])
-    .controller('SpecsController', ['ENV', '$scope', '$http', '$q', SpecsController])
+    .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', OptionsController])
+    .controller('SpecsController', ['ENV', '$scope', '$http', '$q', '$uibModal', SpecsController])
     .controller('ManufacturerAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerAliasesController])
     .controller('ManufacturerVinsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerVinsController])
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
@@ -30,6 +30,13 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "update": ["configurationId", "modelId", "vinModelNumber", "modelYear", "sizeClassId"]
         }
     }, {
+        name: "models",
+        title: "Models",
+        header: {
+            "append": ["modelName", "manufacturerId"],
+            "update": ["modelId", "modelName", "manufacturerId"]
+        }
+    }, {
         name: "manufacturers",
         title: "Manufacturers",
         header: {
@@ -37,11 +44,74 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "update": ["manufacturerId", "manufacturerName"]
         }
     }, {
+        name: "sizeclasses",
+        title: "Size Classes",
+        header: {
+            "append": ["sizeClassName", "sizeClassMin", "sizeClassMax", "sizeClassUom", "subtypeId"],
+            "update": ["sizeClassId", "sizeClassName", "sizeClassMin", "sizeClassMax", "sizeClassUom", "subtypeId"]
+        }
+    }, {
+        name: "subtypes",
+        title: "Subtypes",
+        header: {
+            "append": ["subtypeName", "categoryId"],
+            "update": ["subtypeId", "subtypeName", "categoryId"]
+        }
+    }, {
+        name: "categories",
+        title: "Categories",
+        header: {
+            "append": ["categoryName", "classificationId"],
+            "update": ["categoryId", "categoryName", "classificationId"]
+        }
+    }, {
         name: "classifications",
         title: "Classifications",
         header: {
             "append": ["classificationName"],
             "update": ["classificationId", "classificationName"]
+        }
+    }, {
+        name: "modelAliases",
+        title: "Model Aliases",
+        header: {
+            "append": ["modelId", "modelAlias"]
+        }
+    }, {
+        name: "manufacturerAliases",
+        title: "Manufacturer Aliases",
+        header: {
+            "append": ["manufacturerId", "manufacturerAlias"]
+        }
+    }, {
+        name: "manufacturerVins",
+        title: "Manufacturer Vins",
+        header: {
+            "append": ["vinManufacturerCode", "vinYearCode", "modelYear", "shortVin", "cicCode"]
+        }
+    }, {
+        name: "values",
+        title: "Values",
+        header: {
+            "append": ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"]
+        }
+    }, {
+        name: "specs",
+        title: "Specs",
+        header: {
+            "append": ["configurationId", "specName", "specNameFriendly", "specValue", "specUom", "specFamily", "specDescription"]
+        }
+    }, {
+        name: "options",
+        title: "Options",
+        header: {
+            "append": ["sizeClassId", "optionFamilyId", "modelYear", "optionName", "optionValue"]
+        }
+    }, {
+        name: "optionFamilies",
+        title: "Option Familes",
+        header: {
+            "append": ["optionFamilyName"]
         }
     }]
     $scope.alerts = [];
@@ -51,7 +121,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
     $scope.import = function() {
         $scope.progress = 0;
         $scope.processing = true;
-        $http.post(ENV['API_URL'] + '/analyst/import', {
+        $http.post(ENV['API_URL'] + '/analyst/import/url', {
                 "table": $scope.table.name,
                 "type": $scope.importType,
                 "contentType": $scope.file.type
@@ -72,14 +142,31 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
                     }).progress(function(evt) {
                         $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-                        $scope.processing = false;
                         $timeout(function() {
-                            $scope.alerts.unshift({
-                                type: "success",
-                                title: "Upload Successful",
-                                msg: 'A status email will be sent shortly.<br>Import Id assigned:' + response.data.id
-                            });
                             $scope.file = null;
+                            $http.post(ENV['API_URL'] + '/analyst/import/done', {
+                                    "id": response.data.id,
+                                    "type": $scope.importType
+                                }, {
+                                    "timeout": canceler.promise,
+                                    "withCredentials": true
+                                })
+                                .then(function() {
+                                    $scope.processing = false;
+                                    $scope.alerts.unshift({
+                                        type: "success",
+                                        title: "Upload Successful",
+                                        msg: 'A status email will be sent shortly.<br>Import Id assigned:' + response.data.id
+                                    });
+                                })
+                                .catch(function() {
+                                    $scope.processing = false;
+                                    $scope.alerts.unshift({
+                                        type: "danger",
+                                        title: "Upload Error!",
+                                        msg: 'Error uploading file. Please retry.'
+                                    });
+                                })
                         });
                     }).error(function(data, status, headers, config) {
                         $timeout(function() {
@@ -533,6 +620,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
                 console.log(err)
             });
     }
+
     $scope.load = function() {
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/model-aliases', {
@@ -582,7 +670,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
 
 }
 
-function SpecsController(ENV, $scope, $http, $q) {
+function SpecsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
         enableFiltering: true,
         enableRowHeaderSelection: false,
@@ -641,9 +729,88 @@ function SpecsController(ENV, $scope, $http, $q) {
                 $scope.gridOptions.data = response.data;
             });
     }
+
+    $scope.edit = function(item) {
+        var manufacturer = $scope.configuration.manufacturerName;
+        var model = $scope.configuration.modelName;
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-spec.html',
+            controller: function($scope, $http) {
+                $scope.title = [item.modelYear, manufacturer, model].join(' ');
+                $scope.item = angular.copy(item);
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/specs/" + $scope.item.id, $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/specs/" + $scope.item.id, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close({
+                                "configurationId": item.configurationId
+                            });
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.configurationId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(configurationId) {
+        var manufacturer = $scope.configuration.manufacturerName;
+        var model = $scope.configuration.modelName;
+        var modelYear = $scope.configuration.modelYear;
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-spec.html',
+            controller: function($scope, $http) {
+                $scope.title = [modelYear, manufacturer, model].join(' ');
+                $scope.item = {
+                    configurationId: configurationId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/specs", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.configurationId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
 }
 
-function OptionsController(ENV, $scope, $http, $q) {
+function OptionsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.gridOptions = {
         enableFiltering: true,
         enableRowHeaderSelection: false,
@@ -665,9 +832,10 @@ function OptionsController(ENV, $scope, $http, $q) {
             width: '50',
             cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
         },
-        { name: "optionFamilyName" },
         { name: "optionName" },
         { name: "optionValue" },
+        { name: "optionFamilyId" },
+        { name: "optionFamilyName" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
         { name: "lastModifiedBy", field: "user" }
     ];
@@ -698,6 +866,80 @@ function OptionsController(ENV, $scope, $http, $q) {
             })
             .then(function(response) {
                 $scope.gridOptions.data = response.data;
+            });
+    }
+
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-option.html',
+            controller: function($scope, $http) {
+                $scope.item = angular.copy(item);
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/options/" + $scope.item.id, $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/options/" + $scope.item.id, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close({
+                                "sizeClassId": item.sizeClassId,
+                                "modelYear": item.modelYear
+                            });
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.sizeClassId, result.modelYear);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(sizeClassId, year) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-option.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": sizeClassId,
+                    "modelYear": year
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/options", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true,
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.sizeClassId, result.modelYear);
+            })
+            .catch(function(err) {
+                console.log(err)
             });
     }
 }
