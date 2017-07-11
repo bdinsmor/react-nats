@@ -2,6 +2,11 @@ angular.module('PriceDigests')
     .controller('LoginController', ['ENV', '$scope', '$location', 'LoginService', loginController])
     .controller('LogoutController', ['ENV', '$scope', '$location', 'SessionService', logoutController])
     .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
+    // .controller('PopularityController', ['ENV', '$scope', '$http', '$q', '$uibModal', PopularityController])
+    // .controller('UsageController', ['ENV', '$scope', '$http', '$q', '$uibModal', UsageController])
+    // .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', RegionAdjustmentsController])
+    // .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', UtilizationAdjustmentsController])
+    .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConditionAdjustmentsController])
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', OptionsController])
     .controller('SpecsController', ['ENV', '$scope', '$http', '$q', '$uibModal', SpecsController])
@@ -18,58 +23,54 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
-    $scope.importTypes = {
-        "append": "Append New",
-        //"update": "Update Existing"
-    }
     $scope.tables = [{
         name: "configurations",
         title: "Configurations",
         header: {
             "append": ["modelId", "vinModelNumber", "modelYear", "sizeClassId"],
-            "update": ["configurationId", "modelId", "vinModelNumber", "modelYear", "sizeClassId"]
+            // "update": ["configurationId", "modelId", "vinModelNumber", "modelYear", "sizeClassId"]
         }
     }, {
         name: "models",
         title: "Models",
         header: {
             "append": ["modelName", "manufacturerId"],
-            "update": ["modelId", "modelName", "manufacturerId"]
+            // "update": ["modelId", "modelName", "manufacturerId"]
         }
     }, {
         name: "manufacturers",
         title: "Manufacturers",
         header: {
             "append": ["manufacturerName"],
-            "update": ["manufacturerId", "manufacturerName"]
+            // "update": ["manufacturerId", "manufacturerName"]
         }
     }, {
         name: "sizeclasses",
         title: "Size Classes",
         header: {
             "append": ["sizeClassName", "sizeClassMin", "sizeClassMax", "sizeClassUom", "subtypeId"],
-            "update": ["sizeClassId", "sizeClassName", "sizeClassMin", "sizeClassMax", "sizeClassUom", "subtypeId"]
+            // "update": ["sizeClassId", "sizeClassName", "sizeClassMin", "sizeClassMax", "sizeClassUom", "subtypeId"]
         }
     }, {
         name: "subtypes",
         title: "Subtypes",
         header: {
             "append": ["subtypeName", "categoryId"],
-            "update": ["subtypeId", "subtypeName", "categoryId"]
+            // "update": ["subtypeId", "subtypeName", "categoryId"]
         }
     }, {
         name: "categories",
         title: "Categories",
         header: {
             "append": ["categoryName", "classificationId"],
-            "update": ["categoryId", "categoryName", "classificationId"]
+            // "update": ["categoryId", "categoryName", "classificationId"]
         }
     }, {
         name: "classifications",
         title: "Classifications",
         header: {
             "append": ["classificationName"],
-            "update": ["classificationId", "classificationName"]
+            // "update": ["classificationId", "classificationName"]
         }
     }, {
         name: "modelAliases",
@@ -90,12 +91,6 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "append": ["vinManufacturerCode", "vinYearCode", "modelYear", "shortVin", "cicCode"]
         }
     }, {
-        name: "values",
-        title: "Values",
-        header: {
-            "append": ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"]
-        }
-    }, {
         name: "specs",
         title: "Specs",
         header: {
@@ -112,6 +107,42 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         title: "Option Familes",
         header: {
             "append": ["optionFamilyName"]
+        }
+    }, {
+        name: "values",
+        title: "Values",
+        header: {
+            "append": ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"]
+        }
+    }, {
+        name: "conditionAdjustments",
+        title: "Condition Adjustments",
+        header: {
+            "replace": ["sizeClassId", "condition", "adjustmentFactor"]
+        }
+    }, {
+        name: "regionAdjustments",
+        title: "Region Adjustments",
+        header: {
+            "replace": ["sizeClassId", "country", "state", "adjustmentValue"]
+        }
+    }, {
+        name: "utilizationAdjustments",
+        title: "Utilization Adjustments",
+        header: {
+            "replace": ["sizeClassId", "fuelType", "modelYear", "lowValue", "highValue", "uom", "adjustmentValue"]
+        }
+    }, {
+        name: "usage",
+        title: "Usage",
+        header: {
+            "replace": ["modelId", "modelYear", "age", "benchmarkLevel", "meanAnnualUsage", "recordCount", "percentile25", "percentile45", "percentile55", "percentile75", "percentile99", "distribution25", "distribution45", "distribution55", "distribution75", "distribution99"]
+        }
+    }, {
+        name: "popularity",
+        title: "Popularity",
+        header: {
+            "replace": ["modelId", "recordCount", "marketPopularityIndex", "benchmarkGroup", "marketPopularityLabel", "twenty", "forty", "sixty", "eighty", "hundred", "twentyPercent", "fortyPercent", "sixtyPercent", "eightyPercent", "hundredPercent"]
         }
     }]
     $scope.alerts = [];
@@ -220,7 +251,145 @@ function SyncController(ENV, $scope, $http, $q) {
     }
 }
 
+function ConditionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return ["sizeClassId", "condition", "adjustmentFactor"];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
+        { name: "sizeClassId" },
+        { name: "condition" },
+        { name: "adjustmentFactor" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-condition-adjustment.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": item.sizeClassId,
+                    "condition": item.condition,
+                    "adjustmentFactor": item.adjustmentFactor
+                };
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/condition-adjustments", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/condition-adjustments", {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(data) {
+                if (data) $scope.load(item.sizeClassId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(sizeClass) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-condition-adjustment.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": sizeClass.sizeClassId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/condition-adjustments", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.sizeClassId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function(sizeClassId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
+                timeout: canceler.promise,
+                "withCredentials": true
+            })
+            .then(function(response) {
+                $scope.sizeClass = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/condition-adjustments', {
+                    timeout: canceler.promise,
+                    "withCredentials": true,
+                    params: {
+                        "sizeClassId": sizeClassId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+}
+
 function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return ["vinManufacturerCode", "vinYearCode", "modelYear", "shortVin", "cicCode"];
+    }
+
     $scope.gridOptions = {
         enableFiltering: true,
         enableRowSelection: true,
@@ -369,6 +538,10 @@ function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
 }
 
 function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return ["manufacturerId", "manufacturerAlias"];
+    }
+
     $scope.manufacturer = null;
 
     $scope.gridOptions = {
@@ -395,7 +568,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
         },
         { name: "manufacturerId" },
         { name: "manufacturer" },
-        { name: "alias" },
+        { name: "alias", field: "manufacturerAlias" },
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
         { name: "lastModifiedBy", field: "user" }
     ];
@@ -413,7 +586,7 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
                     "id": item.id,
                     "manufacturerId": item.manufacturerId,
                     "manufacturerName": item.manufacturer,
-                    "manufacturerAlias": item.alias
+                    "manufacturerAlias": item.manufacturerAlias
                 };
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/manufacturer-aliases", $scope.item, {
@@ -513,6 +686,10 @@ function ManufacturerAliasesController(ENV, $scope, $http, $q, $uibModal) {
 }
 
 function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return ["modelId", "modelAlias"];
+    }
+
     $scope.gridOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
@@ -535,7 +712,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
             cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
         },
         { name: "modelId", width: 100 },
-        { name: "alias", width: '*' },
+        { name: "alias", field: "modelAlias", width: '*' },
         { name: "lastModified", width: 200, field: "ts", cellFilter: 'date:"medium"' },
         { name: "lastModifiedBy", width: 200, field: "user" }
     ];
@@ -553,7 +730,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
                     "id": item.id,
                     "modelId": item.modelId,
                     "modelName": item.model,
-                    "modelAlias": item.alias
+                    "modelAlias": item.modelAlias
                 };
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/model-aliases", $scope.item, {
@@ -671,6 +848,18 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
 }
 
 function SpecsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return [
+            "configurationId",
+            "specName",
+            "specNameFriendly",
+            "specValue",
+            "specUom",
+            "specFamily",
+            "specDescription"
+        ];
+    }
+
     $scope.gridOptions = {
         enableFiltering: true,
         enableRowHeaderSelection: false,
@@ -682,6 +871,7 @@ function SpecsController(ENV, $scope, $http, $q, $uibModal) {
             });
         }
     };
+
     $scope.gridOptions.columnDefs = [{
             name: '',
             field: 'name',
@@ -701,12 +891,12 @@ function SpecsController(ENV, $scope, $http, $q, $uibModal) {
         { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
         { name: "lastModifiedBy", field: "user" }
     ];
+
     var canceler = $q.defer();
 
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
-
 
     $scope.load = function(configurationId) {
         $scope.configuration = null;
@@ -811,6 +1001,9 @@ function SpecsController(ENV, $scope, $http, $q, $uibModal) {
 }
 
 function OptionsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return ["sizeClassId", "optionFamilyId", "modelYear", "optionName", "optionValue"];
+    }
     $scope.gridOptions = {
         enableFiltering: true,
         enableRowHeaderSelection: false,
@@ -945,6 +1138,9 @@ function OptionsController(ENV, $scope, $http, $q, $uibModal) {
 }
 
 function ValuesController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"];
+    }
     $scope.gridOptions = {
         enableFiltering: true,
         enableRowHeaderSelection: false,

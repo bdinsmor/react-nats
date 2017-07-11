@@ -95,6 +95,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/condition-adjustments', {
+            templateUrl: 'condition-adjustments.html',
+            controller: 'ConditionAdjustmentsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .when('/sync', {
             templateUrl: 'sync.html',
             controller: 'SyncController',

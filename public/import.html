@@ -3,11 +3,11 @@
         <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
             <div class="form-group">
                 <label>Table</label>
-                <select ng-model="table" class="form-control" ng-options="tbl as tbl.title for tbl in tables">{{tbl}}</select>
+                <select style="min-width:100px;" ng-model="table" class="form-control" ng-options="tbl as tbl.title for tbl in tables">{{tbl}}</select>
             </div>
             <div class="form-group">
                 <label>Import Type</label>
-                <select ng-model="importType" class="form-control" ng-options="k as v for (k,v) in importTypes">{{v}}</select>
+                <select style="min-width:100px;" ng-disabled="!table" ng-model="importType" class="form-control" ng-options="k as k for (k,v) in table.header">{{k}}</select>
             </div>
             <button ng-disabled="processing===true||!table||!importType||!file" ng-click="import()" class="btn btn-success">Import</button>
         </div>
