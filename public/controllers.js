@@ -2,8 +2,8 @@ angular.module('PriceDigests')
     .controller('LoginController', ['ENV', '$scope', '$location', 'LoginService', loginController])
     .controller('LogoutController', ['ENV', '$scope', '$location', 'SessionService', logoutController])
     .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
-    // .controller('PopularityController', ['ENV', '$scope', '$http', '$q', '$uibModal', PopularityController])
-    // .controller('UsageController', ['ENV', '$scope', '$http', '$q', '$uibModal', UsageController])
+    .controller('PopularityController', ['ENV', '$scope', '$http', '$q', '$uibModal', PopularityController])
+    .controller('UsageController', ['ENV', '$scope', '$http', '$q', '$uibModal', UsageController])
     .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', RegionAdjustmentsController])
     .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', UtilizationAdjustmentsController])
     .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConditionAdjustmentsController])
@@ -247,6 +247,376 @@ function SyncController(ENV, $scope, $http, $q) {
             })
             .then(function(response) {
                 $scope.staged = response.data;
+            });
+    }
+}
+
+function UsageController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return [
+            "modelId",
+            "modelYear",
+            "age",
+            "benchmarkLevel",
+            "meanAnnualUsage",
+            "recordCount",
+            "percentile25",
+            "percentile45",
+            "percentile55",
+            "percentile75",
+            "percentile99",
+            "distribution25",
+            "distribution45",
+            "distribution55",
+            "distribution75",
+            "distribution99"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
+        { name: "modelId" },
+        { name: "modelYear" },
+        { name: "age" },
+        { name: "benchmarkLevel" },
+        { name: "meanAnnualUsage" },
+        { name: "recordCount" },
+        { name: "percentile25" },
+        { name: "percentile45" },
+        { name: "percentile55" },
+        { name: "percentile75" },
+        { name: "percentile99" },
+        { name: "distribution25" },
+        { name: "distribution45" },
+        { name: "distribution55" },
+        { name: "distribution75" },
+        { name: "distribution99" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-usage.html',
+            controller: function($scope, $http) {
+                $scope.item = item;
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/usage", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/usage", {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(data) {
+                if (data) $scope.load();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(model) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-usage.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "modelId": model.modelId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/usage", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function() {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/usage', {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "modelId": $scope.model.modelId
+                },
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function(model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+                timeout: cancelSearchModel.promise,
+                "withCredentials": true,
+                params: {
+                    "model": model,
+                    "manufacturerId": $scope.manufacturer.manufacturerId
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
+}
+
+function PopularityController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return [
+            "modelId",
+            "recordCount",
+            "marketPopularityIndex",
+            "benchmarkGroup",
+            "marketPopularityLabel",
+            "twenty",
+            "forty",
+            "sixty",
+            "eighty",
+            "hundred",
+            "twentyPercent",
+            "fortyPercent",
+            "sixtyPercent",
+            "eightyPercent",
+            "hundredPercent"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
+        { name: "modelId" },
+        { name: "recordCount" },
+        { name: "marketPopularityIndex" },
+        { name: "benchmarkGroup" },
+        { name: "marketPopularityLabel" },
+        { name: "twenty" },
+        { name: "forty" },
+        { name: "sixty" },
+        { name: "eighty" },
+        { name: "hundred" },
+        { name: "twentyPercent" },
+        { name: "fortyPercent" },
+        { name: "sixtyPercent" },
+        { name: "eightyPercent" },
+        { name: "hundredPercent" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-popularity.html',
+            controller: function($scope, $http) {
+                $scope.item = item;
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/popularity", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/popularity", {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(data) {
+                if (data) $scope.load();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(sizeClass) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-popularity.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "modelId": model.modelId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/popularity", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load();
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function(modelId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/popularity', {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "modelId": $scope.model.modelId
+                },
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function(manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+                timeout: cancelSearchManufacturer.promise,
+                "withCredentials": true,
+                params: {
+                    "manufacturer": manufacturer
+                }
+            })
+            .then(function(response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function(model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+                timeout: cancelSearchModel.promise,
+                "withCredentials": true,
+                params: {
+                    "model": model,
+                    "manufacturerId": $scope.manufacturer.manufacturerId
+                }
+            })
+            .then(function(response) {
+                return response.data;
             });
     }
 }
