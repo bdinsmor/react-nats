@@ -320,9 +320,11 @@ function UsageController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.edit = function(item) {
+        var model = $scope.model;
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-usage.html',
             controller: function($scope, $http) {
+                $scope.title = [model.manufacturerName, model.modelName].join(' ');
                 $scope.item = item;
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/usage", $scope.item, {
@@ -363,6 +365,7 @@ function UsageController(ENV, $scope, $http, $q, $uibModal) {
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-usage.html',
             controller: function($scope, $http) {
+                $scope.title = [model.manufacturerName, model.modelName].join(' ');
                 $scope.item = {
                     "modelId": model.modelId
                 };
@@ -504,9 +507,11 @@ function PopularityController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.edit = function(item) {
+        var model = $scope.model;
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-popularity.html',
             controller: function($scope, $http) {
+                $scope.title = [model.manufacturerName, model.modelName].join(' ');
                 $scope.item = item;
                 $scope.save = function() {
                     $http.put(ENV['API_URL'] + "/analyst/popularity", $scope.item, {
@@ -543,10 +548,11 @@ function PopularityController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
-    $scope.add = function(sizeClass) {
+    $scope.add = function(model) {
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-popularity.html',
             controller: function($scope, $http) {
+                $scope.title = [model.manufacturerName, model.modelName].join(' ');
                 $scope.item = {
                     "modelId": model.modelId
                 };
@@ -2635,6 +2641,16 @@ function MainController(ENV, $scope, $location, SessionService) {
                 return "Specifications";
             case '/values':
                 return "Values";
+            case '/condition-adjustments':
+                return "Condition Adjustments";
+            case '/region-adjustments':
+                return "Region Adjustments";
+            case '/utilization-adjustments':
+                return "Utilization Adjustments";
+            case '/popularity':
+                return "Popularity";
+            case '/usage':
+                return "Usage";
             default:
                 return "PriceDigests Analyst";
         }

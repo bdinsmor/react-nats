@@ -1,0 +1,77 @@
+<div class="container-fluid" style="padding-top:15px;padding-bottom:15px;">
+    <h3>{{title}}</h3>
+    <hr>
+    <div class="row">
+        <form name="frm">
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label>Record Count</label>
+                    <input required name="recordCount" type="text" class="form-control" ng-model="item.recordCount">
+                </div>
+                <div class="form-group">
+                    <label>Market Popularity Index</label>
+                    <input required name="marketPopularityIndex" type="text" class="form-control" ng-model="item.marketPopularityIndex">
+                </div>
+                <div class="form-group">
+                    <label>Benchmark Group</label>
+                    <input required name="benchmarkGroup" type="text" class="form-control" ng-model="item.benchmarkGroup">
+                </div>
+                <div class="form-group">
+                    <label>Market Popularity Label</label>
+                    <input required name="marketPopularityLabel" type="text" class="form-control" ng-model="item.marketPopularityLabel">
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label>Twenty</label>
+                    <input required name="twenty" type="text" class="form-control" ng-model="item.twenty">
+                </div>
+                <div class="form-group">
+                    <label>Forty</label>
+                    <input required name="forty" type="text" class="form-control" ng-model="item.forty">
+                </div>
+                <div class="form-group">
+                    <label>Sixty</label>
+                    <input required name="sixty" type="text" class="form-control" ng-model="item.sixty">
+                </div>
+                <div class="form-group">
+                    <label>Eighty</label>
+                    <input required name="eighty" type="text" class="form-control" ng-model="item.eighty">
+                </div>
+                <div class="form-group">
+                    <label>Hundred</label>
+                    <input required name="hundred" type="text" class="form-control" ng-model="item.hundred">
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label>Twenty Percent</label>
+                    <input required name="twentyPercent" type="text" class="form-control" ng-model="item.twentyPercent">
+                </div>
+                <div class="form-group">
+                    <label>Forty Percent</label>
+                    <input required name="fortyPercent" type="text" class="form-control" ng-model="item.fortyPercent">
+                </div>
+                <div class="form-group">
+                    <label>Sixty Percent</label>
+                    <input required name="sixtyPercent" type="text" class="form-control" ng-model="item.sixtyPercent">
+                </div>
+                <div class="form-group">
+                    <label>Eighty Percent</label>
+                    <input required name="eightyPercent" type="text" class="form-control" ng-model="item.eightyPercent">
+                </div>
+                <div class="form-group">
+                    <label>Hundred Percent</label>
+                    <input required name="hundredPercent" type="text" class="form-control" ng-model="item.hundredPercent">
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div class="clearfix">
+        <div class="pull-right">
+            <button class="btn btn-primary" ng-click="save()">Save</button>
+            <button class="btn btn-default" ng-click="$close()">Cancel</button>
+        </div>
+    </div>
+</div>
