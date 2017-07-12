@@ -102,6 +102,34 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/region-adjustments', {
+            templateUrl: 'region-adjustments.html',
+            controller: 'RegionAdjustmentsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/utilization-adjustments', {
+            templateUrl: 'utilization-adjustments.html',
+            controller: 'UtilizationAdjustmentsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/popularity', {
+            templateUrl: 'popularity.html',
+            controller: 'PopularityController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/usage', {
+            templateUrl: 'usage.html',
+            controller: 'UsageController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .when('/sync', {
             templateUrl: 'sync.html',
             controller: 'SyncController',

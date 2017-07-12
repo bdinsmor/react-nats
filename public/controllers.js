@@ -4,8 +4,8 @@ angular.module('PriceDigests')
     .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
     // .controller('PopularityController', ['ENV', '$scope', '$http', '$q', '$uibModal', PopularityController])
     // .controller('UsageController', ['ENV', '$scope', '$http', '$q', '$uibModal', UsageController])
-    // .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', RegionAdjustmentsController])
-    // .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', UtilizationAdjustmentsController])
+    .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', RegionAdjustmentsController])
+    .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', UtilizationAdjustmentsController])
     .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConditionAdjustmentsController])
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', OptionsController])
@@ -247,6 +247,284 @@ function SyncController(ENV, $scope, $http, $q) {
             })
             .then(function(response) {
                 $scope.staged = response.data;
+            });
+    }
+}
+
+function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return [
+            "sizeClassId",
+            "modelYear",
+            "fuelType",
+            "lowValue",
+            "highValue",
+            "uom",
+            "adjustmentValue"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
+        { name: "sizeClassId" },
+        { name: "modelYear" },
+        { name: "fuelType" },
+        { name: "lowValue" },
+        { name: "highValue" },
+        { name: "uom" },
+        { name: "adjustmentValue" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-utilization-adjustment.html',
+            controller: function($scope, $http) {
+                $scope.item = item;
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/utilization-adjustments", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/utilization-adjustments", {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(data) {
+                if (data) $scope.load(item.sizeClassId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(sizeClass) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-utilization-adjustment.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": sizeClass.sizeClassId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/utilization-adjustments", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.sizeClassId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function(sizeClassId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
+                timeout: canceler.promise,
+                "withCredentials": true
+            })
+            .then(function(response) {
+                $scope.sizeClass = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/utilization-adjustments', {
+                    timeout: canceler.promise,
+                    "withCredentials": true,
+                    params: {
+                        "sizeClassId": sizeClassId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+}
+
+function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
+    $scope.getHeader = function() {
+        return [
+            "sizeClassId",
+            "country",
+            "state",
+            "adjustmentValue"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function(gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+            name: '',
+            field: 'name',
+            enableColumnMenu: false,
+            enableFiltering: false,
+            enableHiding: false,
+            enableSorting: false,
+            width: '50',
+            cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+        },
+        { name: "sizeClassId" },
+        { name: "country" },
+        { name: "state" },
+        { name: "adjustmentValue" },
+        { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+        { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function() {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function(item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-region-adjustment.html',
+            controller: function($scope, $http) {
+                $scope.item = item;
+                $scope.save = function() {
+                    $http.put(ENV['API_URL'] + "/analyst/region-adjustments", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+                $scope.delete = function() {
+                    $http.delete(ENV['API_URL'] + "/analyst/region-adjustments", {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(data) {
+                if (data) $scope.load(item.sizeClassId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.add = function(sizeClass) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-region-adjustment.html',
+            controller: function($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": sizeClass.sizeClassId
+                };
+                $scope.save = function() {
+                    $http.post(ENV['API_URL'] + "/analyst/region-adjustments", $scope.item, {
+                            timeout: canceler.promise,
+                            "withCredentials": true
+                        })
+                        .then(function(response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function(err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function(result) {
+                if (result) $scope.load(result.sizeClassId);
+            })
+            .catch(function(err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function(sizeClassId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
+                timeout: canceler.promise,
+                "withCredentials": true
+            })
+            .then(function(response) {
+                $scope.sizeClass = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/region-adjustments', {
+                    timeout: canceler.promise,
+                    "withCredentials": true,
+                    params: {
+                        "sizeClassId": sizeClassId
+                    },
+                })
+            })
+            .then(function(response) {
+                $scope.gridOptions.data = response.data;
             });
     }
 }
