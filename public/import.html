@@ -11,9 +11,13 @@
             </div>
             <button ng-disabled="processing===true||!table||!importType||!file" ng-click="import()" class="btn btn-success">Import</button>
         </div>
-        <div ngf-drop ngf-select ng-model="file" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="false" ngf-allow-dir="false">
+        <div ngf-drop ngf-select ngf-model-invalid="errorFile" ng-model="file" class="drop-box" ngf-max-size="100MB" ngf-drag-over-class="dragover" ngf-multiple="false" ngf-allow-dir="false">
             <span ng-hide="file">Drop file here or click to select</span>
             <span class="ng-hide" ng-show="file">{{file.name}}</span>
+        </div>
+        <div ng-if="errorFile && errorFile.$error=='maxSize'" class="alert alert-danger" style="text-align:center;">
+            <p>{{errorFile.name}} is too large</p>
+            <p>Max File Size is 100MB</p>
         </div>
         <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
         <uib-progressbar ng-if="processing===true" value="progress" type="success"><b>{{progress}}%</b></uib-progressbar>
