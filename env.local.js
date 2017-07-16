@@ -1,4 +1,4 @@
 angular.module('PriceDigests').constant("ENV", {
-    // "API_URL": "http://pricedigestsapi-internal-staging.us-east-2.elasticbeanstalk.com"
-    "API_URL": "http://localhost:8082"
+    "API_URL": "https://internal-dev.pricedigestsapi.com"
+        // "API_URL": "http://localhost:8082"
 });
