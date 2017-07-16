@@ -767,6 +767,86 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.gridOptions.data = response.data;
             });
     }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.sizeclasses = [];
+    $scope.selection = {};
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+            })
+            .then(function(response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId
+                }
+            })
+            .then(function(response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId,
+                    "categoryId": $scope.selection.categoryId
+                }
+            })
+            .then(function(response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    $scope.getSizeClasses = function getSizeClasses() {
+        $scope.sizeclasses = [];
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId,
+                    "categoryId": $scope.selection.categoryId,
+                    "subtypeId": $scope.selection.subtypeId
+                }
+            })
+            .then(function(response) {
+                $scope.sizeclasses = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
 }
 
 function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
@@ -903,6 +983,86 @@ function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.gridOptions.data = response.data;
             });
     }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.sizeclasses = [];
+    $scope.selection = {};
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+            })
+            .then(function(response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId
+                }
+            })
+            .then(function(response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId,
+                    "categoryId": $scope.selection.categoryId
+                }
+            })
+            .then(function(response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    $scope.getSizeClasses = function getSizeClasses() {
+        $scope.sizeclasses = [];
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId,
+                    "categoryId": $scope.selection.categoryId,
+                    "subtypeId": $scope.selection.subtypeId
+                }
+            })
+            .then(function(response) {
+                $scope.sizeclasses = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
 }
 
 function ConditionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
@@ -1037,6 +1197,86 @@ function ConditionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
                 $scope.gridOptions.data = response.data;
             });
     }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.sizeclasses = [];
+    $scope.selection = {};
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+            })
+            .then(function(response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId
+                }
+            })
+            .then(function(response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId,
+                    "categoryId": $scope.selection.categoryId
+                }
+            })
+            .then(function(response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    $scope.getSizeClasses = function getSizeClasses() {
+        $scope.sizeclasses = [];
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
+                timeout: canceler.promise,
+                "withCredentials": true,
+                params: {
+                    "classificationId": $scope.selection.classificationId,
+                    "categoryId": $scope.selection.categoryId,
+                    "subtypeId": $scope.selection.subtypeId
+                }
+            })
+            .then(function(response) {
+                $scope.sizeclasses = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
 }
 
 function ManufacturerVinsController(ENV, $scope, $http, $q, $uibModal) {
