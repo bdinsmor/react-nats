@@ -19,6 +19,7 @@ angular.module('PriceDigests')
     .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
 
 function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
+    $scope.test_url = ENV.TEST_URL;
     var canceler = $q.defer();
     $scope.$on('$destroy', function() {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
