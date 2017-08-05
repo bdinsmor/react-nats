@@ -711,10 +711,10 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
         });
         modalInstance.result
             .then(function(data) {
-                if (data) $scope.load(item.sizeClassId);
+                $scope.load(item.sizeClassId);
             })
             .catch(function(err) {
-                console.log(err)
+                $scope.load(item.sizeClassId);
             });
     }
 
