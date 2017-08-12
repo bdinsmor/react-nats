@@ -1,5 +1,6 @@
 {
   "devDependencies": {
-    "eslint": "^4.2.0"
+    "eslint": "^4.2.0",
+    "http-server": "^0.10.0"
   }
 }
