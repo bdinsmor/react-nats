@@ -89,7 +89,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         name: "manufacturerVins",
         title: "Manufacturer Vins",
         header: {
-            "append": ["vinManufacturerCode", "vinYearCode", "modelYear", "shortVin", "cicCode"]
+            "append": ["manufacturerId", "vinManufacturerCode", "vinYearCode", "modelYear", "shortVin", "cicCode"]
         }
     }, {
         name: "specs",
