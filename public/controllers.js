@@ -2779,6 +2779,18 @@ function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
                             $scope.$dismiss(err);
                         });
                 }
+                $scope.delete = function () {
+                    $http.delete(ENV['API_URL'] + "/analyst/taxonomy/configurations/" + $scope.configuration.configurationId, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
             }
         });
         modalInstance.result
