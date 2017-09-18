@@ -1,10 +1,10 @@
-angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider", function(ENV, $routeProvider, $httpProvider) {
-    $httpProvider.interceptors.push(function($q, $location) {
+angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider", function (ENV, $routeProvider, $httpProvider) {
+    $httpProvider.interceptors.push(function ($q, $location) {
         return {
-            response: function(response) {
+            response: function (response) {
                 return response;
             },
-            responseError: function(response) {
+            responseError: function (response) {
                 if (response.status === 401 || (response.status <= 0 && response.config.url === (ENV['API_URL'] + "/"))) {
                     var next = $location.url();
                     $location.url('/login');
@@ -15,17 +15,17 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
         };
     });
     $httpProvider.interceptors.push('jwtInjector');
-    var checkLoggedin = function($q, $timeout, $http) {
+    var checkLoggedin = function ($q, $timeout, $http) {
         // Initialize a new promise
         var deferred = $q.defer();
         // Make an AJAX call to check if the user is logged in
         var url = ENV['API_URL'] + "/analyst/";
         $http.get(url, {
-                "withCredentials": true
-            })
-            .then(function() {
+            "withCredentials": true
+        })
+            .then(function () {
                 deferred.resolve();
-            }, function() {
+            }, function () {
                 deferred.reject();
             });
         return deferred.promise;
@@ -140,6 +140,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
         .when('/import', {
             templateUrl: 'import.html',
             controller: 'ImportController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/export', {
+            templateUrl: 'export.html',
+            controller: 'ExportController',
             resolve: {
                 loggedin: checkLoggedin
             }

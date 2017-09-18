@@ -17,6 +17,102 @@ angular.module('PriceDigests')
     .controller('ConfigurationsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConfigurationsController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
     .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
+    .controller('ExportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ExportController])
+
+function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
+    var canceler = $q.defer();
+    $scope.$on('$destroy', function () {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+    $scope.tables = [{
+        name: "configurations",
+        title: "Configurations"
+    }, {
+        name: "models",
+        title: "Models"
+    }, {
+        name: "manufacturers",
+        title: "Manufacturers"
+    }, {
+        name: "sizeclasses",
+        title: "Size Classes"
+    }, {
+        name: "subtypes",
+        title: "Subtypes"
+    }, {
+        name: "categories",
+        title: "Categories"
+    }, {
+        name: "classifications",
+        title: "Classifications"
+    }, {
+        name: "modelAliases",
+        title: "Model Aliases"
+    }, {
+        name: "manufacturerAliases",
+        title: "Manufacturer Aliases"
+    }, {
+        name: "manufacturerVins",
+        title: "Manufacturer Vins"
+    }, {
+        name: "specs",
+        title: "Specs"
+    }, {
+        name: "options",
+        title: "Options"
+    }, {
+        name: "optionFamilies",
+        title: "Option Familes"
+    }, {
+        name: "values",
+        title: "Values"
+    }, {
+        name: "conditionAdjustments",
+        title: "Condition Adjustments"
+    }, {
+        name: "regionAdjustments",
+        title: "Region Adjustments"
+    }, {
+        name: "utilizationAdjustments",
+        title: "Utilization Adjustments"
+    }, {
+        name: "usage",
+        title: "Usage"
+    }, {
+        name: "popularity",
+        title: "Popularity"
+    }];
+    $scope.alerts = [];
+    $scope.closeAlert = function (index) {
+        $scope.alerts.splice(index, 1);
+    };
+    $scope.export = function () {
+        $scope.progress = 0;
+        $scope.processing = true;
+        $http.post(ENV['API_URL'] + '/analyst/export', {
+            "tableName": $scope.table.name
+        }, {
+                "timeout": canceler.promise,
+                "withCredentials": true
+            })
+            .then(function () {
+                $scope.processing = false;
+                $scope.alerts.unshift({
+                    type: "success",
+                    title: "Export Processing",
+                    msg: 'A status email will be sent shortly'
+                });
+            })
+            .catch(function () {
+                $scope.processing = false;
+                $scope.alerts.unshift({
+                    type: "danger",
+                    title: "Export Error!",
+                    msg: 'Error exporting table. Please retry.'
+                });
+            })
+    }
+}
 
 function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
     $scope.test_url = ENV.TEST_URL;
