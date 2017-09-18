@@ -11,9 +11,10 @@
         <button ng-click="load(sizeClassId,modelYear)" class="btn btn-default">Search</button>
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
-        <button ng-disabled="!modelYearSelected || !sizeClassId" ng-click="add(sizeClassId,modelYearSelected)" class="btn btn-default">Add</button>
+        <button ng-disabled="!modelYear || !sizeClassId" ng-click="add(sizeClassId,modelYear)" class="btn btn-default">Add</button>
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
-        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="options.csv">Export</button>
+        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data"
+            csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="options.csv">Export</button>
     </div>
     <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
 </div>

@@ -7,9 +7,9 @@ angular.module('PriceDigests')
     .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', RegionAdjustmentsController])
     .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', UtilizationAdjustmentsController])
     .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConditionAdjustmentsController])
-    .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ValuesController])
-    .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', OptionsController])
-    .controller('SpecsController', ['ENV', '$scope', '$http', '$q', '$uibModal', SpecsController])
+    .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ValuesController])
+    .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', OptionsController])
+    .controller('SpecsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', SpecsController])
     .controller('ManufacturerAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerAliasesController])
     .controller('ManufacturerVinsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ManufacturerVinsController])
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
@@ -1682,7 +1682,7 @@ function ModelAliasesController(ENV, $scope, $http, $q, $uibModal) {
 
 }
 
-function SpecsController(ENV, $scope, $http, $q, $uibModal) {
+function SpecsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
     $scope.getHeader = function () {
         return [
             "configurationId",
@@ -1753,6 +1753,11 @@ function SpecsController(ENV, $scope, $http, $q, $uibModal) {
             .then(function (response) {
                 $scope.gridOptions.data = response.data;
             });
+    }
+
+    if ($routeParams.configurationId) {
+        $scope.configId = $routeParams.configurationId;
+        $scope.load($routeParams.configurationId);
     }
 
     $scope.edit = function (item) {
@@ -1835,7 +1840,7 @@ function SpecsController(ENV, $scope, $http, $q, $uibModal) {
     }
 }
 
-function OptionsController(ENV, $scope, $http, $q, $uibModal) {
+function OptionsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
     $scope.getHeader = function () {
         return ["sizeClassId", "optionFamilyId", "modelYear", "optionName", "optionValue"];
     }
@@ -1873,8 +1878,6 @@ function OptionsController(ENV, $scope, $http, $q, $uibModal) {
         canceler.resolve(); // Aborts the $http request if it isn't finished.
     });
     $scope.load = function (sizeClassId, modelYear) {
-        $scope.modelYearSelected = null;
-        $scope.sizeClass = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
             timeout: canceler.promise,
@@ -1895,6 +1898,12 @@ function OptionsController(ENV, $scope, $http, $q, $uibModal) {
             .then(function (response) {
                 $scope.gridOptions.data = response.data;
             });
+    }
+
+    if ($routeParams.sizeClassId && $routeParams.modelYear) {
+        $scope.modelYear = $routeParams.modelYear;
+        $scope.sizeClassId = $routeParams.sizeClassId;
+        $scope.load($routeParams.sizeClassId, $routeParams.modelYear);
     }
 
     $scope.edit = function (item) {
@@ -1972,7 +1981,7 @@ function OptionsController(ENV, $scope, $http, $q, $uibModal) {
     }
 }
 
-function ValuesController(ENV, $scope, $http, $q, $uibModal) {
+function ValuesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
     $scope.getHeader = function () {
         return ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"];
     }
@@ -2019,12 +2028,10 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
     });
 
     $scope.edit = function (item) {
-        var model = $scope.model.modelName;
-        var manufacturer = $scope.manufacturer.manufacturerName;
         var modalInstance = $uibModal.open({
             templateUrl: 'edit-value.html',
             controller: function ($scope, $http) {
-                $scope.title = [item.modelYear, manufacturer, model].join(' ');
+                $scope.title = [item.configurationId].join(' ');
                 $scope.item = {
                     "configurationId": item.configurationId,
                     "msrp": item.msrp,
@@ -2062,6 +2069,7 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
     }
 
     $scope.load = function () {
+        $scope.configurationId = null;
         $scope.configuration = null;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/values', {
@@ -2069,6 +2077,23 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
             "withCredentials": true,
             params: {
                 "modelId": $scope.model.modelId
+            },
+        })
+            .then(function (response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    $scope.loadConfiguration = function () {
+        $scope.configuration = null;
+        $scope.model = null;
+        $scope.manufacturer = null;
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/values', {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "configurationId": $scope.configurationId
             },
         })
             .then(function (response) {
@@ -2107,6 +2132,11 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal) {
             .then(function (response) {
                 return response.data;
             });
+    }
+
+    if ($routeParams.configurationId) {
+        $scope.configurationId = $routeParams.configurationId;
+        $scope.loadConfiguration();
     }
 }
 
@@ -2679,6 +2709,7 @@ function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.configurationsGrid.data = [];
     var canceler = $q.defer();
     $scope.update = function update() {
+        $scope.configurationId = null;
         $scope.configurationsGrid.data = [];
         $http.get(ENV['API_URL'] + "/analyst/taxonomy/configurations", {
             timeout: canceler.promise,
@@ -2686,6 +2717,22 @@ function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
             params: {
                 "modelId": $scope.selection.model.modelId
             }
+        })
+            .then(function (response) {
+                $scope.configurationsGrid.data = response.data;
+            });
+    }
+
+    $scope.loadConfiguration = function () {
+        $scope.model = null;
+        $scope.manufacturer = null;
+        $scope.configurationsGrid.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/configurations', {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "configurationId": $scope.configurationId
+            },
         })
             .then(function (response) {
                 $scope.configurationsGrid.data = response.data;
@@ -2745,6 +2792,42 @@ function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
                             $scope.$dismiss(err);
                         });
                 }
+            }
+        });
+        modalInstance.result
+            .then(function (result) {
+                if (result) $scope.update();
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
+    }
+
+    $scope.showProducts = function (configuration) {
+        var tpl = '<div class="container-fluid" style="padding-top:15px;padding-bottom:15px;">';
+        tpl += '<h3>{{configuration.year}} {{configuration.manufacturer}} {{configuration.model}}</h3>';
+        tpl += '<h3>Values <span ng-if="result.values===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.values===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
+        tpl += '<h3>Specs <span ng-if="result.specs===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.specs===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
+        tpl += '</div>';
+        var modalInstance = $uibModal.open({
+            template: tpl,
+            controller: function ($scope, $http) {
+                $scope.configuration = {
+                    "configurationId": configuration.configurationId,
+                    "model": configuration.modelName,
+                    "manufacturer": configuration.manufacturerName,
+                    "year": configuration.modelYear
+                };
+                $http.get(ENV['API_URL'] + "/analyst/products/" + configuration.configurationId, {
+                    timeout: canceler.promise,
+                    "withCredentials": true,
+                })
+                    .then(function (response) {
+                        $scope.result = response.data;
+                    })
+                    .catch(function (err) {
+                        $scope.$dismiss(err);
+                    });
             }
         });
         modalInstance.result

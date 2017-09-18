@@ -2,16 +2,28 @@
     <div style="margin-top:25px;margin-bottom:25px;">
         <div class="row">
             <div class="col-xs-3">
-                <input required name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3" class="form-control">
+                <input name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)"
+                    typeahead-min-length="3" class="form-control">
             </div>
             <div class="col-xs-3">
-                <input typeahead-on-select="load()" ng-disabled="!manufacturer" required name="model" type="text" ng-model="model" placeholder="Search Models" uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="3" class="form-control">
+                <input typeahead-on-select="load()" ng-disabled="!manufacturer" name="model" type="text" ng-model="model" placeholder="Search Models"
+                    uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="3" class="form-control">
+            </div>
+            <div class="col-xs-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Configuration Id" ng-model="configurationId">
+                    <span class="input-group-btn">
+                      <button ng-click="loadConfiguration()" class="btn btn-default" type="button">Go</button>
+                    </span>
+                </div>
+                <!-- /input-group -->
             </div>
         </div>
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
-        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="values.csv">Export</button>
+        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data"
+            csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="values.csv">Export</button>
     </div>
     <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
 </div>
