@@ -4,9 +4,9 @@ angular.module('PriceDigests')
     .controller('MainController', ['ENV', '$scope', '$location', 'SessionService', MainController])
     .controller('PopularityController', ['ENV', '$scope', '$http', '$q', '$uibModal', PopularityController])
     .controller('UsageController', ['ENV', '$scope', '$http', '$q', '$uibModal', UsageController])
-    .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', RegionAdjustmentsController])
-    .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', UtilizationAdjustmentsController])
-    .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConditionAdjustmentsController])
+    .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', RegionAdjustmentsController])
+    .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', UtilizationAdjustmentsController])
+    .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ConditionAdjustmentsController])
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', OptionsController])
     .controller('SpecsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', SpecsController])
@@ -700,7 +700,7 @@ function PopularityController(ENV, $scope, $http, $q, $uibModal) {
     }
 }
 
-function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
+function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
     $scope.getHeader = function () {
         return [
             "sizeClassId",
@@ -829,6 +829,11 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
+    if ($routeParams.sizeClassId) {
+        $scope.sizeClassId = $routeParams.sizeClassId;
+        $scope.load($routeParams.sizeClassId);
+    }
+
     $scope.classifications = [];
     $scope.categories = [];
     $scope.subtypes = [];
@@ -910,7 +915,7 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.getClassifications();
 }
 
-function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
+function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
     $scope.getHeader = function () {
         return [
             "sizeClassId",
@@ -1033,6 +1038,11 @@ function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
             });
     }
 
+    if ($routeParams.sizeClassId) {
+        $scope.sizeClassId = $routeParams.sizeClassId;
+        $scope.load($routeParams.sizeClassId);
+    }
+
     $scope.classifications = [];
     $scope.categories = [];
     $scope.subtypes = [];
@@ -1114,7 +1124,7 @@ function RegionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.getClassifications();
 }
 
-function ConditionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
+function ConditionAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
     $scope.getHeader = function () {
         return ["sizeClassId", "condition", "adjustmentFactor"];
     }
@@ -1233,6 +1243,11 @@ function ConditionAdjustmentsController(ENV, $scope, $http, $q, $uibModal) {
             .then(function (response) {
                 $scope.gridOptions.data = response.data;
             });
+    }
+
+    if ($routeParams.sizeClassId) {
+        $scope.sizeClassId = $routeParams.sizeClassId;
+        $scope.load($routeParams.sizeClassId);
     }
 
     $scope.classifications = [];
