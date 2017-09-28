@@ -227,7 +227,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         name: "utilizationAdjustments",
         title: "Utilization Adjustments",
         header: {
-            "replace": ["sizeClassId", "fuelType", "modelYear", "lowValue", "highValue", "uom", "adjustmentValue"]
+            "replace": ["sizeClassId", "fuelType", "modelYear", "lowValue", "highValue", "uom", "retailAdjustment", "financeAdjustment", "wholesaleAdjustment", "tradeinAdjustment"]
         }
     }, {
         name: "usage",
@@ -709,7 +709,10 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $ro
             "lowValue",
             "highValue",
             "uom",
-            "adjustmentValue"
+            "retailAdjustment",
+            "financeAdjustment",
+            "wholesaleAdjustment",
+            "tradeinAdjustment"
         ];
     }
 
@@ -740,7 +743,10 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $ro
     { name: "lowValue" },
     { name: "highValue" },
     { name: "uom" },
-    { name: "adjustmentValue" },
+    { name: "retailAdjustment" },
+    { name: "financeAdjustment" },
+    { name: "wholesaleAdjustment" },
+    { name: "tradeinAdjustment" },
     { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
     { name: "lastModifiedBy", field: "user" }
     ];
