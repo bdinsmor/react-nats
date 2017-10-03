@@ -2,17 +2,20 @@
     <div style="margin-top:25px;margin-bottom:25px;">
         <div class="row">
             <div class="col-xs-3">
-                <input required name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3" class="form-control">
+                <input required name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)"
+                    typeahead-min-length="0" class="form-control">
             </div>
             <div class="col-xs-3">
-                <input typeahead-on-select="load()" ng-disabled="!manufacturer" required name="model" type="text" ng-model="model" placeholder="Search Models" uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="3" class="form-control">
+                <input typeahead-on-select="load()" ng-disabled="!manufacturer" required name="model" type="text" ng-model="model" placeholder="Search Models"
+                    uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="0" class="form-control">
             </div>
         </div>
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
         <button ng-disabled="!model" ng-click="add(model)" class="btn btn-default">Add</button>
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
-        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="popularity.csv">Export</button>
+        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data"
+            csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="popularity.csv">Export</button>
     </div>
     <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
 </div>

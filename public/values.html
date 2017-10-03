@@ -3,11 +3,11 @@
         <div class="row">
             <div class="col-xs-3">
                 <input name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)"
-                    typeahead-min-length="3" class="form-control">
+                    typeahead-min-length="0" class="form-control">
             </div>
             <div class="col-xs-3">
                 <input typeahead-on-select="load()" ng-disabled="!manufacturer" name="model" type="text" ng-model="model" placeholder="Search Models"
-                    uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="3" class="form-control">
+                    uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="0" class="form-control">
             </div>
             <div class="col-xs-3">
                 <div class="input-group">

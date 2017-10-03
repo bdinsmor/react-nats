@@ -1,14 +1,16 @@
 <div class="container-fluid">
     <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
         <div class="form-group">
-            <input style="width:300px;" typeahead-on-select="load()" required name="manufacturer" type="text" ng-model="manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)" typeahead-min-length="3"
-                class="form-control">
+            <input style="width:300px;" typeahead-on-select="load()" required name="manufacturer" type="text" ng-model="manufacturer"
+                placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)"
+                typeahead-min-length="0" class="form-control">
         </div>
     </div>
     <div style="margin-bottom:15px;margin-top:15px;">
         <button ng-disabled="!manufacturer" ng-click="add(manufacturer)" class="btn btn-default">Add</button>
         <button ng-click="edit(selected)" ng-disabled="!selected" class="btn btn-default">Edit</button>
-        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data" csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="manufacturer-vins.csv">Export</button>
+        <button ng-disabled="!gridOptions.data || gridOptions.data.length===0" class="btn btn-default" ng-csv="gridOptions.data"
+            csv-header="getHeader()" csv-column-order="getHeader()" quote-strings filename="manufacturer-vins.csv">Export</button>
     </div>
     <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-resize-columns></div>
 </div>
