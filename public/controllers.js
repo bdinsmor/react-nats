@@ -2923,8 +2923,11 @@ function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
     $scope.showProducts = function (configuration) {
         var tpl = '<div class="container-fluid" style="padding-top:15px;padding-bottom:15px;">';
         tpl += '<h3>{{configuration.year}} {{configuration.manufacturer}} {{configuration.model}}</h3>';
-        tpl += '<h3>Values <span ng-if="result.values===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.values===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
         tpl += '<h3>Specs <span ng-if="result.specs===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.specs===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
+        tpl += '<h3>Values <span ng-if="result.values===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.values===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
+        tpl += '<h3>Residuals (Model) <span ng-if="result.residualValuesModels===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.residualValuesModels===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
+        tpl += '<h3>Residuals (SizeClass) <span ng-if="result.residualValuesSizes===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.residualValuesSizes===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
+        tpl += '<h3>Residuals (Subtype) <span ng-if="result.residualValuesSubtypes===true" class="glyphicon glyphicon-ok text-success"></span><span ng-if="result.residualValuesSubtypes===false" class="glyphicon glyphicon-remove text-danger"></span></h3>';
         tpl += '</div>';
         var modalInstance = $uibModal.open({
             template: tpl,
