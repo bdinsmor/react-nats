@@ -81,6 +81,27 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/residual-values-models', {
+            templateUrl: 'residual-values-models.html',
+            controller: 'ResidualValuesModelsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/residual-values-sizes', {
+            templateUrl: 'residual-values-sizes.html',
+            controller: 'ResidualValuesSizesController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .when('/residual-values-subtypes', {
+            templateUrl: 'residual-values-subtypes.html',
+            controller: 'ResidualValuesSubtypesController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .when('/options', {
             templateUrl: 'options.html',
             controller: 'OptionsController',

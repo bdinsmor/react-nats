@@ -16,6 +16,9 @@ angular.module('PriceDigests')
     .controller('ModelAliasesController', ['ENV', '$scope', '$http', '$q', '$uibModal', ModelAliasesController])
     .controller('TaxonomyController', ['ENV', '$scope', '$http', '$q', '$uibModal', TaxonomyController])
     .controller('ConfigurationsController', ['ENV', '$scope', '$http', '$q', '$uibModal', ConfigurationsController])
+    .controller('ResidualValuesModelsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ResidualValuesModelsController])
+    .controller('ResidualValuesSizesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ResidualValuesSizesController])
+    .controller('ResidualValuesSubtypesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ResidualValuesSubtypesController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
     .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
     .controller('ExportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ExportController])
@@ -67,6 +70,15 @@ function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
     }, {
         name: "values",
         title: "Values"
+    }, {
+        name: "residualValuesModels",
+        title: "Residual Values - Models"
+    }, {
+        name: "residualValuesSizes",
+        title: "Residual Values - Sizes"
+    }, {
+        name: "residualValuesSubtypes",
+        title: "Residual Values - Subtypes"
     }, {
         name: "conditionAdjustments",
         title: "Condition Adjustments"
@@ -214,6 +226,102 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         title: "Values",
         header: {
             "append": ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"]
+        }
+    }, {
+        name: "residualValuesModels",
+        title: "Residual Values - Models",
+        header: {
+            "replace": ["modelId", "sizeClassId",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26"]
+        }
+    }, {
+        name: "residualValuesSizes",
+        title: "Residual Values - Sizes",
+        header: {
+            "replace": ["sizeClassId",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26"]
+        }
+    }, {
+        name: "residualValuesSubtypes",
+        title: "Residual Values - Subtypes",
+        header: {
+            "replace": ["subtypeId",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26"]
         }
     }, {
         name: "conditionAdjustments",
@@ -3323,4 +3431,623 @@ function loginController(ENV, $scope, $location, LoginService) {
 function logoutController(ENV, $scope, $location, SessionService) {
     SessionService.logout();
     $location.path("/login");
+}
+
+function ResidualValuesModelsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
+    $scope.selection = {};
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function (gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selection = null;
+                if (row.isSelected === true) $scope.selection = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+        name: '',
+        field: 'name',
+        enableColumnMenu: false,
+        enableFiltering: false,
+        enableHiding: false,
+        enableSorting: false,
+        width: '50',
+        cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+    },
+    { name: "modelId" },
+    { name: "sizeClassId" },
+    { name: "1" },
+    { name: "2" },
+    { name: "3" },
+    { name: "4" },
+    { name: "5" },
+    { name: "6" },
+    { name: "7" },
+    { name: "8" },
+    { name: "9" },
+    { name: "10" },
+    { name: "11" },
+    { name: "12" },
+    { name: "13" },
+    { name: "14" },
+    { name: "15" },
+    { name: "16" },
+    { name: "17" },
+    { name: "18" },
+    { name: "19" },
+    { name: "20" },
+    { name: "21" },
+    { name: "22" },
+    { name: "23" },
+    { name: "24" },
+    { name: "25" },
+    { name: "26" },
+    { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+    { name: "lastModifiedBy", field: "user" }
+    ];
+    $scope.gridOptions.data = [];
+    var canceler = $q.defer();
+    $scope.load = function load() {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + "/analyst/residual-values-models/" + $scope.model.modelId, {
+            timeout: canceler.promise,
+            "withCredentials": true
+        })
+            .then(function (response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function (manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+            timeout: cancelSearchManufacturer.promise,
+            "withCredentials": true,
+            params: {
+                "manufacturer": manufacturer
+            }
+        })
+            .then(function (response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function (model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+            timeout: cancelSearchModel.promise,
+            "withCredentials": true,
+            params: {
+                "model": model,
+                "manufacturerId": $scope.manufacturer.manufacturerId
+            }
+        })
+            .then(function (response) {
+                return response.data;
+            });
+    }
+
+    $scope.getHeader = function () {
+        return [
+            "modelId",
+            "sizeClassId",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26"
+        ]
+    }
+}
+
+function ResidualValuesSizesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
+    $scope.getHeader = function () {
+        return [
+            "sizeClassId",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function (gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+        name: '',
+        field: 'name',
+        enableColumnMenu: false,
+        enableFiltering: false,
+        enableHiding: false,
+        enableSorting: false,
+        width: '50',
+        cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+    },
+    { name: "sizeClassId" },
+    { name: "1" },
+    { name: "2" },
+    { name: "3" },
+    { name: "4" },
+    { name: "5" },
+    { name: "6" },
+    { name: "7" },
+    { name: "8" },
+    { name: "9" },
+    { name: "10" },
+    { name: "11" },
+    { name: "12" },
+    { name: "13" },
+    { name: "14" },
+    { name: "15" },
+    { name: "16" },
+    { name: "17" },
+    { name: "18" },
+    { name: "19" },
+    { name: "20" },
+    { name: "21" },
+    { name: "22" },
+    { name: "23" },
+    { name: "24" },
+    { name: "25" },
+    { name: "26" },
+    { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+    { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function () {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function (item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-residual-values-sizes.html',
+            controller: function ($scope, $http) {
+                $scope.item = item;
+                $scope.save = function () {
+                    $http.put(ENV['API_URL'] + "/analyst/residual-values-sizes", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (data) {
+                $scope.load(item.sizeClassId);
+            })
+            .catch(function (err) {
+                $scope.load(item.sizeClassId);
+            });
+    }
+
+    $scope.add = function (sizeClass) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-residual-values-sizes.html',
+            controller: function ($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": sizeClass.sizeClassId
+                };
+                $scope.save = function () {
+                    $http.post(ENV['API_URL'] + "/analyst/residual-values-sizes", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (result) {
+                if (result) $scope.load(result.sizeClassId);
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function (sizeClassId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
+            timeout: canceler.promise,
+            "withCredentials": true
+        })
+            .then(function (response) {
+                $scope.sizeClass = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/residual-values-sizes/' + sizeClassId, {
+                    timeout: canceler.promise,
+                    "withCredentials": true
+                })
+            })
+            .then(function (response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    if ($routeParams.sizeClassId) {
+        $scope.sizeClassId = $routeParams.sizeClassId;
+        $scope.load($routeParams.sizeClassId);
+    }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.sizeclasses = [];
+    $scope.selection = {};
+
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+        })
+            .then(function (response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId
+            }
+        })
+            .then(function (response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId,
+                "categoryId": $scope.selection.categoryId
+            }
+        })
+            .then(function (response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    $scope.getSizeClasses = function getSizeClasses() {
+        $scope.sizeclasses = [];
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId,
+                "categoryId": $scope.selection.categoryId,
+                "subtypeId": $scope.selection.subtypeId
+            }
+        })
+            .then(function (response) {
+                $scope.sizeclasses = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
+}
+
+function ResidualValuesSubtypesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
+    $scope.getHeader = function () {
+        return [
+            "subtypeId",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function (gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+        name: '',
+        field: 'name',
+        enableColumnMenu: false,
+        enableFiltering: false,
+        enableHiding: false,
+        enableSorting: false,
+        width: '50',
+        cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+    },
+    { name: "subtypeId" },
+    { name: "1" },
+    { name: "2" },
+    { name: "3" },
+    { name: "4" },
+    { name: "5" },
+    { name: "6" },
+    { name: "7" },
+    { name: "8" },
+    { name: "9" },
+    { name: "10" },
+    { name: "11" },
+    { name: "12" },
+    { name: "13" },
+    { name: "14" },
+    { name: "15" },
+    { name: "16" },
+    { name: "17" },
+    { name: "18" },
+    { name: "19" },
+    { name: "20" },
+    { name: "21" },
+    { name: "22" },
+    { name: "23" },
+    { name: "24" },
+    { name: "25" },
+    { name: "26" },
+    { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+    { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function () {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function (item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-residual-values-subtypes.html',
+            controller: function ($scope, $http) {
+                $scope.item = item;
+                $scope.save = function () {
+                    $http.put(ENV['API_URL'] + "/analyst/residual-values-subtypes", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (data) {
+                $scope.load(item.subtypeId);
+            })
+            .catch(function (err) {
+                $scope.load(item.subtypeId);
+            });
+    }
+
+    $scope.add = function (subtype) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-residual-values-subtypes.html',
+            controller: function ($scope, $http) {
+                $scope.item = {
+                    "subtypeId": subtype.subtypeId
+                };
+                $scope.save = function () {
+                    $http.post(ENV['API_URL'] + "/analyst/residual-values-subtypes", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (result) {
+                if (result) $scope.load(result.sizeClassId);
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function (subtypeId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/subtypes/' + subtypeId, {
+            timeout: canceler.promise,
+            "withCredentials": true
+        })
+            .then(function (response) {
+                $scope.subtype = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/residual-values-subtypes/' + subtypeId, {
+                    timeout: canceler.promise,
+                    "withCredentials": true
+                })
+            })
+            .then(function (response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    if ($routeParams.subtypeId) {
+        $scope.subtypeId = $routeParams.subtypeId;
+        $scope.load($routeParams.subtypeId);
+    }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.selection = {};
+
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+        })
+            .then(function (response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId
+            }
+        })
+            .then(function (response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.subtypeId = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId,
+                "categoryId": $scope.selection.categoryId
+            }
+        })
+            .then(function (response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
 }
