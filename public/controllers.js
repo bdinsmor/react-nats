@@ -76,6 +76,9 @@ function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
         name: "utilizationAdjustments",
         title: "Utilization Adjustments"
     }, {
+        name: "waterAdjustments",
+        title: "Water Adjustments"
+    }, {
         name: "usage",
         title: "Usage"
     }, {
@@ -228,6 +231,12 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         title: "Utilization Adjustments",
         header: {
             "replace": ["sizeClassId", "fuelType", "modelYear", "lowValue", "highValue", "uom", "retailAdjustment", "financeAdjustment", "wholesaleAdjustment", "tradeinAdjustment"]
+        }
+    }, {
+        name: "waterAdjustments",
+        title: "Water Adjustments",
+        header: {
+            "replace": ["sizeClassId", "manufacturerId", "modelYear", "fwAdj", "swAdj"]
         }
     }, {
         name: "usage",
@@ -698,6 +707,242 @@ function PopularityController(ENV, $scope, $http, $q, $uibModal) {
                 return response.data;
             });
     }
+}
+
+function WaterAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
+    $scope.getHeader = function () {
+        return [
+            "sizeClassId",
+            "manufacturerId",
+            "modelYear",
+            "fwAdj",
+            "swAdj"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function (gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+        name: '',
+        field: 'name',
+        enableColumnMenu: false,
+        enableFiltering: false,
+        enableHiding: false,
+        enableSorting: false,
+        width: '50',
+        cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+    },
+    { name: "sizeClassId" },
+    { name: "manufacturerId" },
+    { name: "modelYear" },
+    { name: "fwAdj" },
+    { name: "swAdj" },
+    { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+    { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function () {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function (item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-water-adjustment.html',
+            controller: function ($scope, $http) {
+                $scope.item = item;
+                $scope.save = function () {
+                    $http.put(ENV['API_URL'] + "/analyst/water-adjustments", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (data) {
+                $scope.load(item.sizeClassId, item.manufacturerId);
+            })
+            .catch(function (err) {
+                $scope.load(item.sizeClassId, item.manufacturerId);
+            });
+    }
+
+    $scope.add = function (sizeClass, manufacturer) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-water-adjustment.html',
+            controller: function ($scope, $http) {
+                $scope.item = {
+                    "sizeClassId": sizeClass.sizeClassId,
+                    "manufacturerId": manufacturer.manufacturerId
+                };
+                $scope.save = function () {
+                    $http.post(ENV['API_URL'] + "/analyst/water-adjustments", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (result) {
+                if (result) $scope.load(result.sizeClassId, result.manufacturerId);
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function (sizeClassId, manufacturerId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
+            timeout: canceler.promise,
+            "withCredentials": true
+        })
+            .then(function (response) {
+                $scope.sizeClass = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/taxonomy/manufacturers/' + manufacturerId, {
+                    timeout: canceler.promise,
+                    "withCredentials": true
+                })
+            })
+            .then(function (response) {
+                $scope.manufacturer = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/water-adjustments', {
+                    timeout: canceler.promise,
+                    "withCredentials": true,
+                    params: {
+                        "sizeClassId": sizeClassId
+                    },
+                })
+            })
+            .then(function (response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    if ($routeParams.sizeClassId && $routeParams.manufacturerId) {
+        $scope.sizeClassId = $routeParams.sizeClassId;
+        $scope.manufacturerId = $routeParams.manufacturerId;
+        $scope.load($routeParams.sizeClassId, $routeParams.manufacturerId);
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function (manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+            timeout: cancelSearchManufacturer.promise,
+            "withCredentials": true,
+            params: {
+                "manufacturer": manufacturer
+            }
+        })
+            .then(function (response) {
+                return response.data;
+            });
+    }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.sizeclasses = [];
+    $scope.selection = {};
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+        })
+            .then(function (response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId
+            }
+        })
+            .then(function (response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.sizeclasses = [];
+        $scope.selection.subtypeId = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId,
+                "categoryId": $scope.selection.categoryId
+            }
+        })
+            .then(function (response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    $scope.getSizeClasses = function getSizeClasses() {
+        $scope.sizeclasses = [];
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId,
+                "categoryId": $scope.selection.categoryId,
+                "subtypeId": $scope.selection.subtypeId
+            }
+        })
+            .then(function (response) {
+                $scope.sizeclasses = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
 }
 
 function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
