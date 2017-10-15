@@ -18,29 +18,64 @@
                 <div class="btn-group" uib-dropdown is-open="status.isopen">
                     <button style="padding-top:0;border:0;background-color:transparent;" id="single-button" type="button" class="btn btn-lg"
                         uib-dropdown-toggle ng-disabled="disabled">
-                    <span style="color: white" class="glyphicon glyphicon-menu-hamburger"></span>
-                </button>
+                        <span style="color: white" class="glyphicon glyphicon-menu-hamburger"></span>
+                    </button>
                     <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                        <li role="menuitem"><a href="#/taxonomy">Taxonomy</a></li>
-                        <li role="menuitem"><a href="#/configurations">Configurations</a></li>
-                        <li role="menuitem"><a href="#/model/alias">Model Aliases</a></li>
-                        <li role="menuitem"><a href="#/manufacturer/alias">Manufacturer Aliases</a></li>
+                        <li role="menuitem">
+                            <a href="#/taxonomy">Taxonomy</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/configurations">Configurations</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/model/alias">Model Aliases</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/manufacturer/alias">Manufacturer Aliases</a>
+                        </li>
                         <li class="divider"></li>
-                        <li role="menuitem"><a href="#/manufacturer/vins">Manufacturer VINs</a></li>
-                        <li role="menuitem"><a href="#/options">Options</a></li>
-                        <li role="menuitem"><a href="#/specs">Specifications</a></li>
+                        <li role="menuitem">
+                            <a href="#/manufacturer/vins">Manufacturer VINs</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/options">Options</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/specs">Specifications</a>
+                        </li>
                         <li class="divider"></li>
-                        <li role="menuitem"><a href="#/values">Values</a></li>
-                        <li role="menuitem"><a href="#/condition-adjustments">Condition Adjustments</a></li>
-                        <li role="menuitem"><a href="#/region-adjustments">Region Adjustments</a></li>
-                        <li role="menuitem"><a href="#/utilization-adjustments">Utilization Adjustments</a></li>
+                        <li role="menuitem">
+                            <a href="#/values">Values</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/condition-adjustments">Condition Adjustments</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/region-adjustments">Region Adjustments</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/utilization-adjustments">Utilization Adjustments</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/water-adjustments">Water Adjustments</a>
+                        </li>
                         <li class="divider"></li>
-                        <li role="menuitem"><a href="#/usage">Usage</a></li>
-                        <li role="menuitem"><a href="#/popularity">Popularity</a></li>
+                        <li role="menuitem">
+                            <a href="#/usage">Usage</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/popularity">Popularity</a>
+                        </li>
                         <li class="divider"></li>
-                        <li role="menuitem"><a href="#/import">Import Data</a></li>
-                        <li role="menuitem"><a href="#/sync">Production Sync</a></li>
-                        <li role="menuitem"><a href="#/export">Export Data</a></li>
+                        <li role="menuitem">
+                            <a href="#/import">Import Data</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/sync">Production Sync</a>
+                        </li>
+                        <li role="menuitem">
+                            <a href="#/export">Export Data</a>
+                        </li>
                     </ul>
                 </div>
                 <span ng-cloak style="margin-top:5px;color: white" class="text-left h4">
@@ -49,7 +84,9 @@
             </div>
             <div class="col-md-6">
                 <div ng-hide="!getUser()" style="margin-top:5px;color: white" class="text-right h4">
-                    <span>{{getUser().name}}<small style="color:white"> ({{getUser().email}})</small></span>
+                    <span>{{getUser().name}}
+                        <small style="color:white"> ({{getUser().email}})</small>
+                    </span>
                     <a ng-href="#/logout" class="btn" style="padding-top:0;border:0;background-color:transparent;">
                         <span style="color: white" class="glyphicon glyphicon-log-out"></span>
                     </a>

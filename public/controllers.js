@@ -7,6 +7,7 @@ angular.module('PriceDigests')
     .controller('RegionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', RegionAdjustmentsController])
     .controller('UtilizationAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', UtilizationAdjustmentsController])
     .controller('ConditionAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ConditionAdjustmentsController])
+    .controller('WaterAdjustmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', WaterAdjustmentsController])
     .controller('ValuesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ValuesController])
     .controller('OptionsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', OptionsController])
     .controller('SpecsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', SpecsController])
@@ -815,6 +816,7 @@ function WaterAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routePar
     }
 
     $scope.load = function (sizeClassId, manufacturerId) {
+        if (!sizeClassId || !manufacturerId) return;
         $scope.gridOptions.data = [];
         $http.get(ENV['API_URL'] + '/analyst/taxonomy/sizes/' + sizeClassId, {
             timeout: canceler.promise,
@@ -822,7 +824,7 @@ function WaterAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routePar
         })
             .then(function (response) {
                 $scope.sizeClass = response.data;
-                return $http.get(ENV['API_URL'] + '/analyst/taxonomy/manufacturers/' + manufacturerId, {
+                return $http.get(ENV['API_URL'] + '/analyst/manufacturer/' + manufacturerId, {
                     timeout: canceler.promise,
                     "withCredentials": true
                 })
@@ -833,7 +835,8 @@ function WaterAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $routePar
                     timeout: canceler.promise,
                     "withCredentials": true,
                     params: {
-                        "sizeClassId": sizeClassId
+                        "sizeClassId": sizeClassId,
+                        "manufacturerId": manufacturerId
                     },
                 })
             })

@@ -116,6 +116,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/water-adjustments', {
+            templateUrl: 'water-adjustments.html',
+            controller: 'WaterAdjustmentsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .when('/popularity', {
             templateUrl: 'popularity.html',
             controller: 'PopularityController',
