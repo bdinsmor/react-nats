@@ -9,9 +9,43 @@
         </div>
         <div style="margin-top:25px;">
             <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">
-                <div><strong>{{alert.title}}</strong></div>
+                <div>
+                    <strong>{{alert.title}}</strong>
+                </div>
                 <div ng-bind-html="alert.msg"></div>
             </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom:25px;">
+        <div class="col-xs-2">
+            <label>Classification</label>
+            <select aria-placeholder="Classification" class="form-control" ng-change="getCategories()" ng-model="selection.classification"
+                ng-options="c.classificationId as c.classificationName for c in data.classifications | orderBy:'classificationName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Category</label>
+            <select class="form-control" ng-change="getSubtypes()" ng-model="selection.category" ng-disabled="!selection.classification"
+                ng-options="c.categoryId as c.categoryName for c in data.categories | orderBy:'categoryName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Subtype</label>
+            <select class="form-control" ng-change="getSizeClasses()" ng-model="selection.subtype" ng-disabled="!selection.category"
+                ng-options="c.subtypeId as c.subtypeName for c in data.subtypes | orderBy:'subtypeName'"></select>
+        </div>
+        <div class="col-xs-2">
+            <label>Size Class</label>
+            <select class="form-control" ng-model="selection.sizeclass" ng-disabled="!selection.subtype" ng-options="c.sizeClassId as (c.sizeClassName+' ('+c.sizeClassMin+'-'+c.sizeClassMax+' '+c.sizeClassUom+')') for c in data.sizeclasses | orderBy:'sizeClassName'"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <input name="manufacturer" type="text" ng-model="selection.manufacturer" placeholder="Search Manufacturers" uib-typeahead="m as m.manufacturerName for m in searchManufacturer($viewValue)"
+                typeahead-min-length="0" class="form-control">
+        </div>
+        <div class="col-xs-3">
+            <input typeahead-on-select="load()" ng-disabled="!selection.manufacturer" name="model" type="text" ng-model="selection.model"
+                placeholder="Search Models" uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="0"
+                class="form-control">
         </div>
     </div>
 </div>

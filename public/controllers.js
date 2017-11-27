@@ -106,7 +106,15 @@ function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
         $scope.progress = 0;
         $scope.processing = true;
         $http.post(ENV['API_URL'] + '/analyst/export', {
-            "tableName": $scope.table.name
+            "tableName": $scope.table.name,
+            "query": {
+                "classificationId": $scope.selection.classification || null,
+                "categoryId": $scope.selection.category || null,
+                "subtypeId": $scope.selection.subtype || null,
+                "sizeClassId": $scope.selection.sizeclass || null,
+                "manufacturerId": $scope.selection.manufacturer ? $scope.selection.manufacturer.manufacturerId || null : null,
+                "modelId": $scope.selection.model ? $scope.selection.model.modelId || null : null
+            }
         }, {
                 "timeout": canceler.promise,
                 "withCredentials": true
@@ -128,6 +136,117 @@ function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
                 });
             })
     }
+
+    $scope.selection = {};
+    $scope.data = {};
+
+    $scope.getClassifications = function getClassifications() {
+        $scope.data.sizeclasses = [];
+        $scope.data.subtypes = [];
+        $scope.data.categories = [];
+        $scope.data.classifications = [];
+        $scope.selection.classification = null;
+        $scope.selection.category = null;
+        $scope.selection.subtype = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+        })
+            .then(function (response) {
+                $scope.data.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.data.sizeclasses = [];
+        $scope.data.subtypes = [];
+        $scope.data.categories = [];
+        $scope.selection.category = null;
+        $scope.selection.subtype = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classification
+            }
+        })
+            .then(function (response) {
+                $scope.data.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.data.sizeclasses = [];
+        $scope.data.subtypes = [];
+        $scope.selection.subtype = null;
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classification,
+                "categoryId": $scope.selection.category
+            }
+        })
+            .then(function (response) {
+                $scope.data.subtypes = response.data;
+            });
+    }
+
+    $scope.getSizeClasses = function getSizeClasses() {
+        $scope.data.sizeclasses = [];
+        $scope.selection.sizeclass = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/sizes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classification,
+                "categoryId": $scope.selection.category,
+                "subtypeId": $scope.selection.subtype
+            }
+        })
+            .then(function (response) {
+                $scope.data.sizeclasses = response.data;
+            });
+    }
+
+    var cancelSearchManufacturer = $q.defer();
+    $scope.searchManufacturer = function (manufacturer) {
+        cancelSearchManufacturer.resolve();
+        cancelSearchManufacturer = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/manufacturers", {
+            timeout: cancelSearchManufacturer.promise,
+            "withCredentials": true,
+            params: {
+                "manufacturer": manufacturer
+            }
+        })
+            .then(function (response) {
+                return response.data;
+            });
+    }
+
+    var cancelSearchModel = $q.defer();
+    $scope.searchModel = function (model) {
+        cancelSearchModel.resolve();
+        cancelSearchModel = $q.defer();
+        return $http.get(ENV['API_URL'] + "/analyst/search/models", {
+            timeout: cancelSearchModel.promise,
+            "withCredentials": true,
+            params: {
+                "model": model,
+                "manufacturerId": $scope.selection.manufacturer.manufacturerId
+            }
+        })
+            .then(function (response) {
+                return response.data;
+            });
+    }
+
+    $scope.getClassifications();
+
 }
 
 function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
