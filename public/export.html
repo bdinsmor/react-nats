@@ -7,14 +7,6 @@
             </div>
             <button ng-disabled="processing===true||!table" ng-click="export()" class="btn btn-success">Export</button>
         </div>
-        <div style="margin-top:25px;">
-            <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">
-                <div>
-                    <strong>{{alert.title}}</strong>
-                </div>
-                <div ng-bind-html="alert.msg"></div>
-            </div>
-        </div>
     </div>
     <div class="row" style="margin-bottom:25px;">
         <div class="col-xs-2">
@@ -47,5 +39,16 @@
                 placeholder="Search Models" uib-typeahead="m as m.modelName for m in searchModel($viewValue)" typeahead-min-length="0"
                 class="form-control">
         </div>
+    </div>
+    <div class="row">
+        <div style="margin-top:25px;">
+            <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">
+                <div>
+                    <strong>{{alert.title}}</strong>
+                </div>
+                <div ng-bind-html="alert.msg"></div>
+            </div>
+        </div>
+
     </div>
 </div>
