@@ -2653,7 +2653,7 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
         });
         modalInstance.result
             .then(function (result) {
-                if (result) $scope.load(result.configurationId);
+                if (result) $scope.loadConfiguration(result.configurationId);
             })
             .catch(function (err) {
                 console.log(err)
@@ -2676,7 +2676,7 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
             });
     }
 
-    $scope.loadConfiguration = function () {
+    $scope.loadConfiguration = function (configurationId) {
         $scope.configuration = null;
         $scope.model = null;
         $scope.manufacturer = null;
@@ -2685,7 +2685,7 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
             timeout: canceler.promise,
             "withCredentials": true,
             params: {
-                "configurationId": $scope.configurationId
+                "configurationId": configurationId
             },
         })
             .then(function (response) {
@@ -2728,7 +2728,7 @@ function ValuesController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
 
     if ($routeParams.configurationId) {
         $scope.configurationId = $routeParams.configurationId;
-        $scope.loadConfiguration();
+        $scope.loadConfiguration($scope.configurationId);
     }
 }
 
