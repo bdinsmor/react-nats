@@ -97,6 +97,9 @@ function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
     }, {
         name: "popularity",
         title: "Popularity"
+    }, {
+        name: "attachments",
+        title: "Attachments"
     }];
     $scope.alerts = [];
     $scope.closeAlert = function (index) {
