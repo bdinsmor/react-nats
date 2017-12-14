@@ -458,7 +458,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         name: "utilizationAdjustments",
         title: "Utilization Adjustments",
         header: {
-            "replace": ["sizeClassId", "fuelType", "modelYear", "lowValue", "highValue", "uom", "retailAdjustment", "financeAdjustment", "wholesaleAdjustment", "tradeinAdjustment"]
+            "replace": ["sizeClassId", "fuelType", "modelYear", "lowValue", "highValue", "uom", "retailAdjustment", "financeAdjustment", "wholesaleAdjustment", "tradeinAdjustment", "lowAdjustment", "highAdjustment"]
         }
     }, {
         name: "waterAdjustments",
@@ -477,6 +477,12 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         title: "Popularity",
         header: {
             "replace": ["modelId", "recordCount", "marketPopularityIndex", "benchmarkGroup", "marketPopularityLabel", "twenty", "forty", "sixty", "eighty", "hundred", "twentyPercent", "fortyPercent", "sixtyPercent", "eightyPercent", "hundredPercent"]
+        }
+    }, {
+        name: "attachments",
+        title: "Attachments",
+        header: {
+            "replace": ["attachmentCategoryId", "subtypeId"]
         }
     }]
     $scope.alerts = [];
