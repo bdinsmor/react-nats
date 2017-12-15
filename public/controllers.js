@@ -3536,7 +3536,9 @@ function AttachmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) 
         cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
     },
     { name: "subtypeId" },
+    { name: "subtypeName" },
     { name: "attachmentCategoryId" },
+    { name: "attachmentCategory", field: "categoryName" },
     { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
     { name: "lastModifiedBy", field: "user" }
     ];
