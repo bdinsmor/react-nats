@@ -46,6 +46,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/attachments', {
+            templateUrl: 'attachments.html',
+            controller: 'AttachmentsController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .when('/configurations', {
             templateUrl: 'configurations.html',
             controller: 'ConfigurationsController',

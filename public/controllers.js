@@ -19,6 +19,7 @@ angular.module('PriceDigests')
     .controller('ResidualValuesModelsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ResidualValuesModelsController])
     .controller('ResidualValuesSizesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ResidualValuesSizesController])
     .controller('ResidualValuesSubtypesController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', ResidualValuesSubtypesController])
+    .controller('AttachmentsController', ['ENV', '$scope', '$http', '$q', '$uibModal', '$routeParams', AttachmentsController])
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
     .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
     .controller('ExportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ExportController])
@@ -3503,6 +3504,187 @@ function ConfigurationsController(ENV, $scope, $http, $q, $uibModal) {
             "vinModelNumber"
         ]
     }
+}
+
+function AttachmentsController(ENV, $scope, $http, $q, $uibModal, $routeParams) {
+    $scope.getHeader = function () {
+        return [
+            "subtypeId",
+            "attachmentCategoryId"
+        ];
+    }
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableRowHeaderSelection: false,
+        multiSelect: false,
+        onRegisterApi: function (gridApi) {
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                if (gridApi.selection.getSelectedRows().length === 0) $scope.selected = null;
+                if (row.isSelected === true) $scope.selected = row.entity;
+            });
+        }
+    };
+    $scope.gridOptions.columnDefs = [{
+        name: '',
+        field: 'name',
+        enableColumnMenu: false,
+        enableFiltering: false,
+        enableHiding: false,
+        enableSorting: false,
+        width: '50',
+        cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)+1}}.</div>'
+    },
+    { name: "subtypeId" },
+    { name: "attachmentCategoryId" },
+    { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
+    { name: "lastModifiedBy", field: "user" }
+    ];
+    var canceler = $q.defer();
+
+    $scope.$on('$destroy', function () {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+
+    $scope.edit = function (item) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-attachment.html',
+            controller: function ($scope, $http) {
+                $scope.item = item;
+                $scope.save = function () {
+                    $http.put(ENV['API_URL'] + "/analyst/attachments", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (data) {
+                $scope.load(item.subtypeId);
+            })
+            .catch(function (err) {
+                $scope.load(item.subtypeId);
+            });
+    }
+
+    $scope.add = function (subtypeId) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'edit-attachment.html',
+            controller: function ($scope, $http) {
+                $scope.item = {
+                    "subtypeId": subtypeId
+                };
+                $scope.save = function () {
+                    $http.post(ENV['API_URL'] + "/analyst/attachments", $scope.item, {
+                        timeout: canceler.promise,
+                        "withCredentials": true
+                    })
+                        .then(function (response) {
+                            $scope.$close(response.data);
+                        })
+                        .catch(function (err) {
+                            $scope.$dismiss(err);
+                        });
+                }
+            }
+        });
+        modalInstance.result
+            .then(function (result) {
+                if (result) $scope.load(result.subtypeId);
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
+    }
+
+    $scope.load = function (subtypeId) {
+        $scope.gridOptions.data = [];
+        $http.get(ENV['API_URL'] + '/analyst/taxonomy/subtypes/' + subtypeId, {
+            timeout: canceler.promise,
+            "withCredentials": true
+        })
+            .then(function (response) {
+                $scope.sizeClass = response.data;
+                return $http.get(ENV['API_URL'] + '/analyst/attachments', {
+                    timeout: canceler.promise,
+                    "withCredentials": true,
+                    params: {
+                        "subtypeId": subtypeId
+                    },
+                })
+            })
+            .then(function (response) {
+                $scope.gridOptions.data = response.data;
+            });
+    }
+
+    if ($routeParams.subtypeId) {
+        $scope.subtypeId = $routeParams.subtypeId;
+        $scope.load($routeParams.subtypeId);
+    }
+
+    $scope.classifications = [];
+    $scope.categories = [];
+    $scope.subtypes = [];
+    $scope.selection = {};
+    $scope.getClassifications = function getClassifications() {
+        $scope.classifications = [];
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.selection.classificationId = null;
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/classifications", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+        })
+            .then(function (response) {
+                $scope.classifications = response.data;
+            });
+    }
+
+    $scope.getCategories = function getCategories() {
+        $scope.categories = [];
+        $scope.subtypes = [];
+        $scope.selection.categoryId = null;
+        $scope.selection.subtypeId = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/categories", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId
+            }
+        })
+            .then(function (response) {
+                $scope.categories = response.data;
+            });
+    }
+
+    $scope.getSubtypes = function getSubtypes() {
+        $scope.subtypes = [];
+        $scope.selection.subtypeId = null;
+        $http.get(ENV['API_URL'] + "/analyst/taxonomy/subtypes", {
+            timeout: canceler.promise,
+            "withCredentials": true,
+            params: {
+                "classificationId": $scope.selection.classificationId,
+                "categoryId": $scope.selection.categoryId
+            }
+        })
+            .then(function (response) {
+                $scope.subtypes = response.data;
+            });
+    }
+
+    // Get initial classifications
+    $scope.getClassifications();
 }
 
 function MainController(ENV, $scope, $location, SessionService) {
