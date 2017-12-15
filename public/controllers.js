@@ -1196,7 +1196,9 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $ro
             "retailAdjustment",
             "financeAdjustment",
             "wholesaleAdjustment",
-            "tradeinAdjustment"
+            "tradeinAdjustment",
+            "lowAdjustment",
+            "highAdjustment"
         ];
     }
 
@@ -1231,6 +1233,8 @@ function UtilizationAdjustmentsController(ENV, $scope, $http, $q, $uibModal, $ro
     { name: "financeAdjustment" },
     { name: "wholesaleAdjustment" },
     { name: "tradeinAdjustment" },
+    { name: "lowAdjustment" },
+    { name: "highAdjustment" },
     { name: "lastModified", field: "ts", cellFilter: 'date:"medium"' },
     { name: "lastModifiedBy", field: "user" }
     ];
