@@ -351,6 +351,12 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "append": ["configurationId", "askingPrice", "auctionPrice", "msrp", "low", "high", "finance", "wholesale", "retail", "tradeIn", "revisionDate"]
         }
     }, {
+        name: "displaySpecs",
+        title: "Display Specs",
+        header: {
+            "replace": ["subtypeId", "specName"]
+        }
+    }, {
         name: "residualValuesModels",
         title: "Residual Values - Models",
         header: {
