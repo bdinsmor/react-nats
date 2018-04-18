@@ -271,7 +271,7 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         title: "Models",
         header: {
             "append": ["modelName", "manufacturerId"],
-            // "update": ["modelId", "modelName", "manufacturerId"]
+            "update": ["modelId", "modelName", "manufacturerId"]
         }
     }, {
         name: "manufacturers",
@@ -330,7 +330,8 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         name: "specs",
         title: "Specs",
         header: {
-            "append": ["configurationId", "specName", "specNameFriendly", "specValue", "specUom", "specFamily", "specDescription"]
+            "append": ["configurationId", "specName", "specNameFriendly", "specValue", "specUom", "specFamily", "specDescription"],
+            "update": ["id", "configurationId", "specName", "specNameFriendly", "specValue", "specUom", "specFamily", "specDescription"]
         }
     }, {
         name: "options",
@@ -360,97 +361,19 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
         name: "residualValuesModels",
         title: "Residual Values - Models",
         header: {
-            "replace": ["modelId", "sizeClassId",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18",
-                "19",
-                "20",
-                "21",
-                "22",
-                "23",
-                "24",
-                "25",
-                "26"]
+            "replace": ["modelId", "sizeClassId", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"]
         }
     }, {
         name: "residualValuesSizes",
         title: "Residual Values - Sizes",
         header: {
-            "replace": ["sizeClassId",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18",
-                "19",
-                "20",
-                "21",
-                "22",
-                "23",
-                "24",
-                "25",
-                "26"]
+            "replace": ["sizeClassId", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"]
         }
     }, {
         name: "residualValuesSubtypes",
         title: "Residual Values - Subtypes",
         header: {
-            "replace": ["subtypeId",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18",
-                "19",
-                "20",
-                "21",
-                "22",
-                "23",
-                "24",
-                "25",
-                "26"]
+            "replace": ["subtypeId", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"]
         }
     }, {
         name: "conditionAdjustments",
