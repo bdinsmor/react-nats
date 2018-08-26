@@ -1,6 +1,5 @@
 angular.module('PriceDigests').constant("ENV", {
-    // "API_URL": "https://internal-dev.pricedigestsapi.com",
-    // "TEST_URL": "https://dev.pricedigestsapi.com/test",
-    "TEST_URL": "https://localhost:8082/test",
-    "API_URL": "http://localhost:8082"
+    "API_URL": "https://analyst.development.pricedigestsapi.com",
+    "TEST_URL": "https://external.development.pricedigestsapi.com/test",
+    "LOGIN_URL": "https://login.development.pricedigestsapi.com"
 });

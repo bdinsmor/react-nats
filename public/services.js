@@ -7,12 +7,12 @@ angular.module('PriceDigests')
 
 function loginService(ENV, $http, SessionService) {
     var self = this;
-    self.login = function(credentials) {
-        return $http.post(ENV['API_URL'] + "/analyst/login", {
-            username: credentials.username,
-            password: credentials.password,
-        }).then(function(response) {
-            SessionService.setToken(response.data);
+    self.login = function (credentials) {
+        return $http.post(ENV['LOGIN_URL'] + "/login", {
+            "email": credentials.username,
+            "password": credentials.password,
+        }).then(function (response) {
+            SessionService.setToken(response.data.token);
         });
     }
     self.status = SessionService.getStatus()
@@ -21,7 +21,7 @@ function loginService(ENV, $http, SessionService) {
 function sessionService($window) {
     var self = this;
     var memToken = "";
-    self.getStatus = function() {
+    self.getStatus = function () {
         if ($window.Storage && $window.localStorage) {
             try {
                 $window.localStorage.getItem("token");
@@ -33,7 +33,7 @@ function sessionService($window) {
             return "Your browser security settings require you to log in after any page refresh."
         }
     }
-    self.getUser = function() {
+    self.getUser = function () {
         if ($window.Storage && $window.localStorage) {
             try {
                 var token = $window.localStorage.getItem("token");
@@ -48,7 +48,7 @@ function sessionService($window) {
             else return null;
         }
     }
-    self.getToken = function() {
+    self.getToken = function () {
         if ($window.Storage && $window.localStorage) {
             try {
                 var token = $window.localStorage.getItem("token");
@@ -60,7 +60,7 @@ function sessionService($window) {
             return memToken;
         }
     }
-    self.setToken = function(token) {
+    self.setToken = function (token) {
         if ($window.Storage) {
             try {
                 $window.localStorage.setItem("token", token);
@@ -73,7 +73,7 @@ function sessionService($window) {
             memToken = token;
         }
     }
-    self.logout = function() {
+    self.logout = function () {
         if ($window.Storage) {
             try {
                 $window.localStorage.setItem("token", "");
@@ -90,7 +90,7 @@ function sessionService($window) {
 
 function jwtInjector(SessionService) {
     var jwtInjector = {
-        request: function(config) {
+        request: function (config) {
             if (config.withCredentials == null) config.withCredentials = true;
             if (config.withCredentials === true) config.headers.Authorization = 'Bearer ' + SessionService.getToken();
             return config;
