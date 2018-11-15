@@ -4,14 +4,19 @@
 			<div class="panel-body">
 				<form>
 					<div class="form-group">
-						<input class="form-control" style="width:100%" type="text" name="user" ng-model="user" ng-disabled="loading" placeholder="Email" />
+						<input class="form-control" style="width:100%" type="text" name="user" ng-model="user" ng-disabled="loading"
+						 placeholder="Email" />
 					</div>
 					<div class="form-group">
-						<input class="form-control" style="width:100%" type="password" name="pass" ng-model="pass" ng-disabled="loading" placeholder="Password" />
-
+						<input class="form-control" style="width:100%" type="password" name="pass" ng-model="pass" ng-disabled="loading"
+						 placeholder="Password" />
+					</div>
+					<div class="form-group">
+						<input ng-show="requireNewPass" class="form-control" style="width:100%" type="password" name="newpass" ng-model="newpass"
+						 ng-disabled="loading" placeholder="New Password" />
 					</div>
 					<button class="btn btn-primary" ng-click="submit()" ng-disabled="loading">Login</button>
-					<a class="pull-right" ng-click="reset()"><small>Forgot Password</small></a>
+					<!-- <a class="pull-right" ng-click="reset()"><small>Forgot Password</small></a> -->
 				</form>
 				<div class="text-muted">{{message}}</div>
 			</div>

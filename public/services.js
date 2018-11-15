@@ -7,12 +7,28 @@ angular.module('PriceDigests')
 
 function loginService(ENV, $http, SessionService) {
     var self = this;
+    self.reset = function (credentials) {
+        return $http.post(ENV['LOGIN_URL'] + "/reset", {
+            "email": credentials.username,
+            "password": credentials.password,
+            "newpassword": credentials.newpassword
+        }).then(function (response) {
+            SessionService.setToken(response.data.token);
+            self.status = SessionService.getStatus();
+        });
+    }
     self.login = function (credentials) {
         return $http.post(ENV['LOGIN_URL'] + "/login", {
             "email": credentials.username,
             "password": credentials.password,
         }).then(function (response) {
-            SessionService.setToken(response.data.token);
+            if (response.data.challenge === 'NEW_PASSWORD_REQUIRED') {
+                return 'reset';
+            }
+            else {
+                SessionService.setToken(response.data.token);
+                self.status = SessionService.getStatus();
+            }
         });
     }
     self.status = SessionService.getStatus()

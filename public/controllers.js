@@ -3657,18 +3657,45 @@ function MainController(ENV, $scope, $location, SessionService) {
 function loginController(ENV, $scope, $location, LoginService) {
     $scope.user = '';
     $scope.pass = '';
+    $scope.newpass = '';
     $scope.submit = function () {
-        LoginService.login({
-            username: $scope.user.toLowerCase(),
-            password: $scope.pass
-        })
-            .then(function () {
-                $location.url($location.search().next ? $location.search().next : "/home");
-                $scope.loading = false;
-            }, function () {
-                $scope.loading = false;
+        if ($scope.requireNewPass == true) {
+            LoginService.reset({
+                username: $scope.user.toLowerCase(),
+                password: $scope.pass,
+                newpassword: $scope.newpass
             })
-    };
+                .then(function (result) {
+                    $scope.requireNewPass = false;
+                    $location.url($location.search().next ? $location.search().next : "/home");
+                    $scope.message = LoginService.status;
+                    $scope.loading = false;
+                }, function (result) {
+                    $scope.message = result.data;
+                    $scope.newpass = '';
+                    $scope.loading = false;
+                })
+        } else {
+            LoginService.login({
+                username: $scope.user.toLowerCase(),
+                password: $scope.pass
+            })
+                .then(function (result) {
+                    if (result === 'reset') {
+                        $scope.requireNewPass = true;
+                        $scope.message = 'Your password must be reset.';
+                    }
+                    else {
+                        $scope.message = LoginService.status;
+                        $scope.requireNewPass = false;
+                        $location.url($location.search().next ? $location.search().next : "/home");
+                    }
+                    $scope.loading = false;
+                }, function () {
+                    $scope.loading = false;
+                })
+        }
+    }
 
     $scope.message = LoginService.status;
 }
