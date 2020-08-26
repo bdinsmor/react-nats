@@ -120,9 +120,9 @@ function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
                 "modelId": $scope.selection.model ? $scope.selection.model.modelId || null : null
             }
         }, {
-                "timeout": canceler.promise,
-                "withCredentials": true
-            })
+            "timeout": canceler.promise,
+            "withCredentials": true
+        })
             .then(function () {
                 $scope.processing = false;
                 $scope.alerts.unshift({
@@ -412,6 +412,27 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "replace": ["modelId", "recordCount", "marketPopularityIndex", "benchmarkGroup", "marketPopularityLabel", "twenty", "forty", "sixty", "eighty", "hundred", "twentyPercent", "fortyPercent", "sixtyPercent", "eightyPercent", "hundredPercent"]
         }
     }, {
+        name: "truckBodies",
+        title: "Truck Bodies",
+        header: {
+            "replace": ["assetSizeClassId", "bodySizeClassId"],
+            "append": ["assetSizeClassId", "bodySizeClassId"]
+        }
+    }, {
+        name: "naicsCodes",
+        title: "NAICS Codes",
+        header: {
+            "replace": ["bodySubtypeId", "naicsCode", "naicsDescription"],
+            "append": ["bodySubtypeId", "naicsCode", "naicsDescription"]
+        }
+    }, {
+        name: "sicCodes",
+        title: "SIC Codes",
+        header: {
+            "replace": ["bodySubtypeId", "sicCode", "sicDescription", "sicCompanyType"],
+            "append": ["bodySubtypeId", "sicCode", "sicDescription", "sicCompanyType"]
+        }
+    }, {
         name: "attachments",
         title: "Attachments",
         header: {
@@ -430,9 +451,9 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
             "type": $scope.importType,
             "contentType": $scope.file.type
         }, {
-                "timeout": canceler.promise,
-                "withCredentials": true
-            })
+            "timeout": canceler.promise,
+            "withCredentials": true
+        })
             .then(function (response) {
                 if (!$scope.file.$error && response.data.url) {
                     Upload.http({
@@ -452,9 +473,9 @@ function ImportController(ENV, $scope, $http, $q, $timeout, Upload) {
                                 "id": response.data.id,
                                 "type": $scope.importType
                             }, {
-                                    "timeout": canceler.promise,
-                                    "withCredentials": true
-                                })
+                                "timeout": canceler.promise,
+                                "withCredentials": true
+                            })
                                 .then(function () {
                                     $scope.processing = false;
                                     $scope.alerts.unshift({
