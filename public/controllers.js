@@ -23,6 +23,55 @@ angular.module('PriceDigests')
     .controller('SyncController', ['ENV', '$scope', '$http', '$q', SyncController])
     .controller('ImportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ImportController])
     .controller('ExportController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ExportController])
+    .controller('ExportFileController', ['ENV', '$scope', '$http', '$q', "$timeout", "Upload", ExportFileController])
+
+function ExportFileController(ENV, $scope, $http, $q, $timeout, Upload) {
+    var canceler = $q.defer();
+    $scope.$on('$destroy', function () {
+        canceler.resolve(); // Aborts the $http request if it isn't finished.
+    });
+    $scope.tables = [{
+        name: "naics_full",
+        title: "NAICS Full - Production"
+    }, {
+        name: "sic_full",
+        title: "SIC Full - Production"
+    }];
+    $scope.alerts = [];
+    $scope.closeAlert = function (index) {
+        $scope.alerts.splice(index, 1);
+    };
+    $scope.export = function () {
+        $scope.progress = 0;
+        $scope.processing = true;
+        $http.post(ENV['API_URL'] + '/analyst/export-file', {
+            "file": $scope.table.name
+        }, {
+            "timeout": canceler.promise,
+            "withCredentials": true
+        })
+            .then(function () {
+                $scope.processing = false;
+                $scope.alerts.unshift({
+                    type: "success",
+                    title: "File Processing",
+                    msg: 'A status email will be sent shortly'
+                });
+            })
+            .catch(function () {
+                $scope.processing = false;
+                $scope.alerts.unshift({
+                    type: "danger",
+                    title: "File Creation Error!",
+                    msg: 'Error creating file. Please retry.'
+                });
+            })
+    }
+
+    $scope.selection = {};
+    $scope.data = {};
+
+}
 
 function ExportController(ENV, $scope, $http, $q, $timeout, Upload) {
     var canceler = $q.defer();

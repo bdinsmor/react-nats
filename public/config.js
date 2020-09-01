@@ -186,6 +186,13 @@ angular.module('PriceDigests').config(["ENV", "$routeProvider", "$httpProvider",
                 loggedin: checkLoggedin
             }
         })
+        .when('/export-file', {
+            templateUrl: 'export-file.html',
+            controller: 'ExportFileController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
         .otherwise({
             redirectTo: '/taxonomy'
         });

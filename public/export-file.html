@@ -1,0 +1,24 @@
+<div class="container-fluid">
+    <div class="row" style="width:600px;margin-left:auto;margin-right:auto;">
+        <div class="form-inline" style="margin-top:25px;margin-bottom:25px;">
+            <div class="form-group">
+                <label>Flat File</label>
+                <select style="min-width:100px;" ng-model="table" class="form-control"
+                    ng-options="tbl as tbl.title for tbl in tables | orderBy : 'title'">{{tbl}}</select>
+            </div>
+            <button ng-disabled="processing===true||!table" ng-click="export()" class="btn btn-success">Export</button>
+        </div>
+    </div>
+    <div class="row">
+        <div style="margin-top:25px;">
+            <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')"
+                close="closeAlert($index)">
+                <div>
+                    <strong>{{alert.title}}</strong>
+                </div>
+                <div ng-bind-html="alert.msg"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
