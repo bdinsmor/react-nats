@@ -1,136 +1,20 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PriceDigests API Analyst</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.rawgit.com/angular-ui/bower-ui-grid/v4.0.4/ui-grid.min.css">
-    <link rel="stylesheet" href="main.css">
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="PriceDigests internal users admin application." />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon.ico" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <title>PRD Internal Users</title>
 </head>
 
-<body ng-app="PriceDigests" ng-cloak>
-    <div>
-        <div ng-controller="MainController" class="row" style="padding-top: 15px;background-color:rgb(49,55,65);">
-            <div class="col-md-6">
-                <div class="btn-group" uib-dropdown is-open="status.isopen">
-                    <button style="padding-top:0;border:0;background-color:transparent;" id="single-button"
-                        type="button" class="btn btn-lg" uib-dropdown-toggle ng-disabled="disabled">
-                        <span style="color: white" class="glyphicon glyphicon-menu-hamburger"></span>
-                    </button>
-                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                        <li role="menuitem">
-                            <a href="#/taxonomy">Taxonomy</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/configurations">Configurations</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/model/alias">Model Aliases</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/manufacturer/alias">Manufacturer Aliases</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/attachments">Attachments</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li role="menuitem">
-                            <a href="#/manufacturer/vins">Manufacturer VINs</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/options">Options</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/specs">Specifications</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li role="menuitem">
-                            <a href="#/values">Values</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/residual-values-models">Residual Values - Models</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/residual-values-sizes">Residual Values - Sizes</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/residual-values-subtypes">Residual Values - Subtypes</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li role="menuitem">
-                            <a href="#/condition-adjustments">Condition Adjustments</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/region-adjustments">Region Adjustments</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/utilization-adjustments">Utilization Adjustments</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/water-adjustments">Water Adjustments</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li role="menuitem">
-                            <a href="#/usage">Usage</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/popularity">Popularity</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li role="menuitem">
-                            <a href="#/import">Import Data</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/sync">Production Sync</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/export">Export Data</a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#/export-file">Export File</a>
-                        </li>
-                    </ul>
-                </div>
-                <span ng-cloak style="margin-top:5px;color: white" class="text-left h4">
-                    {{getTitle()}}
-                </span>
-            </div>
-            <div class="col-md-6">
-                <div ng-hide="!getUser()" style="margin-top:5px;color: white" class="text-right h4">
-                    <span>{{getUser().name}}
-                        <small style="color:white"> ({{getUser().email}})</small>
-                    </span>
-                    <a ng-href="#/logout" class="btn" style="padding-top:0;border:0;background-color:transparent;">
-                        <span style="color: white" class="glyphicon glyphicon-log-out"></span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div ng-view></div>
-    </div>
-
-    <script type="text/javascript" src="lib/jwt-decode.min.js"></script>
-    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
-    <script type="text/javascript" src="lib/angular-route/angular-route.min.js"></script>
-    <script type="text/javascript" src="lib/angular-animate/angular-animate.min.js"></script>
-    <script type="text/javascript" src="lib/angular-sanitize/angular-sanitize.min.js"></script>
-
-    <script type="text/javascript" src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-
-    <script type="text/javascript" src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/v4.0.4/ui-grid.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.6/ng-csv.min.js"></script>
-    <script type="text/javascript" src="lib/ng-file-upload/ng-file-upload.min.js"></script>
-
-    <!-- Your application bootstrap  -->
-    <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="env.js"></script>
-    <script type="text/javascript" src="config.js"></script>
-    <script type="text/javascript" src="services.js"></script>
-    <script type="text/javascript" src="controllers.js"></script>
-
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
 </body>
 
 </html>

@@ -1,0 +1,9 @@
+{
+  "short_name": "PRD Internal Admin",
+  "name": "PRD Internal Users Admin App",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
