@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const CreateModelAlias = (props) => {
+const CreateManufacturerAlias = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -78,7 +78,7 @@ const CreateModelAlias = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                {props.model.modelId}
+                Create Manufacturer Alias
               </Typography>
             </div>
           </Col>
@@ -87,15 +87,45 @@ const CreateModelAlias = (props) => {
         <Row>
           <Col span={24}>
             <Form.Item
-              name="modelId"
+              name="manufacturerId"
               rules={[
                 {
                   required: true,
-                  message: "Model Id cannot be empty",
+                  message: "Manufacturer Id cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Model Id" />
+              <Input placeholder="Manufacturer Id" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              name="manufacturerName"
+              rules={[
+                {
+                  required: true,
+                  message: "Manufacturer cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Manufacturer Alias" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              name="manufacturerAlias"
+              rules={[
+                {
+                  required: true,
+                  message: "Manufacturer Alias cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Manufacturer Alias" />
             </Form.Item>
           </Col>
         </Row>
@@ -126,4 +156,4 @@ const CreateModelAlias = (props) => {
   );
 };
 
-export default CreateModelAlias;
+export default CreateManufacturerAlias;

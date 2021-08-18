@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const CreateModelAlias = (props) => {
+const UpdateManufacturerAlias = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +26,33 @@ const CreateModelAlias = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.model);
+      form.setFieldsValue(props.manufacturerAlias);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.model]);
+  }, [form, props.manufacturerAlias]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
       const modelAliasUpdates = {
-        modelId: props.model.modelId,
-        modelAlias: values.model.modelAlias
+        manufacturerId: values.manufacturerAlias.manufacturerId,
+        manufacturerName: values.manufacturerAlias.manufacturerName,
+        manufacturerAlias: values.manufacturerAlias.manufacturerAlias,
       };
 
-      await DataService.updateModelAlias(modelAliasUpdates);
+      await DataService.updateUser(modelAliasUpdates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Manufacturer Alias Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Manufacturer Alias",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,24 +79,51 @@ const CreateModelAlias = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                {props.model.modelId}
+                Manufacturer Alias
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="modelId"
+              name="manufacturerId"
+              label="Manufacturer Id"
               rules={[
                 {
                   required: true,
-                  message: "Model Id cannot be empty",
+                  message: "Manufacturer Id cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Model Id" />
+              <Input placeholder="Manufacturer Id" disabled />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="manufacturer"
+              label="Manufacturer"
+              rules={[
+                {
+                  required: true,
+                  message: "Manufacturer cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Manufacturer" disabled />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="manufacturerAlias"
+              label="Manufacturer Alias"
+            >
+              <Input placeholder="Manufacturer Alias" />
             </Form.Item>
           </Col>
         </Row>
@@ -126,4 +154,4 @@ const CreateModelAlias = (props) => {
   );
 };
 
-export default CreateModelAlias;
+export default UpdateManufacturerAlias;

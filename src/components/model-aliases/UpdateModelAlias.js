@@ -26,20 +26,20 @@ const UpdateModelAlias = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.configuration);
+      form.setFieldsValue(props.modelAlias);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.configuration]);
+  }, [form, props.modelAlias]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
       const modelAliasUpdates = {
-        modelId: values.configuration.modelId,
-        modelName: values.configuration.modelName,
-        modelAlias: values.configuration.modelAlias,
+        modelId: values.modelAlias.modelId,
+        modelName: values.modelAlias.modelName,
+        modelAlias: values.modelAlias.modelAlias,
       };
 
       await DataService.updateUser(modelAliasUpdates);

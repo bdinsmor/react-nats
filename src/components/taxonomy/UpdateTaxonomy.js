@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
 import {
   notification,
-  Input,
   Button,
+  Input,
   Row,
   Col,
   Form,
@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const CreateModelAlias = (props) => {
+const UpdateConfiguration = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +26,31 @@ const CreateModelAlias = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.model);
+      form.setFieldsValue(props.taxonomy);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.model]);
+  }, [form, props.taxonomy]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.model.modelId,
-        modelAlias: values.model.modelAlias
+      const configurationUpdates = {
+        classificationName: props.taxonomy.classificationName
       };
 
-      await DataService.updateModelAlias(modelAliasUpdates);
+      await DataService.updateUser(configurationUpdates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Taxonomy Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Taxonomy",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,27 +77,29 @@ const CreateModelAlias = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                {props.model.modelId}
+              Update Taxonomy
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="modelId"
+              name="classificationName"
+              label="Classification Name"
               rules={[
                 {
                   required: true,
-                  message: "Model Id cannot be empty",
+                  message: "Classification Name cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Model Id" />
+              <Input placeholder="Classification Name" />
             </Form.Item>
           </Col>
         </Row>
+        
         <Space>
           <Form.Item>
             <Button
@@ -126,4 +127,4 @@ const CreateModelAlias = (props) => {
   );
 };
 
-export default CreateModelAlias;
+export default UpdateConfiguration;

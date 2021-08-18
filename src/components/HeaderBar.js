@@ -20,8 +20,10 @@ const HeaderBar = (props) => {
     }, [])
 
     useEffect(() => {
-        if(props.title && props.title != '') {
+        if(props.title && props.title !== '' && props.title !== '/') {
             setTitle(props.title.replace(/^\/|\/$/g, ''));
+        } else {
+            setTitle("Taxonomy");
         }
        
     }, [props.title])
@@ -44,7 +46,7 @@ const HeaderBar = (props) => {
     return (
         <Row>
             <Col span={12} offset={2}>
-            <Typography strong style={{ color: 'fff', fontSize: "20px", textTransform: "capitalize" }}>
+            <Typography style={{ color: 'fff', fontSize: "20px", textTransform: "capitalize" }}>
                 <div style={{color:"#fff"}}>{title}</div>
               </Typography>
             </Col>

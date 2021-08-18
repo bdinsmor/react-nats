@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-import DataService from "../services/DataService";
+import DataService from "../../services/DataService";
 import {
   notification,
-  Checkbox,
-  Switch,
-  Input,
   Button,
+  Input,
   Row,
   Col,
   Form,
@@ -16,12 +14,9 @@ import {
   Skeleton,
 } from "antd";
 
-import * as _dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
-const dayjs = _dayjs.extend(relativeTime);
 
 const UpdateConfiguration = (props) => {
   const [form] = Form.useForm();

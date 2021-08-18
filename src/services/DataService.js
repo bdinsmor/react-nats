@@ -15,8 +15,48 @@ const DataService = {
         return response.data;
     },
 
-    async getConfigurationsForModel(modelId){
+    async getConfigurationsForModelId(modelId){
         const response = await axios.get(API_URL + '/analyst/taxonomy/configurations', { headers: authHeader(), params: {modelId: modelId}})
+        return response.data;
+    },
+
+    async getAliasesForModelId(modelId){
+        const response = await axios.get(API_URL + '/analyst/model-aliases', { headers: authHeader(), params: {modelId: modelId}})
+        return response.data;
+    },
+
+    async getAliasesForManufacturerId(manufacturerId){
+        const response = await axios.get(API_URL + '/analyst/manufacturer-aliases', { headers: authHeader(), params: {manufacturerId: manufacturerId}})
+        return response.data;
+    },
+
+    async getClassifications(){
+        const response = await axios.get(API_URL + '/analyst/taxonomy/classifications', { headers: authHeader()})
+        return response.data;
+    },
+
+    async getCategories(classificationId){
+        const response = await axios.get(API_URL + '/analyst/taxonomy/categories', { headers: authHeader(), params: {"classificationId": classificationId}})
+        return response.data;
+    },
+
+    async getSubtypes(classificationId, categoryId){
+        const response = await axios.get(API_URL + '/analyst/taxonomy/subtypes', { headers: authHeader(), params: {"classificationId": classificationId, "categoryId": categoryId}})
+        return response.data;
+    },
+
+    async getSizeClasses(classificationId, categoryId, subtypeId){
+        const response = await axios.get(API_URL + '/analyst/taxonomy/sizes', { headers: authHeader(), params: {"classificationId": classificationId, "categoryId": categoryId, "subtypeId": subtypeId}})
+        return response.data;
+    },
+
+    async getManufacturersForSizeClassId(sizeClassId){
+        const response = await axios.get(API_URL + '/analyst/taxonomy/manufacturers', { headers: authHeader(), params: {"sizeClassId": sizeClassId}})
+        return response.data;
+    },
+
+    async getTaxonomyModels(sizeClassId, manufacturerId){
+        const response = await axios.get(API_URL + '/analyst/taxonomy/models', { headers: authHeader(), params: {manufacturerId: manufacturerId, sizeClassId: sizeClassId}})
         return response.data;
     },
 

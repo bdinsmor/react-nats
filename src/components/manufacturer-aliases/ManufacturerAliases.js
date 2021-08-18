@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreateModelAlias from "./CreateModelAlias";
-import UpdateModelAlias from "./UpdateModelAlias";
+import CreateManufacturerAlias from "./CreateManufacturerAlias";
+import UpdateManufacturerAlias from "./UpdateManufacturerAlias";
 import {
   Space,
   Row,
@@ -53,16 +53,14 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   );
 } // Usage of DebounceSelect
 
-const ModelAliases = (props) => {
+const ManufacturerAliases = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateDrawer, setShowCreateDrawer] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
   const [selectedManufacturer, setSelectedManufacturer] = useState([]);
-  const [selectedModel, setSelectedModel] = useState([]);
 
   const handleManufacturerSearch = async (value) => {
     const res = await DataService.getManufacturers(value);
@@ -73,45 +71,20 @@ const ModelAliases = (props) => {
     return manuResults;
   };
 
-  const handleModelSearch = async (value) => {
-    if (!value || value === "") {
-      return [];
-    }
-    const res = await DataService.getModelsForManufacturer(
-      manufacturerId,
-      value
-    );
-    const modelResults = res.map((item) => ({
-      label: `${item.modelName}`,
-      value: item.modelId,
-    }));
-    return modelResults;
-  };
 
 
-  const onManufacturerSelect = (option) => {
-    setSelectedModel(null);
-    handleModelSearch("");
+
+  const onManufacturerSelect = async (option) => {
     setItems([]);
     if (!option || option === null) {
       setSelectedManufacturer(null);
       setManufacturerId(null);
-
       return;
     }
     setSelectedManufacturer(option);
     setManufacturerId(option.value);
-  };
 
-  const onModelSelect = async (option) => {
-    if (!option || option === null) {
-      setModelId("");
-      setSelectedModel(null);
-      return;
-    }
-    setModelId(option.value);
-    setSelectedModel(option);
-    const res = await DataService.getAliasesForModelId(option.value);
+    const res = await DataService.getAliasesForManufacturer(option.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
@@ -120,8 +93,6 @@ const ModelAliases = (props) => {
     setItems(res);
   };
 
-  const onUpdateModelAlias = (record) => {};
-
   const columns = [
     {
       title: "#",
@@ -129,13 +100,18 @@ const ModelAliases = (props) => {
       width: '5%',
     },
     {
-      title: "Model Id",
-      dataIndex: "modelId",
+      title: "Manufacturer Id",
+      dataIndex: "manufacturerId",
+      editable: true,
+    },
+    {
+      title: "Manufacturer",
+      dataIndex: "manufacturerName",
       editable: true,
     },
     {
       title: "Alias",
-      dataIndex: "modelAlias",
+      dataIndex: "manufacturerAlias",
       editable: true,
     },
     
@@ -217,21 +193,7 @@ const ModelAliases = (props) => {
                     }}
                   />
                 </Col>
-                <Col>
-                  <h5>Model</h5>
-                  <DebounceSelect
-                    placeholder="Search Models"
-                    value={selectedModel}
-                    fetchOptions={handleModelSearch}
-                    onChange={onModelSelect}
-                    allowClear={true}
-                    style={{
-                      width: "300px",
-                    }}
-                  />
-                </Col>
-
-              
+                
               </Space>
             </Row>
           </div>
@@ -239,7 +201,7 @@ const ModelAliases = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            rowKey="modelId"
+            rowKey="manufacturerId"
           />
         </Content>
       </Layout>
@@ -250,10 +212,10 @@ const ModelAliases = (props) => {
         visible={showCreateDrawer}
         width={600}
       >
-        <CreateModelAlias
+        <CreateManufacturerAlias
           onSaveSuccess={onCreateSuccess}
           onCancel={() => setShowCreateDrawer(false)}
-        ></CreateModelAlias>
+        ></CreateManufacturerAlias>
       </Drawer>
       <Drawer
         placement="right"
@@ -262,14 +224,14 @@ const ModelAliases = (props) => {
         visible={showUpdateDrawer}
         width={600}
       >
-        <UpdateModelAlias
-          model={item}
+        <UpdateManufacturerAlias
+          manufacturer={item}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
-        ></UpdateModelAlias>
+        ></UpdateManufacturerAlias>
       </Drawer>
     </React.Fragment>
   );
 };
 
-export default ModelAliases;
+export default ManufacturerAliases;
