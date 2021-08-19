@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const UpdateConfiguration = (props) => {
+const UpdateModel = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,31 +26,35 @@ const UpdateConfiguration = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.taxonomy);
+      form.setFieldsValue(props.model);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.taxonomy]);
+  }, [form, props.model]);
+
+
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const configurationUpdates = {
-        classificationName: props.taxonomy.classificationName
+      const updates = {
+        modelId: props.model.modelId,
+        manufacturerId: props.model.manufacturerId,
+        modelName: props.model.modelName
       };
 
-      await DataService.updateUser(configurationUpdates);
+      await DataService.updateModel(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Taxonomy Updated",
+        message: "Model Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Updating Taxonomy",
+        message: "Error Updating Model",
         duration: 2,
       });
       setIsLoading(false);
@@ -77,7 +81,7 @@ const UpdateConfiguration = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-              Update Taxonomy
+              Update Model
               </Typography>
             </div>
           </Col>
@@ -86,16 +90,36 @@ const UpdateConfiguration = (props) => {
         <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="classificationName"
-              label="Classification Name"
+              name="modelId"
+              label="Model Id"
+              >
+              <Input placeholder="Model Id" disabled />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="manufacturerId"
+              label="Manufacturer Id"
+            >
+              <Input placeholder="Manufacturer Id" disabled />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="modelName"
+              label="Model Name"
               rules={[
                 {
                   required: true,
-                  message: "Classification Name cannot be empty",
+                  message: "Model Name cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Classification Name" />
+              <Input placeholder="Model Name" />
             </Form.Item>
           </Col>
         </Row>
@@ -127,4 +151,4 @@ const UpdateConfiguration = (props) => {
   );
 };
 
-export default UpdateConfiguration;
+export default UpdateModel;

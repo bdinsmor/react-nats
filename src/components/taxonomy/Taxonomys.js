@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import UpdateTaxonomy from "./UpdateTaxonomy";
-import { Space, Row, Col, Table, Drawer, Layout, Select, Button } from "antd";
+import { Space, Row, Col, Menu, Table, Drawer, Layout, Select, Dropdown, Button } from "antd";
+import {Link} from 'react-router-dom';
+
+import { DownOutlined} from '@ant-design/icons';
+import UpdateClassification from "./UpdateClassification";
+import UpdateCategory from "./UpdateCategory";
+import UpdateSubtype from "./UpdateSubtype";
+import UpdateSizeClass from "./UpdateSizeClass";
+import UpdateManufacturer from "./UpdateManufacturer";
+import UpdateModel from "./UpdateModel";
 
 const { Content } = Layout;
 
@@ -33,8 +41,21 @@ const Taxonomys = (props) => {
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
 
   const [taxonomy, setTaxonomy] = useState({});
+  const [currentView, setCurrentView] = useState("");
+
+  const [clickedSizeClassId, setClickedSizeClassId] = useState("");
 
   const [columns, setColumns] = useState([]);
+
+  const getConditionLink = () => {
+    return "/condition-adjustments?sizeClassId=" + clickedSizeClassId;
+  }
+  const getRegionLink = () => {
+    return "/region-adjustments?sizeClassId=" + clickedSizeClassId;
+  }
+  const getUtilizationLink = () => {
+    return "/utilization-adjustments?sizeClassId=" + clickedSizeClassId;
+  }
 
   const resetChoices = () => {
     setSelectedCategory({});
@@ -271,6 +292,19 @@ const Taxonomys = (props) => {
     },
   ];
 
+  const optionsMenu = (
+    <Menu>
+      <Menu.Item>
+      <Link to={getConditionLink}>Condition Adjustments</Link>
+      </Menu.Item>
+      <Menu.Item>
+      <Link to={getRegionLink}>Region Adjustments</Link>
+      </Menu.Item>
+      <Menu.Item><Link to={getUtilizationLink}>Utilization Adjustments</Link>
+      </Menu.Item>
+    </Menu>
+  );
+
   const subtypeColumns = [
     {
       title: "#",
@@ -359,6 +393,11 @@ const Taxonomys = (props) => {
           <Button type="link" onClick={() => openUpdateDrawer(record)}>
             Edit
           </Button>
+          <Dropdown overlay={optionsMenu}>
+    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+      Options <DownOutlined />
+    </a>
+  </Dropdown>
         </Space>
       ),
     },
@@ -377,7 +416,7 @@ const Taxonomys = (props) => {
     },
     {
       title: "Manufacturer Name",
-      dataIndex: "classificationName",
+      dataIndex: "manufacturerName",
       editable: true,
     },
     {
@@ -453,7 +492,7 @@ const Taxonomys = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-    setRowKey('classificationId');
+    setRowKey("classificationId");
     populateClassifications();
     setIsLoading(false);
   };
@@ -516,21 +555,27 @@ const Taxonomys = (props) => {
   useEffect(() => {
     switch (rowKey) {
       case "classificationId":
+        setCurrentView("classification");
         setColumns(classificationColumns);
         break;
       case "categoryId":
+        setCurrentView("category");
         setColumns(categoryColumns);
         break;
       case "subtypeId":
+        setCurrentView("subtype");
         setColumns(subtypeColumns);
         break;
       case "sizeClassId":
+        setCurrentView("sizeClass");
         setColumns(sizeClassColumns);
         break;
       case "manufacturerId":
+        setCurrentView("manufacturer");
         setColumns(manufacturerColumns);
         break;
       case "modelId":
+        setCurrentView("model");
         setColumns(modelColumns);
         break;
       default:
@@ -543,16 +588,13 @@ const Taxonomys = (props) => {
       <Layout>
         <Content
           style={{
-            paddingTop: 24,
-            marginTop: 8,
-            marginLeft: 8,
-            marginRight: 8,
+            paddingTop: 12,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
           <div style={{ marginBottom: 8, paddingLeft: 16 }}>
-            <Row>
+            <Row gutter={12}>
               <Space>
                 <Col>
                   <h5>Classification</h5>
@@ -622,6 +664,16 @@ const Taxonomys = (props) => {
                 </Col>
               </Space>
             </Row>
+            
+          </div>
+          <div style={{ paddingLeft: 16, marginBottom: 8}}>
+          <Row gutter={12}>
+          <Col span={24}>
+           
+            <Button type="ghost">Export</Button>
+            
+          </Col>
+          </Row>
           </div>
           <div style={{ marginBottom: 16 }}></div>
           <Table columns={columns} dataSource={items} rowKey={rowKey} />
@@ -635,11 +687,20 @@ const Taxonomys = (props) => {
         visible={showUpdateDrawer}
         width={600}
       >
-        <UpdateTaxonomy
-          taxonomy={taxonomy}
-          onSaveSuccess={onUpdateSuccess}
-          onCancel={() => setShowUpdateDrawer(false)}
-        ></UpdateTaxonomy>
+        {
+      (()=> {
+        switch (currentView) {
+          case 'classification': return <UpdateClassification classification={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateClassification>;
+          case 'category': return <UpdateCategory category={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateCategory>;
+          case 'subtype': return <UpdateSubtype subtype={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateSubtype>;
+          case 'sizeClass': return <UpdateSizeClass sizeClass={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateSizeClass>;
+          case 'manufacturer': return <UpdateManufacturer manufacturer={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateManufacturer>;
+          case 'model': return <UpdateModel model={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateModel>;
+          default: return null;
+        }
+      })()
+     }
+        
       </Drawer>
     </React.Fragment>
   );
