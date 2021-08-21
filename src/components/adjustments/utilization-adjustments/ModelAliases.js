@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreateManufacturerAlias from "./CreateManufacturerAlias";
-import UpdateManufacturerAlias from "./UpdateManufacturerAlias";
+import CreateModelAlias from "./CreateModelAlias";
+import UpdateModelAlias from "./UpdateModelAlias";
 import { EditOutlined } from "@ant-design/icons";
 import {
   Space,
@@ -15,11 +15,9 @@ import {
   Button,
 } from "antd";
 import debounce from "lodash/debounce";
-
 import dayjs from "dayjs";
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
-
 const { Content } = Layout;
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
@@ -58,14 +56,16 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   );
 } // Usage of DebounceSelect
 
-const ManufacturerAliases = (props) => {
+const ModelAliases = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
+  const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateDrawer, setShowCreateDrawer] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
   const [selectedManufacturer, setSelectedManufacturer] = useState([]);
+  const [selectedModel, setSelectedModel] = useState([]);
 
   const handleManufacturerSearch = async (value) => {
     const res = await DataService.getManufacturers(value);
@@ -76,20 +76,45 @@ const ManufacturerAliases = (props) => {
     return manuResults;
   };
 
+  const handleModelSearch = async (value) => {
+    if (!value || value === "") {
+      return [];
+    }
+    const res = await DataService.getModelsForManufacturer(
+      manufacturerId,
+      value
+    );
+    const modelResults = res.map((item) => ({
+      label: `${item.modelName}`,
+      value: item.modelId,
+    }));
+    return modelResults;
+  };
 
 
-
-  const onManufacturerSelect = async (option) => {
+  const onManufacturerSelect = (option) => {
+    setSelectedModel(null);
+    handleModelSearch("");
     setItems([]);
     if (!option || option === null) {
       setSelectedManufacturer(null);
       setManufacturerId(null);
+
       return;
     }
     setSelectedManufacturer(option);
     setManufacturerId(option.value);
+  };
 
-    const res = await DataService.getAliasesForManufacturer(option.value);
+  const onModelSelect = async (option) => {
+    if (!option || option === null) {
+      setModelId("");
+      setSelectedModel(null);
+      return;
+    }
+    setModelId(option.value);
+    setSelectedModel(option);
+    const res = await DataService.getAliasesForModelId(option.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
@@ -99,6 +124,8 @@ const ManufacturerAliases = (props) => {
     setItems(res);
   };
 
+  const onUpdateModelAlias = (record) => {};
+
   const columns = [
     {
       title: "#",
@@ -106,18 +133,13 @@ const ManufacturerAliases = (props) => {
       width: '5%',
     },
     {
-      title: "Manufacturer Id",
-      dataIndex: "manufacturerId",
-      editable: true,
-    },
-    {
-      title: "Manufacturer",
-      dataIndex: "manufacturerName",
+      title: "Model Id",
+      dataIndex: "modelId",
       editable: true,
     },
     {
       title: "Alias",
-      dataIndex: "manufacturerAlias",
+      dataIndex: "modelAlias",
       editable: true,
     },
     
@@ -200,7 +222,21 @@ const ManufacturerAliases = (props) => {
                     }}
                   />
                 </Col>
-                
+                <Col>
+                  <h5>Model</h5>
+                  <DebounceSelect
+                    placeholder="Search Models"
+                    value={selectedModel}
+                    fetchOptions={handleModelSearch}
+                    onChange={onModelSelect}
+                    allowClear={true}
+                    style={{
+                      width: "300px",
+                    }}
+                  />
+                </Col>
+
+              
               </Space>
             </Row>
           </div>
@@ -209,7 +245,7 @@ const ManufacturerAliases = (props) => {
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
-            rowKey="manufacturerId"
+            rowKey="modelId"
           />
         </Content>
       </Layout>
@@ -220,10 +256,10 @@ const ManufacturerAliases = (props) => {
         visible={showCreateDrawer}
         width={600}
       >
-        <CreateManufacturerAlias
+        <CreateModelAlias
           onSaveSuccess={onCreateSuccess}
           onCancel={() => setShowCreateDrawer(false)}
-        ></CreateManufacturerAlias>
+        ></CreateModelAlias>
       </Drawer>
       <Drawer
         placement="right"
@@ -232,14 +268,14 @@ const ManufacturerAliases = (props) => {
         visible={showUpdateDrawer}
         width={600}
       >
-        <UpdateManufacturerAlias
-          manufacturer={item}
+        <UpdateModelAlias
+          model={item}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
-        ></UpdateManufacturerAlias>
+        ></UpdateModelAlias>
       </Drawer>
     </React.Fragment>
   );
 };
 
-export default ManufacturerAliases;
+export default ModelAliases;

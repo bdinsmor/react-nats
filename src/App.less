@@ -1,10 +1,10 @@
 @import '~antd/dist/antd.css';
 @import '~antd/dist/antd.css';
 .header{
-    background-color: #01283a;
+    backgroundColor: #01283a;
 }
 .footer{
-    background-color: #01283a;
+    backgroundColor: #01283a;
     color: white;
     text-align: center;
 }
@@ -13,6 +13,13 @@
    align-items: flex-end;
    align-content: flex-end;
 }
+
+.menu-style {
+
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    }
 
 .editable-row .ant-form-item-explain {
     position: absolute;
@@ -28,18 +35,18 @@
 }
 
 .list-light{
-    background-color:white
+    backgroundColor:white
 }
 .list-light li:hover{
-    background-color:whitesmoke;
+    backgroundColor:whitesmoke;
     cursor: pointer;
 }
 
 .switch-stoplight{
-    background-color: red;
+    backgroundColor: red;
 }
 .switch-stoplight.ant-switch-checked{
-    background-color: green;
+    backgroundColor: green;
 }
 
 .popover-200 .ant-popover-inner {
@@ -47,4 +54,9 @@
 }
 .popover-200 .ant-popover-content {
    font-size: 12px;
+}
+
+.ant-menu-vertical > .ant-menu-item, .ant-menu-vertical-left > .ant-menu-item, .ant-menu-vertical-right > .ant-menu-item, .ant-menu-inline > .ant-menu-item, .ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-vertical-left > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-vertical-right > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+    height: 25px !important;
+    line-height: 25px !important;
 }

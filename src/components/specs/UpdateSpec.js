@@ -14,11 +14,9 @@ import {
   Skeleton,
 } from "antd";
 
-
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
-
-const UpdateTaxonomy = (props) => {
+const UpdateSpec = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +24,38 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.spec);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.spec]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        id: props.spec.id,
+        configurationId: props.spec.configurationId,
+        specFamily: props.spec.specFamily,
+        specUom: values.spec.specUom,
+        specDescription: values.spec.specDescription,
+        specNameFriendly: values.spec.sepcNameFriendly,
+        specName: values.spec.specName,
+        specValue: values.spec.specValue
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.updateOption(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Spec Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Spec",
         duration: 2,
       });
       setIsLoading(false);
@@ -75,57 +79,97 @@ const UpdateTaxonomy = (props) => {
         hideRequiredMark
       >
         <Row align="middle">
-          <Col>
+          <Col span={12}>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+                Spec for Configuation Id: {props.spec.configurationId}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
-          <Col span={24}>
+        <Row gutter={12}>
+          <Col span={12}>
             <Form.Item
-              name="manufacturerId"
+              name="specFamily"
+              label="Family"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Id cannot be empty",
+                  message: "Spec Family cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Id" />
+              <Input placeholder="Spec Family" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="specValue"
+              label="Value"
+              rules={[
+                {
+                  required: true,
+                  message: "Spec Value cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Spec Value" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
-          <Col span={24}>
+        <Row gutter={12}>
+          <Col span={12}>
             <Form.Item
-              name="manufacturerName"
+              name="specName"
+              label="Name"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer cannot be empty",
+                  message: "Spec Name cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Spec Name" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="specUom"
+              label="UoM"
+              rules={[
+                {
+                  required: true,
+                  message: "Spec Uom cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Spec Uom" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
-          <Col span={24}>
+        <Row gutter={12}>
+          <Col span={12}>
             <Form.Item
-              name="manufacturerAlias"
+              name="specNameFriendly"
+              label="Friendly Name"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Alias cannot be empty",
+                  message: "Spec Name cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Spec Name" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="specDescription"
+              label="Description"
+              
+            >
+              <Input.TextArea showCount placeholder="Description"/>
             </Form.Item>
           </Col>
         </Row>
@@ -145,6 +189,7 @@ const UpdateTaxonomy = (props) => {
             <Button
               className="login-form-button"
               icon={<CloseOutlined />}
+              type="ghost"
               onClick={() => cancel()}
             >
               Cancel
@@ -156,4 +201,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default UpdateSpec;

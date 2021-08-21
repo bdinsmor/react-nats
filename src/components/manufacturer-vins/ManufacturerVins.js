@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreateManufacturerAlias from "./CreateManufacturerAlias";
-import UpdateManufacturerAlias from "./UpdateManufacturerAlias";
+import CreateManufacturerVin from "./CreateManufacturerVin";
+import UpdateManufacturerVin from "./UpdateManufacturerVin";
+
 import { EditOutlined } from "@ant-design/icons";
 import {
   Space,
@@ -15,11 +16,9 @@ import {
   Button,
 } from "antd";
 import debounce from "lodash/debounce";
-
 import dayjs from "dayjs";
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
-
 const { Content } = Layout;
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
@@ -58,7 +57,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   );
 } // Usage of DebounceSelect
 
-const ManufacturerAliases = (props) => {
+const ManufacturerVins = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateDrawer, setShowCreateDrawer] = useState(false);
@@ -76,20 +75,17 @@ const ManufacturerAliases = (props) => {
     return manuResults;
   };
 
-
-
-
   const onManufacturerSelect = async (option) => {
     setItems([]);
     if (!option || option === null) {
       setSelectedManufacturer(null);
       setManufacturerId(null);
+
       return;
     }
     setSelectedManufacturer(option);
     setManufacturerId(option.value);
-
-    const res = await DataService.getAliasesForManufacturer(option.value);
+    const res = await DataService.getVINsForManufacturer(option.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
@@ -106,21 +102,25 @@ const ManufacturerAliases = (props) => {
       width: '5%',
     },
     {
-      title: "Manufacturer Id",
-      dataIndex: "manufacturerId",
-      editable: true,
+      title: "Model Year",
+      dataIndex: "modelYear",
     },
     {
-      title: "Manufacturer",
-      dataIndex: "manufacturerName",
-      editable: true,
+      title: "Vin Manufacturer Code",
+      dataIndex: "vinManufacturerCode",
     },
     {
-      title: "Alias",
-      dataIndex: "manufacturerAlias",
-      editable: true,
+      title: "Vin Year Code",
+      dataIndex: "vinYearCode",
     },
-    
+    {
+      title: "Short Vin",
+      dataIndex: "shortVin",
+    },
+    {
+      title: "Cic Code",
+      dataIndex: "cicCode",
+    },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
@@ -145,9 +145,6 @@ const ManufacturerAliases = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
-  };
   const onCreateSuccess = () => {
     setShowCreateDrawer(false);
     init();
@@ -180,11 +177,13 @@ const ManufacturerAliases = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
+          <div style={{ marginBottom: 8 }}>
             <Row>
               <Space>
                 <Col>
@@ -200,16 +199,24 @@ const ManufacturerAliases = (props) => {
                     }}
                   />
                 </Col>
-                
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Space>
+                  <Button type="ghost">Add</Button>
+                  <Button type="ghost">Export</Button>
+                </Space>
+              </Col>
+            </Row>
+          </div>
           <Table
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
-            rowKey="manufacturerId"
+            rowKey="id"
           />
         </Content>
       </Layout>
@@ -220,10 +227,10 @@ const ManufacturerAliases = (props) => {
         visible={showCreateDrawer}
         width={600}
       >
-        <CreateManufacturerAlias
+        <CreateManufacturerVin
           onSaveSuccess={onCreateSuccess}
           onCancel={() => setShowCreateDrawer(false)}
-        ></CreateManufacturerAlias>
+        ></CreateManufacturerVin>
       </Drawer>
       <Drawer
         placement="right"
@@ -232,14 +239,14 @@ const ManufacturerAliases = (props) => {
         visible={showUpdateDrawer}
         width={600}
       >
-        <UpdateManufacturerAlias
-          manufacturer={item}
+        <UpdateManufacturerVin
+          manufacturerVin={item}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
-        ></UpdateManufacturerAlias>
+        ></UpdateManufacturerVin>
       </Drawer>
     </React.Fragment>
   );
 };
 
-export default ManufacturerAliases;
+export default ManufacturerVins;

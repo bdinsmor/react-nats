@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
 import {
   notification,
-  Input,
   Button,
+  Input,
   Row,
   Col,
   Form,
@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const UpdateTaxonomy = (props) => {
+const UpdateAttachment = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +26,34 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.attachment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.attachment]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        sizeClassId: props.attachment.sizeClassId,
+        modelId: values.attachment.modelId,
+        modelYear: values.attachment.modelYear,
+        vinModelNumber: values.attachment.vinModelNumber,
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.updateUser(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Attachment Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Attachment",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,54 +80,67 @@ const UpdateTaxonomy = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+                Update Attachment
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerId"
+              name="sizeClassId"
+              label="Size Class Id"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Id cannot be empty",
+                  message: "Size Class Id cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Id" />
+              <Input placeholder="Size Class Id" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerName"
+              name="modelId"
+              label="Model Id"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer cannot be empty",
+                  message: "Model Id cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Model Id" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerAlias"
+              name="modelYear"
+              label="Model Year"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Alias cannot be empty",
+                  message: "Model Year cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Model Year" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="vinModelNumber"
+              label="VIN Model Number"
+            >
+              <Input placeholder="VIN Model Number" />
             </Form.Item>
           </Col>
         </Row>
@@ -156,4 +171,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default UpdateAttachment;

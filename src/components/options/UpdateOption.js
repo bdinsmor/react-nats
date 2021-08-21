@@ -14,11 +14,9 @@ import {
   Skeleton,
 } from "antd";
 
-
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
-
-const UpdateTaxonomy = (props) => {
+const UpdateOption = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +24,35 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.option);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.option]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        id: props.option.id,
+        optionId: props.option.optionId,
+        optionName: values.option.optionName,
+        optionValue: values.option.value,
+        optionFamilyId: values.option.openFamilyId,
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.updateOption(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Option Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Option",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,54 +79,58 @@ const UpdateTaxonomy = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+                {props.option.sizeClassId && props.option.modelYear && (
+                  <span>
+                    Size Class Id: {props.option.sizeClassId} | Model Year:{" "}
+                    {props.option.modelYear}
+                  </span>
+                )}
+                {(!props.option.sizeClassId || !props.option.modelYear) && (
+                  <span>
+                    New Option
+                  </span>
+                )}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerId"
+              name="optionName"
+              label="Name"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Id cannot be empty",
+                  message: "Option Name cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Id" />
+              <Input placeholder="Option Name" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerName"
+              name="optionValue"
+              label="Value"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer cannot be empty",
+                  message: "Option Value cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Option Value" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
-            <Form.Item
-              name="manufacturerAlias"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer Alias cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
+            <Form.Item name="optionFamilyId" label="Family Id">
+              <Input placeholder="Family Id" />
             </Form.Item>
           </Col>
         </Row>
@@ -145,6 +150,7 @@ const UpdateTaxonomy = (props) => {
             <Button
               className="login-form-button"
               icon={<CloseOutlined />}
+              type="ghost"
               onClick={() => cancel()}
             >
               Cancel
@@ -156,4 +162,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default UpdateOption;

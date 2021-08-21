@@ -17,8 +17,7 @@ import {
 
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
-
-const UpdateTaxonomy = (props) => {
+const CreateAttachment = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +25,34 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.attachment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.attachment]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        sizeClassId: props.attachment.sizeClassId,
+        modelId: values.attachment.modelId,
+        modelYear: values.attachment.modelYear,
+        vinModelYear: values.attachment.vinModelYear,
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.createAttachment(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Attachment Saved",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Saving Attachment",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,7 +79,7 @@ const UpdateTaxonomy = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+                {props.attachment.configurationId}
               </Typography>
             </div>
           </Col>
@@ -87,45 +88,15 @@ const UpdateTaxonomy = (props) => {
         <Row>
           <Col span={24}>
             <Form.Item
-              name="manufacturerId"
+              name="sizeClassId"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Id cannot be empty",
+                  message: "Size Class Id cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Id" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              name="manufacturerName"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              name="manufacturerAlias"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer Alias cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Size Class Id" />
             </Form.Item>
           </Col>
         </Row>
@@ -156,4 +127,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default CreateAttachment;

@@ -65,6 +65,26 @@ const DataService = {
         return response.data;
     },
 
+    async getVINsForManufacturer(manufacturerId) {
+        const response = await axios.get(API_URL + '/analyst/manufacturer-vins', { headers: authHeader(), params: {manufacturerId: manufacturerId}})
+        return response.data;
+    },
+
+    async getOptions(sizeClassId, modelYear) {
+        const response = await axios.get(API_URL + '/analyst/options', { headers: authHeader(), params: {modelYear: modelYear, sizeClassId: sizeClassId}})
+        return response.data;
+    },
+
+    async getSpecs(configurationId) {
+        const response = await axios.get(API_URL + '/analyst/specs', { headers: authHeader(), params: {configurationId: configurationId}})
+        return response.data;
+    },
+
+    async getAttachments(subtypeId){
+        const response = await axios.get(API_URL + '/analyst/attachments', { headers: authHeader(), params: {subtypeId: subtypeId}})
+        return response.data;
+    },
+
     async getUsers() {
         const response = await axios.get(API_URL + '/users/get', { headers: authHeader() })
         return response.data;

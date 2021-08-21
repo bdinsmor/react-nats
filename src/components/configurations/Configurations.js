@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+
+
 import DataService from "../../services/DataService";
 import CreateConfiguration from "./CreateConfiguration";
 import UpdateConfiguration from "./UpdateConfiguration";
+import { EditOutlined } from "@ant-design/icons";
 import {
   Space,
   Row,
@@ -15,6 +18,11 @@ import {
   Button,
 } from "antd";
 import debounce from "lodash/debounce";
+
+import dayjs from "dayjs";
+var localizedFormat = require('dayjs/plugin/localizedFormat')
+dayjs.extend(localizedFormat);
+
 
 const { Content } = Layout;
 const { Search } = Input;
@@ -59,8 +67,6 @@ const Configurations = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
   const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [manufacturerResults, setManufacturerResults] = useState([]);
-  const [modelResults, setModelResults] = useState([]);
   const [items, setItems] = useState([]);
   const [showCreateDrawer, setShowCreateDrawer] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
@@ -96,6 +102,7 @@ const Configurations = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setItems(res);
@@ -166,7 +173,7 @@ const Configurations = (props) => {
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
+      dataIndex: "formattedDate",
       editable: true,
     },
     {
@@ -177,9 +184,10 @@ const Configurations = (props) => {
     {
       title: "",
       key: "action",
+      fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
             Edit
           </Button>
         </Space>
@@ -271,6 +279,7 @@ const Configurations = (props) => {
           <Table
             columns={columns}
             dataSource={items}
+            scroll={{ x: 1500, y: 400 }}
             rowKey="configurationId"
           />
         </Content>

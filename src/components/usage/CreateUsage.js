@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const UpdateTaxonomy = (props) => {
+const CreateUsage = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +26,32 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.usage);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.model]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        modelId: props.updates.modelId,
+        modelAlias: values.updates.modelAlias
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.updateUsage(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Usage Saved",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Saving Usage",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,7 +78,7 @@ const UpdateTaxonomy = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+                {props.usage.modelId}
               </Typography>
             </div>
           </Col>
@@ -87,45 +87,15 @@ const UpdateTaxonomy = (props) => {
         <Row>
           <Col span={24}>
             <Form.Item
-              name="manufacturerId"
+              name="modelId"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Id cannot be empty",
+                  message: "Model Id cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Id" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              name="manufacturerName"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              name="manufacturerAlias"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer Alias cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Model Id" />
             </Form.Item>
           </Col>
         </Row>
@@ -156,4 +126,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default CreateUsage;

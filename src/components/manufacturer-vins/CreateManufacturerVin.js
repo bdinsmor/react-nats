@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const UpdateTaxonomy = (props) => {
+const CreateManufacturerVin = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +26,37 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.manufacturerVin);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.manufacturerVin]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        manufacturerId: props.manufacturerVin.manufacturerId,
+        manufacturerName: props.manufacturerVin.manufacturerName,
+        shortVin: values.manufacturerVin.shortVin,
+        vinManufacturerCode: values.manufacturerVin.vinManufacturerCode,
+        vinYearCode: values.manufacturerVin.vinYearCode,
+        cicCode: values.manufacturerVin.cicCode,
+        modelYear: values.manufacturerVin.modelYear
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.createManufacturerVin(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Manufacturer Vin Created",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Creating Manufacturer Vin",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,7 +83,7 @@ const UpdateTaxonomy = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+                Create Manufacturer VIN
               </Typography>
             </div>
           </Col>
@@ -86,46 +91,50 @@ const UpdateTaxonomy = (props) => {
         <Divider />
         <Row>
           <Col span={24}>
-            <Form.Item
-              name="manufacturerId"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer Id cannot be empty",
-                },
-              ]}
-            >
+            <Form.Item name="manufacturerId">
+              <Input placeholder="Manufacturer Id" disabled />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item name="manufacturerName">
+              <Input placeholder="Manufacturer Name" disabled />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item name="modelYear">
+              <Input placeholder="Model Year" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item name="vinManufacturerCode">
+              <Input placeholder="VIN Manufacturer Code" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item name="vinYearCode">
               <Input placeholder="Manufacturer Id" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item
-              name="manufacturerName"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
+            <Form.Item name="shortVin">
+              <Input placeholder="Short VIN" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item
-              name="manufacturerAlias"
-              rules={[
-                {
-                  required: true,
-                  message: "Manufacturer Alias cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Manufacturer Alias" />
+            <Form.Item name="cicCode">
+              <Input placeholder="CIC Code" />
             </Form.Item>
           </Col>
         </Row>
@@ -156,4 +165,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default CreateManufacturerVin;

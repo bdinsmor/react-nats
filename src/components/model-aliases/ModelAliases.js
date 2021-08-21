@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
 import CreateModelAlias from "./CreateModelAlias";
 import UpdateModelAlias from "./UpdateModelAlias";
+import { EditOutlined } from "@ant-design/icons";
 import {
   Space,
   Row,
@@ -14,7 +15,9 @@ import {
   Button,
 } from "antd";
 import debounce from "lodash/debounce";
-
+import dayjs from "dayjs";
+var localizedFormat = require('dayjs/plugin/localizedFormat')
+dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
@@ -115,12 +118,12 @@ const ModelAliases = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setItems(res);
   };
 
-  const onUpdateModelAlias = (record) => {};
 
   const columns = [
     {
@@ -141,7 +144,7 @@ const ModelAliases = (props) => {
     
     {
       title: "Last Modified",
-      dataIndex: "ts",
+      dataIndex: "formattedDate",
       editable: true,
     },
     {
@@ -152,9 +155,10 @@ const ModelAliases = (props) => {
     {
       title: "",
       key: "action",
+      fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
             Edit
           </Button>
         </Space>
@@ -197,11 +201,13 @@ const ModelAliases = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
+          <div style={{ marginBottom: 8 }}>
             <Row>
               <Space>
                 <Col>
@@ -239,6 +245,7 @@ const ModelAliases = (props) => {
           <Table
             columns={columns}
             dataSource={items}
+            scroll={{ x: 1500, y: 400 }}
             rowKey="modelId"
           />
         </Content>

@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import { Space, Row, Col, Menu, Table, Drawer, Layout, Select, Dropdown, Button } from "antd";
-import {Link} from 'react-router-dom';
+import {
+  Space,
+  Row,
+  Col,
+  Menu,
+  Table,
+  Drawer,
+  Layout,
+  Select,
+  Dropdown,
+  Button,
+} from "antd";
+import { Link } from "react-router-dom";
 
-import { DownOutlined} from '@ant-design/icons';
+import { DownOutlined, EditOutlined } from "@ant-design/icons";
 import UpdateClassification from "./UpdateClassification";
 import UpdateCategory from "./UpdateCategory";
 import UpdateSubtype from "./UpdateSubtype";
@@ -11,11 +22,14 @@ import UpdateSizeClass from "./UpdateSizeClass";
 import UpdateManufacturer from "./UpdateManufacturer";
 import UpdateModel from "./UpdateModel";
 
+import dayjs from "dayjs";
+var localizedFormat = require('dayjs/plugin/localizedFormat')
+dayjs.extend(localizedFormat);
+
 const { Content } = Layout;
 
 const Taxonomys = (props) => {
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [isDataLoading, setIsDataLoading] = useState(true);
   const [classifications, setClassifications] = useState([]);
   const [classificationId, setClassificationId] = useState("");
   const [selectedClassification, setSelectedClassification] = useState({});
@@ -39,23 +53,29 @@ const Taxonomys = (props) => {
   const [items, setItems] = useState([]);
   const [rowKey, setRowKey] = useState("");
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
-
   const [taxonomy, setTaxonomy] = useState({});
   const [currentView, setCurrentView] = useState("");
 
-  const [clickedSizeClassId, setClickedSizeClassId] = useState("");
-
   const [columns, setColumns] = useState([]);
 
-  const getConditionLink = () => {
-    return "/condition-adjustments?sizeClassId=" + clickedSizeClassId;
-  }
-  const getRegionLink = () => {
-    return "/region-adjustments?sizeClassId=" + clickedSizeClassId;
-  }
-  const getUtilizationLink = () => {
-    return "/utilization-adjustments?sizeClassId=" + clickedSizeClassId;
-  }
+  const getConditionLink = (record) => {
+    if (!record || !record.sizeClassId) {
+      return "";
+    }
+    return "/condition-adjustments?sizeClassId=" + record.sizeClassId;
+  };
+  const getRegionLink = (record) => {
+    if (!record || !record.sizeClassId) {
+      return "";
+    }
+    return "/region-adjustments?sizeClassId=" + record.sizeClassId;
+  };
+  const getUtilizationLink = (record) => {
+    if (!record || !record.sizeClassId) {
+      return "";
+    }
+    return "/utilization-adjustments?sizeClassId=" + record.sizeClassId;
+  };
 
   const resetChoices = () => {
     setSelectedCategory({});
@@ -85,6 +105,7 @@ const Taxonomys = (props) => {
     });
     setRowKey("classificationId");
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const onSelectClassification = (value) => {
@@ -111,6 +132,7 @@ const Taxonomys = (props) => {
     });
     setRowKey("categoryId");
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const onSelectCategory = (value) => {
@@ -139,6 +161,7 @@ const Taxonomys = (props) => {
     });
     setRowKey("subtypeId");
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const onSelectSubtype = (value) => {
@@ -174,6 +197,7 @@ const Taxonomys = (props) => {
     });
     setRowKey("sizeClassId");
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const onSelectSizeClass = (value) => {
@@ -199,6 +223,7 @@ const Taxonomys = (props) => {
     });
     setRowKey("manufacturerId");
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const onSelectManufacturer = async (value) => {
@@ -212,6 +237,7 @@ const Taxonomys = (props) => {
     });
     setRowKey("modelId");
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const classificationColumns = [
@@ -223,7 +249,7 @@ const Taxonomys = (props) => {
     {
       title: "Classification Id",
       dataIndex: "classificationId",
-      editable: true,
+      width: "15%",
     },
     {
       title: "Classification Name",
@@ -245,7 +271,11 @@ const Taxonomys = (props) => {
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -262,7 +292,7 @@ const Taxonomys = (props) => {
     {
       title: "Category Id",
       dataIndex: "categoryId",
-      editable: true,
+      width: "10%",
     },
     {
       title: "Category Name",
@@ -284,7 +314,11 @@ const Taxonomys = (props) => {
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -292,15 +326,16 @@ const Taxonomys = (props) => {
     },
   ];
 
-  const optionsMenu = (
+  const optionsMenu = (record) => (
     <Menu>
       <Menu.Item>
-      <Link to={getConditionLink}>Condition Adjustments</Link>
+        <Link to={getConditionLink(record)}>Condition Adjustments</Link>
       </Menu.Item>
       <Menu.Item>
-      <Link to={getRegionLink}>Region Adjustments</Link>
+        <Link to={getRegionLink(record)}>Region Adjustments</Link>
       </Menu.Item>
-      <Menu.Item><Link to={getUtilizationLink}>Utilization Adjustments</Link>
+      <Menu.Item>
+        <Link to={getUtilizationLink(record)}>Utilization Adjustments</Link>
       </Menu.Item>
     </Menu>
   );
@@ -314,7 +349,7 @@ const Taxonomys = (props) => {
     {
       title: "Subtype Id",
       dataIndex: "subtypeId",
-      editable: true,
+      width: "10%",
     },
     {
       title: "Subtype Name",
@@ -336,7 +371,11 @@ const Taxonomys = (props) => {
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -353,7 +392,7 @@ const Taxonomys = (props) => {
     {
       title: "Size Class Id",
       dataIndex: "sizeClassId",
-      editable: true,
+      width: "10%",
     },
     {
       title: "Size Class Name",
@@ -390,14 +429,21 @@ const Taxonomys = (props) => {
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
-          <Dropdown overlay={optionsMenu}>
-    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-      Options <DownOutlined />
-    </a>
-  </Dropdown>
+          <Dropdown overlay={optionsMenu(record)}>
+            <a
+              className="ant-dropdown-link"
+              onClick={(e) => e.preventDefault()}
+            >
+              Options <DownOutlined />
+            </a>
+          </Dropdown>
         </Space>
       ),
     },
@@ -412,7 +458,7 @@ const Taxonomys = (props) => {
     {
       title: "Manufacturer Id",
       dataIndex: "manufacturerId",
-      editable: true,
+      width: "15%",
     },
     {
       title: "Manufacturer Name",
@@ -434,7 +480,11 @@ const Taxonomys = (props) => {
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -451,7 +501,7 @@ const Taxonomys = (props) => {
     {
       title: "Model Id",
       dataIndex: "modelId",
-      editable: true,
+      width: "10%",
     },
     {
       title: "Model Name",
@@ -473,7 +523,11 @@ const Taxonomys = (props) => {
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -491,10 +545,9 @@ const Taxonomys = (props) => {
   };
 
   const init = async function () {
-    setIsLoading(true);
+    setIsDataLoading(true);
     setRowKey("classificationId");
     populateClassifications();
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -502,6 +555,7 @@ const Taxonomys = (props) => {
   }, []);
 
   useEffect(() => {
+    clearRows();
     setSelectedCategory({});
     setSizeClassId("");
     setSizeClasses([]);
@@ -519,6 +573,7 @@ const Taxonomys = (props) => {
   }, [classificationId]);
 
   useEffect(() => {
+    clearRows();
     setSizeClassId("");
     setSizeClasses([]);
     setSubtypeId("");
@@ -535,6 +590,7 @@ const Taxonomys = (props) => {
   }, [categoryId]);
 
   useEffect(() => {
+    clearRows();
     setManufacturerId("");
     setSelectedSizeClass({});
     setManufacturers([]);
@@ -549,6 +605,7 @@ const Taxonomys = (props) => {
     if (!sizeClassId || sizeClassId === "") {
       return;
     }
+    clearRows();
     populateManufacturers();
   }, [sizeClassId]);
 
@@ -583,17 +640,24 @@ const Taxonomys = (props) => {
     }
   }, [rowKey]);
 
+  const clearRows = () => {
+    setIsDataLoading(true);
+    setItems([]);
+  };
+
   return (
     <React.Fragment>
       <Layout>
         <Content
           style={{
             paddingTop: 12,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
+          <div style={{ marginBottom: 8 }}>
             <Row gutter={12}>
               <Space>
                 <Col>
@@ -664,19 +728,26 @@ const Taxonomys = (props) => {
                 </Col>
               </Space>
             </Row>
-            
           </div>
-          <div style={{ paddingLeft: 16, marginBottom: 8}}>
-          <Row gutter={12}>
-          <Col span={24}>
-           
-            <Button type="ghost">Export</Button>
-            
-          </Col>
-          </Row>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Space>
+                  <Button type="ghost">Export</Button>
+                </Space>
+              </Col>
+            </Row>
           </div>
           <div style={{ marginBottom: 16 }}></div>
-          <Table columns={columns} dataSource={items} rowKey={rowKey} />
+          <Table
+            style={{ height: "400px" }}
+            scroll={{ y: 400 }}
+            size="small"
+            columns={columns}
+            dataSource={items}
+            rowKey={rowKey}
+            loading={isDataLoading}
+          />
         </Content>
       </Layout>
 
@@ -687,20 +758,60 @@ const Taxonomys = (props) => {
         visible={showUpdateDrawer}
         width={600}
       >
-        {
-      (()=> {
-        switch (currentView) {
-          case 'classification': return <UpdateClassification classification={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateClassification>;
-          case 'category': return <UpdateCategory category={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateCategory>;
-          case 'subtype': return <UpdateSubtype subtype={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateSubtype>;
-          case 'sizeClass': return <UpdateSizeClass sizeClass={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateSizeClass>;
-          case 'manufacturer': return <UpdateManufacturer manufacturer={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateManufacturer>;
-          case 'model': return <UpdateModel model={taxonomy} onSaveSuccess={onUpdateSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdateModel>;
-          default: return null;
-        }
-      })()
-     }
-        
+        {(() => {
+          switch (currentView) {
+            case "classification":
+              return (
+                <UpdateClassification
+                  classification={taxonomy}
+                  onSaveSuccess={onUpdateSuccess}
+                  onCancel={() => setShowUpdateDrawer(false)}
+                ></UpdateClassification>
+              );
+            case "category":
+              return (
+                <UpdateCategory
+                  category={taxonomy}
+                  onSaveSuccess={onUpdateSuccess}
+                  onCancel={() => setShowUpdateDrawer(false)}
+                ></UpdateCategory>
+              );
+            case "subtype":
+              return (
+                <UpdateSubtype
+                  subtype={taxonomy}
+                  onSaveSuccess={onUpdateSuccess}
+                  onCancel={() => setShowUpdateDrawer(false)}
+                ></UpdateSubtype>
+              );
+            case "sizeClass":
+              return (
+                <UpdateSizeClass
+                  sizeClass={taxonomy}
+                  onSaveSuccess={onUpdateSuccess}
+                  onCancel={() => setShowUpdateDrawer(false)}
+                ></UpdateSizeClass>
+              );
+            case "manufacturer":
+              return (
+                <UpdateManufacturer
+                  manufacturer={taxonomy}
+                  onSaveSuccess={onUpdateSuccess}
+                  onCancel={() => setShowUpdateDrawer(false)}
+                ></UpdateManufacturer>
+              );
+            case "model":
+              return (
+                <UpdateModel
+                  model={taxonomy}
+                  onSaveSuccess={onUpdateSuccess}
+                  onCancel={() => setShowUpdateDrawer(false)}
+                ></UpdateModel>
+              );
+            default:
+              return null;
+          }
+        })()}
       </Drawer>
     </React.Fragment>
   );
