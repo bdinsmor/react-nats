@@ -20,7 +20,7 @@ dayjs.extend(localizedFormat);
 
 const { Content } = Layout;
 
-const Taxonomys = (props) => {
+const Attachments = (props) => {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [classifications, setClassifications] = useState([]);
   const [classificationId, setClassificationId] = useState("");
@@ -363,4 +363,4 @@ const Taxonomys = (props) => {
   );
 };
 
-export default Taxonomys;
+export default Attachments;

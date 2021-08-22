@@ -1,184 +1,61 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import { EditOutlined } from "@ant-design/icons";
-import {
-  Space,
-  Row,
-  Col,
-  Table,
-  Drawer,
-  Layout,
-  Select,
-  Spin,
-  Button,
-} from "antd";
-import debounce from "lodash/debounce";
+import { notification, Row, Col, Layout, Space, Select, Button } from "antd";
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+
+import tables from "../../data/tables-for-export";
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
-function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
-  const [fetching, setFetching] = React.useState(false);
-  const [options, setOptions] = React.useState([]);
-  const fetchRef = React.useRef(0);
-  const debounceFetcher = React.useMemo(() => {
-    const loadOptions = (value) => {
-      fetchRef.current += 1;
-      const fetchId = fetchRef.current;
-      setOptions([]);
-      setFetching(true);
-      fetchOptions(value).then((newOptions) => {
-        if (fetchId !== fetchRef.current) {
-          // for fetch callback order
-          return;
-        }
-        setOptions(newOptions);
-        setFetching(false);
-      });
-    };
-
-    return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
-  return (
-    <Select
-      labelInValue
-      showSearch
-      showArrow={false}
-      filterOption={false}
-      onSearch={debounceFetcher}
-      notFoundContent={fetching ? <Spin size="small" /> : null}
-      {...props}
-      options={options}
-    />
-  );
-} // Usage of DebounceSelect
-
 const ExportFile = (props) => {
-  const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDataLoading, setIsDataLoading] = useState(false);
-  const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
-  const [items, setItems] = useState([]);
-  const [item, setItem] = useState({});
-  const [selectedManufacturer, setSelectedManufacturer] = useState([]);
-  const [selectedModel, setSelectedModel] = useState([]);
-
-  const handleManufacturerSearch = async (value) => {
-    const res = await DataService.getManufacturers(value);
-    const manuResults = res.map((item) => ({
-      label: `${item.manufacturerName}`,
-      value: item.manufacturerId,
-    }));
-    return manuResults;
-  };
-
-  const handleModelSearch = async (value) => {
-    if (!value || value === "") {
-      return [];
-    }
-    const res = await DataService.getModelsForManufacturer(
-      manufacturerId,
-      value
-    );
-    const modelResults = res.map((item) => ({
-      label: `${item.modelName}`,
-      value: item.modelId,
-    }));
-    return modelResults;
-  };
+  const [selectedTable, setSelectedTable] = useState({});
+  const [tableOptions, setTableOptions] = useState([]);
 
 
-  const onManufacturerSelect = (option) => {
-    setSelectedModel(null);
-    handleModelSearch("");
-    setItems([]);
-    if (!option || option === null) {
-      setSelectedManufacturer(null);
-      setManufacturerId(null);
-
-      return;
-    }
-    setSelectedManufacturer(option);
-    setManufacturerId(option.value);
-  };
-
-  const onModelSelect = async (option) => {
-    if (!option || option === null) {
-      setModelId("");
-      setSelectedModel(null);
-      return;
-    }
-    setModelId(option.value);
-    setSelectedModel(option);
-    const res = await DataService.getAliasesForModelId(option.value);
-    let index = 1;
-    res.forEach(function (element) {
-      element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
-      index++;
+  const openExportNotification = () => {
+    notification.open({
+      message: 'File Export Request Submitted',
+      description:
+        'Export File request has been submitted. You will receive an email shortly with a progress update',
+      className: 'export-message-class',
+      duration: 10,
+      style: {
+        width: 600,
+      },
     });
-    setItems(res);
   };
 
-
-  const columns = [
-    {
-      title: "#",
-      dataIndex: "index",
-      width: '5%',
-    },
-    {
-      title: "Model Id",
-      dataIndex: "modelId"
-    },
-    {
-      title: "Alias",
-      dataIndex: "modelAlias"
-    },
+  const onTableSelect = (value) => {
+    setSelectedTable(value);
     
-    {
-      title: "Last Modified",
-      dataIndex: "formattedDate"
-    },
-    {
-      title: "Last Modified By" ,
-      dataIndex: "user"
-    },
-    {
-      title: "",
-      key: "action",width: '50px',
-      fixed: 'right',
-      render: (text, record) => (
-        <Space size="middle">
-           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
-            Edit
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
-
-  const openUpdateDrawer = (item) => {
-    setItem(item);
-    setShowUpdateDrawer(true);
-  };
-  const onUpdateSuccess = () => {
-    setShowUpdateDrawer(false);
-    init();
-  };
+  }
 
   const init = async function () {
     setIsLoading(true);
-
+    if(tables || tables.length > 0) {
+      setTableOptions(tables.map((t) => {
+        return {value: t.name, label: t.title};
+      }));
+    }
+    
     setIsLoading(false);
   };
+
+  const onExport = async() => {
+    const postData = {
+      fileName: selectedTable.value,
+    };
+    const res = await DataService.exportFlatFile(postData);
+    openExportNotification();
+  }
+
 
   useEffect(() => {
     init();
   }, []);
+
 
   return (
     <React.Fragment>
@@ -189,56 +66,34 @@ const ExportFile = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
-            <Row>
-              <Space>
-                <Col>
-                  <h5>Manufacturer</h5>
-                  <DebounceSelect
-                    placeholder="Search Manufacturers"
-                    value={selectedManufacturer}
-                    fetchOptions={handleManufacturerSearch}
-                    allowClear={true}
-                    onChange={onManufacturerSelect}
-                    style={{
-                      width: "300px",
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <h5>Model</h5>
-                  <DebounceSelect
-                    placeholder="Search Models"
-                    value={selectedModel}
-                    fetchOptions={handleModelSearch}
-                    onChange={onModelSelect}
-                    allowClear={true}
-                    style={{
-                      width: "300px",
-                    }}
-                  />
-                </Col>
-
-              
-              </Space>
+            <Row gutter={12}  style={{marginBottom:'24px'}}>
+              <Col>
+                <h5>Flat File</h5>
+                <Select
+                  style={{
+                    width: "250px",
+                  }}
+                  labelInValue
+                  value={selectedTable}
+                  disabled={!tableOptions || tableOptions.length === 0}
+                  options={tableOptions}
+                  onSelect={onTableSelect}
+                />
+              </Col>
             </Row>
-          </div>
-          <div style={{ marginBottom: 16 }}></div>
-          <Table
-            columns={columns}
-            dataSource={items}
-            scroll={{ x: 500, y: 400 }}
-            rowKey="modelId"
-            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
-            loading={isDataLoading}
-          />
+           
+            <Row  style={{marginBottom: '24px'}}>
+            <Button type="primary"onClick={onExport}>Export</Button>
+            </Row>
+
         </Content>
       </Layout>
-     
     </React.Fragment>
   );
 };

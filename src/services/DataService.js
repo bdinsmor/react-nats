@@ -280,6 +280,13 @@ const DataService = {
     return response.data;
   },
 
+  async exportFlatFile(data) {
+    const response = await axios.post(API_URL + "/analyst/export-file", data, {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
   // UPDATES
 
   async updateConfiguration(isNew, data) {
