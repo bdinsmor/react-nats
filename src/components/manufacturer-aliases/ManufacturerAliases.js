@@ -142,7 +142,7 @@ const ManufacturerAliases = (props) => {
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+           <Button type="link" size="small" style={{fontSize:'12px'}} icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
             Edit
           </Button>
         </Space>

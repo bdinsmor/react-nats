@@ -295,7 +295,7 @@ const Taxonomys = (props) => {
         <Space size="left">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
@@ -347,7 +347,7 @@ const Taxonomys = (props) => {
         <Space size="left">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
@@ -413,7 +413,7 @@ const Taxonomys = (props) => {
         <Space size="left">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
@@ -483,12 +483,12 @@ const Taxonomys = (props) => {
         <Space size="left">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}}  icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
           </Button>
-          <Dropdown overlay={optionsMenu(record)}>
+          <Dropdown size="small" overlay={optionsMenu(record)}>
             <a
               className="ant-dropdown-link"
               onClick={(e) => e.preventDefault()}
@@ -543,7 +543,7 @@ const Taxonomys = (props) => {
         <Space size="left">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
@@ -595,7 +595,7 @@ const Taxonomys = (props) => {
         <Space size="left">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit

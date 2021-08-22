@@ -87,7 +87,7 @@ const ConditionAdjustments = (props) => {
         <Space size="middle">
           <Button
             type="link"
-            icon={<EditOutlined />}
+            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
