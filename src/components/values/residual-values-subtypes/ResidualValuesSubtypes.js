@@ -2,47 +2,11 @@ import React, { useState, useEffect } from "react";
 import DataService from "../../../services/DataService";
 import { Space, Row, Col, Table, Layout, Select, Spin } from "antd";
 import { ExportTableButton } from "ant-table-extensions";
-import debounce from "lodash/debounce";
 import dayjs from "dayjs";
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
-function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
-  const [fetching, setFetching] = React.useState(false);
-  const [options, setOptions] = React.useState([]);
-  const fetchRef = React.useRef(0);
-  const debounceFetcher = React.useMemo(() => {
-    const loadOptions = (value) => {
-      fetchRef.current += 1;
-      const fetchId = fetchRef.current;
-      setOptions([]);
-      setFetching(true);
-      fetchOptions(value).then((newOptions) => {
-        if (fetchId !== fetchRef.current) {
-          // for fetch callback order
-          return;
-        }
-        setOptions(newOptions);
-        setFetching(false);
-      });
-    };
-
-    return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
-  return (
-    <Select
-      labelInValue
-      showSearch
-      showArrow={false}
-      filterOption={false}
-      onSearch={debounceFetcher}
-      notFoundContent={fetching ? <Spin size="small" /> : null}
-      {...props}
-      options={options}
-    />
-  );
-} // Usage of DebounceSelect
 
 const ResidualValuesSubtypes = (props) => {
 
