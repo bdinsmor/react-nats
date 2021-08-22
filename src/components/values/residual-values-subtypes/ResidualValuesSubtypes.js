@@ -240,13 +240,14 @@ const ResidualValuesSubtypes = (props) => {
       title: "Last Modified",
       dataIndex: "formattedDate",
       width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
      
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
       width: '200px',
-     
+      sorter: (a, b) => a.user - b.user,
     },
   ];
 
