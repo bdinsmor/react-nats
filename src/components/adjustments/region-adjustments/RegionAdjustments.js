@@ -350,7 +350,7 @@ const RegionAdjusmtents = (props) => {
                 <Space>
                   <Button
                     type="ghost"
-                    onClick={onAdd}
+                    onClick={() => onAdd()}
                     disabled={!sizeClassId || sizeClassId === ""}
                   >
                     Add

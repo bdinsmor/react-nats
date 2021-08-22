@@ -338,7 +338,7 @@ const Usage = (props) => {
                 <Space>
                   <Button
                     type="ghost"
-                    onClick={onAdd}
+                    onClick={() => onAdd()}
                     disabled={!modelId || modelId === ""}
                   >
                     Add

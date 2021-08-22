@@ -258,7 +258,7 @@ const Options = (props) => {
             <Row gutter={12}>
               <Col span={24}>
                 <Space>
-                  <Button type="ghost" onClick={onAdd} disabled={!formValues || !formValues.sizeClassId || !formValues.modelYear}>Add</Button>
+                  <Button type="ghost" onClick={() => onAdd()} disabled={!formValues || !formValues.sizeClassId || !formValues.modelYear}>Add</Button>
                   <ExportTableButton
                     type="ghost"
                     dataSource={items}

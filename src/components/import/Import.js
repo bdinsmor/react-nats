@@ -162,7 +162,7 @@ const Import = (props) => {
                 <h5>&nbsp;</h5>
                 <Button
           type="primary"
-          onClick={handleUpload}
+          onClick={() => handleUpload()}
           disabled={importFiles.length === 0}
           loading={uploading}
         >

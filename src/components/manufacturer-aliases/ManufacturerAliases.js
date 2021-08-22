@@ -217,7 +217,7 @@ const ManufacturerAliases = (props) => {
                 <Space>
                   <Button
                     type="ghost"
-                    onClick={onAdd}
+                    onClick={() => onAdd()}
                     disabled={!manufacturerId || manufacturerId === ""}
                   >
                     Add

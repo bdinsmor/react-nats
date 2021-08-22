@@ -273,6 +273,48 @@ const DataService = {
     return response.data;
   },
 
+  async getPublishHistory() {
+    const response = await axios.get(API_URL + "/analyst/publish", {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
+  async publish() {
+    const response = await axios.post(API_URL + "/analyst/publish", null, {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
+  async getSyncHistory() {
+    const response = await axios.get(API_URL + "/analyst/sync", {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
+  async getStagedChanges() {
+    const response = await axios.get(API_URL + "/analyst/staged", {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+  
+  async sync() {
+    const response = await axios.post(API_URL + "/analyst/sync", null, {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+  async syncSandbox() {
+    const response = await axios.post(API_URL + "/analyst/sync", { sync_mode: "sandbox" }, {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
+
   async exportTable(data) {
     const response = await axios.post(API_URL + "/analyst/export-table", data, {
       headers: authHeader(),

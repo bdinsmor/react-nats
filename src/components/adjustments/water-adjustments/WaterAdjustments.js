@@ -445,7 +445,7 @@ const WaterAdjustments = (props) => {
                 <Space>
                   <Button
                     type="ghost"
-                    onClick={onAdd}
+                    onClick={() => onAdd()}
                     disabled={!sizeClassId || sizeClassId === "" || !manufacturerId || manufacturerId === ''}
                   >
                     Add

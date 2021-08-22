@@ -49,7 +49,7 @@ const HeaderBar = (props) => {
             <img className="logo-header logo-white" src={logo} alt="logo" />
             </Col>
             <Col span={12}>
-            <Typography style={{ color: 'fff', fontSize: "20px", textTransform: "capitalize" }}>
+            <Typography style={{ color: 'fff', fontSize: "22px", textTransform: "capitalize" }}>
                 <div style={{color:"#fff"}}>{title}</div>
               </Typography>
             </Col>

@@ -96,7 +96,7 @@ const LoginComponent = (props) => {
                                 >
                                     Log in
                                 </Button>
-                                <Button type="link" onClick={resetPassword} style={{ float: "right" }}>Reset Password</Button>
+                                <Button type="link" onClick={() => resetPassword()} style={{ float: "right" }}>Reset Password</Button>
                             </Form.Item>
                         </Form>
                     </Space>

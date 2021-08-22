@@ -315,7 +315,7 @@ const Attachments = (props) => {
                 <Space>
                   <Button
                     type="ghost"
-                    onClick={onAdd}
+                    onClick={() => onAdd()}
                     disabled={!subtypeId || subtypeId === ""}
                   >
                     Add

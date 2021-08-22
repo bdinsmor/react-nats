@@ -260,7 +260,7 @@ const Specs = (props) => {
                 <Space>
                   <Button
                     type="ghost"
-                    onClick={onAdd}
+                    onClick={() => onAdd()}
                     disabled={!configurationId || configurationId === ""}
                   >
                     Add
