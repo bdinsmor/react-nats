@@ -20,12 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateCategory = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-console.log(JSON.stringify(props.category,null,2))
+      setIsNew(false);
       form.setFieldsValue(props.category);
 
       setIsLoading(false);
@@ -41,10 +42,10 @@ console.log(JSON.stringify(props.category,null,2))
       const updates = {
         classificationId: props.category.classificationId,
         categoryId: props.category.categoryId,
-        categoryName: props.category.categoryName
+        categoryName: values.category.categoryName
       };
 
-      await DataService.updateCategory(updates);
+      await DataService.updateCategory(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
@@ -77,26 +78,35 @@ console.log(JSON.stringify(props.category,null,2))
         layout="vertical"
         hideRequiredMark
       >
-        <Row align="middle">
+        <Row align="left">
           <Col>
             <div>
-              <Typography style={{ fontSize: "20px" }}>
+              <Typography style={{ fontSize: "24px" }}>
               Update Category
               </Typography>
             </div>
           </Col>
         </Row>
-        <Divider />
-        <Row gutter={12}>
-          <Col span={24}>
-            <Form.Item
-              name="categoryId"
-              label="Category Id"
-              >
-              <Input placeholder="Category Id" disabled />
-            </Form.Item>
+        <Row align="left">
+          <Col>
+            <div>
+              <Typography style={{ fontSize: "18px" }}>
+              Update Category Id: {props.category.categoryId}
+              </Typography>
+            </div>
           </Col>
         </Row>
+        <Row align="left">
+          <Col>
+            <div>
+              <Typography style={{ fontSize: "18px" }}>
+              Update Category Id: {props.category.classificationId}
+              </Typography>
+            </div>
+          </Col>
+        </Row>
+        <Divider />
+        
         <Row gutter={12}>
           <Col span={24}>
             <Form.Item

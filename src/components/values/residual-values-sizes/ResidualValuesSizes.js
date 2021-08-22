@@ -377,7 +377,7 @@ const ResidualValuesSizes = (props) => {
                   <h5>Classification</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     placeholder="Classification"
                     labelInValue
@@ -391,7 +391,7 @@ const ResidualValuesSizes = (props) => {
                   <h5>Category</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedCategory}
@@ -404,7 +404,7 @@ const ResidualValuesSizes = (props) => {
                   <h5>Subtype</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSubtype}
@@ -417,7 +417,7 @@ const ResidualValuesSizes = (props) => {
                   <h5>Size Class</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSizeClass}
@@ -449,10 +449,9 @@ const ResidualValuesSizes = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="sizeClassId"
-            class="wide-table"
-            tableLayout="fixed"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             size="small"
             loading={isDataLoading}
             pagination={{

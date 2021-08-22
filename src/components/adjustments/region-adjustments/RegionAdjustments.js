@@ -4,16 +4,21 @@ import { Space, Drawer, Button, Row, Col, Table, Layout, Select, Spin } from "an
 import { EditOutlined } from "@ant-design/icons";
 import { ExportTableButton } from "ant-table-extensions";
 import UpdateAdjustment from "./UpdateAdjustment";
+import { useLocation } from 'react-router-dom';
 import dayjs from "dayjs";
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const RegionAdjusmtents = (props) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(false);
-
+  const [isNew, setIsNew] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
@@ -46,31 +51,37 @@ const RegionAdjusmtents = (props) => {
     {
       title: "Size Class Id",
       dataIndex: "sizeClassId",
+      width: "100px",
       sorter: (a, b) => a.sizeClassId - b.sizeClassId,
     },
     {
       title: "Country",
       dataIndex: "country",
+      width: "100px",
       sorter: (a, b) => a.country - b.country,
     },
     {
       title: "State",
       dataIndex: "state",
+      width: "100px",
       sorter: (a, b) => a.state - b.state,
     },
     {
       title: "Adjustment Value",
       dataIndex: "adjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.adjustmentValue - b.adjustmentValue,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
+      width: "100px",
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -94,12 +105,14 @@ const RegionAdjusmtents = (props) => {
 
 
   const onAdd = () => {
+    setIsNew(true);
     setItem({sizeClassId: sizeClassId});
     setShowUpdateDrawer(true);
   }
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -200,20 +213,31 @@ const RegionAdjusmtents = (props) => {
     setSizeClassId(value.value);
     setSelectedSizeClass(value);
     setIsDataLoading(true);
-    const res = await DataService.getConditionAdjustments(value.value);
+    const res = await DataService.getRegionAdjustments(value.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setItems(res);
     setIsDataLoading(false);
   };
 
-
+  let query = useQuery();
   const init = async function () {
     setIsLoading(true);
+    setIsNew(false);
     populateClassifications();
+    if(query) {
+      let querySizeClassId = query.get("sizeClassId");
+      if(querySizeClassId && querySizeClassId !== '') {
+        setSizeClassId(querySizeClassId);
+        onSelectSizeClass({value: querySizeClassId, label: querySizeClassId, key: querySizeClassId});
+      } else {
+        console.log("no query params")
+      }
+    }
     setIsLoading(false);
   };
 
@@ -267,7 +291,7 @@ const RegionAdjusmtents = (props) => {
                   <h5>Classification</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     placeholder="Classification"
                     labelInValue
@@ -281,7 +305,7 @@ const RegionAdjusmtents = (props) => {
                   <h5>Category</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedCategory}
@@ -294,7 +318,7 @@ const RegionAdjusmtents = (props) => {
                   <h5>Subtype</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSubtype}
@@ -307,7 +331,7 @@ const RegionAdjusmtents = (props) => {
                   <h5>Size Class</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSizeClass}
@@ -346,10 +370,9 @@ const RegionAdjusmtents = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="sizeClassId"
-            class="wide-table"
-            tableLayout="fixed"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             size="small"
             loading={isDataLoading}
             pagination={{
@@ -366,6 +389,7 @@ const RegionAdjusmtents = (props) => {
       >
         <UpdateAdjustment
           adjustment={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateAdjustment>

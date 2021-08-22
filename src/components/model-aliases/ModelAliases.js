@@ -248,7 +248,7 @@ const ModelAliases = (props) => {
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 8 }}>
+          <div style={{ marginBottom: 8}}>
             <Row gutter={12}>
               <Col span={24}>
                 <Space>
@@ -275,8 +275,9 @@ const ModelAliases = (props) => {
           size="small"
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ y: 400, x: 500 }}
             rowKey="modelId"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />

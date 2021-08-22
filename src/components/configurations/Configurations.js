@@ -70,6 +70,7 @@ const Configurations = (props) => {
   const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const [items, setItems] = useState([]);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [configuration, setConfiguration] = useState({});
@@ -202,11 +203,13 @@ const Configurations = (props) => {
 
   const onAdd = () => {
     setConfiguration({modelId: modelId});
+    setIsNew(true);
     setShowUpdateDrawer(true);
   }
 
   const openUpdateDrawer = (item) => {
     setConfiguration(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -216,7 +219,7 @@ const Configurations = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -307,8 +310,9 @@ const Configurations = (props) => {
           size="small"
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="configurationId"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
@@ -323,6 +327,7 @@ const Configurations = (props) => {
       >
         <UpdateConfiguration
           configuration={configuration}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateConfiguration>

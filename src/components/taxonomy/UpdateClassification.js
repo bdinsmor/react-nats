@@ -20,11 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateClassification = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
+      setIsNew(false);
       form.setFieldsValue(props.classification);
 
       setIsLoading(false);
@@ -39,10 +41,10 @@ const UpdateClassification = (props) => {
     try {
       const updates = {
         classifcationId: props.classification.classifcationId,
-        classificationName: props.classification.classificationName
+        classificationName: values.classification.classificationName
       };
 
-      await DataService.updateClassification(updates);
+      await DataService.updateClassification(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

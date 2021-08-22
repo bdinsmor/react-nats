@@ -18,18 +18,19 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateValue = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-      console.log("value: " + JSON.stringify(props.value,null,2))
+      setIsNew(props.isNew);
       form.setFieldsValue(props.value);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.value]);
+  }, [form, props.value, props.isNew]);
 
   const save = async (values) => {
     setIsLoading(true);
@@ -48,7 +49,7 @@ const UpdateValue = (props) => {
         wholesale: values.value.wholesale,
       };
 
-      await DataService.updateUsage(updates);
+      await DataService.updateValue(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

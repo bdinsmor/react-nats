@@ -62,6 +62,7 @@ const Usage = (props) => {
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isNew, setIsNew] = React.useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -138,87 +139,103 @@ const Usage = (props) => {
     {
       title: "Model Id",
       dataIndex: "modelId",
-      fixed: "left",
+      width: '100px',
       sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Model Year",
       dataIndex: "modelYear",
+      width: '100px',
       sorter: (a, b) => a.modelYear - b.modelYear,
     },
     {
       title: "Age",
       dataIndex: "age",
+      width: '100px',
       sorter: (a, b) => a.age - b.age,
     },
     {
       title: "Benchmark Level",
       dataIndex: "benchmarkLevel",
+      width: '150px',
       sorter: (a, b) => a.benchmarkLevel - b.benchmarkLevel,
     },
     {
       title: "Mean Annual Usage",
       dataIndex: "meanAnnualUsage",
+      width: '150px',
       sorter: (a, b) => a.meanAnnualUsage - b.meanAnnualUsage,
     },
     {
       title: "Record Count",
       dataIndex: "recordCount",
+      width: '150px',
       sorter: (a, b) => a.recordCount - b.recordCount,
     },
     {
       title: "Percentile25",
       dataIndex: "percentile25",
+      width: '100px',
       sorter: (a, b) => a.percentile25 - b.percentile25,
     },
     {
       title: "Percentile45",
       dataIndex: "percentile45",
+      width: '100px',
       sorter: (a, b) => a.percentile45 - b.percentile45,
     },
     {
       title: "Percentile55",
       dataIndex: "percentile55",
+      width: '100px',
       sorter: (a, b) => a.percentile55 - b.percentile55,
     },
     {
       title: "Percentile75",
       dataIndex: "percentile75",
+      width: '100px',
       sorter: (a, b) => a.percentile75 - b.percentile75,
     },
     {
       title: "Distribution25",
       dataIndex: "distribution25",
+      width: '120px',
       sorter: (a, b) => a.distribution25 - b.distribution25,
     },
     {
       title: "Distribution45",
       dataIndex: "distribution45",
+      width: '120px',
       sorter: (a, b) => a.distribution45 - b.distribution45,
     },
     {
       title: "Distribution55",
       dataIndex: "distribution55",
+      width: '120px',
       sorter: (a, b) => a.distribution55 - b.distribution55,
     },
     {
       title: "Distribution75",
       dataIndex: "distribution75",
+      width: '120px',
       sorter: (a, b) => a.distribution75 - b.distribution75,
     },
     {
       title: "Distribution99",
       dataIndex: "distribution99",
+      width: '120px',
       sorter: (a, b) => a.distribution99 - b.distribution99,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
+      width: '150px',
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -227,7 +244,7 @@ const Usage = (props) => {
       width: '50px',
       fixed: "right",
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -243,6 +260,7 @@ const Usage = (props) => {
 
   const onAdd = () => {
     setItem({ modelId: modelId });
+    setIsNew(true);
     setShowUpdateDrawer(true);
   };
 
@@ -252,12 +270,14 @@ const Usage = (props) => {
   };
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
+    setIsNew(false);
+    
     init();
   };
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -336,14 +356,17 @@ const Usage = (props) => {
             </Row>
           </div>
           <Table
-          class="wide-table"
-          tableLayout="fixed"
             loading={isDataLoading}
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             size="small"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             rowKey="modelId"
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>
@@ -356,6 +379,7 @@ const Usage = (props) => {
       >
         <UpdateUsage
           usage={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateUsage>

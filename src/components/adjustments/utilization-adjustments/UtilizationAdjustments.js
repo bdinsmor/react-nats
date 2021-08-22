@@ -4,16 +4,22 @@ import { Space, Drawer, Button, Row, Col, Table, Layout, Select, Spin } from "an
 import { EditOutlined } from "@ant-design/icons";
 import { ExportTableButton } from "ant-table-extensions";
 import UpdateAdjustment from "./UpdateAdjustment";
+import { useLocation } from 'react-router-dom';
 import dayjs from "dayjs";
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+
 const UtilizationAdjustments = (props) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(false);
-
+  const [isNew, setIsNew] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
@@ -46,71 +52,85 @@ const UtilizationAdjustments = (props) => {
     {
       title: "Size Class Id",
       dataIndex: "sizeClassId",
+      width: "120px",
       sorter: (a, b) => a.sizeClassId - b.sizeClassId,
     },
     {
       title: "Model Year",
       dataIndex: "modelYear",
+      width: "100px",
       sorter: (a, b) => a.modelYear - b.modelYear,
     },
     {
       title: "Fuel Type",
       dataIndex: "fuelType",
+      width: "120px",
       sorter: (a, b) => a.fuelType - b.fuelType,
     },
     {
       title: "Low Value",
       dataIndex: "lowValue",
+      width: "120px",
       sorter: (a, b) => a.lowValue - b.lowValue,
     },
     {
       title: "High Value",
       dataIndex: "highValue",
+      width: "120px",
       sorter: (a, b) => a.highValue - b.highValue,
     },
     {
       title: "Uom",
       dataIndex: "uom",
+      width: "80px",
       sorter: (a, b) => a.uom - b.uom,
     },
     {
-      title: "Retail Adjustment Value",
+      title: "Retail Adj",
       dataIndex: "retailAdjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.retailAdjustmentValue - b.retailAdjustmentValue,
     },
     {
-      title: "Finance Adjustment Value",
+      title: "Finance Adj",
       dataIndex: "financeAdjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.financeAdjustmentValue - b.financeAdjustmentValue,
     },
     {
-      title: "Wholesale Adjustment Value",
+      title: "Wholesale Adj",
       dataIndex: "wholesaleAdjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.wholesaleAdjustmentValue - b.wholesaleAdjustmentValue,
     },
     {
-      title: "Trade In Adjustment Value",
+      title: "TradeIn Adj",
       dataIndex: "tradeInAdjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.tradeInAdjustmentValue - b.tradeInAdjustmentValue,
     },
     {
-      title: "Low Adjustment Value",
+      title: "Low Adj",
       dataIndex: "lowAdjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.lowAdjustmentValue - b.lowAdjustmentValue,
     },
     {
-      title: "High Adjustment Value",
+      title: "High Adj",
       dataIndex: "highAdjustmentValue",
+      width: "120px",
       sorter: (a, b) => a.highAdjustmentValue - b.highAdjustmentValue,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
+      width: "150px",
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -135,11 +155,13 @@ const UtilizationAdjustments = (props) => {
 
   const onAdd = () => {
     setItem({subtypeId: subtypeId});
+    setIsNew(true);
     setShowUpdateDrawer(true);
   }
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -240,21 +262,33 @@ const UtilizationAdjustments = (props) => {
     setSizeClassId(value.value);
     setSelectedSizeClass(value);
     setIsDataLoading(true);
-    const res = await DataService.getConditionAdjustments(value.value);
+    const res = await DataService.getUtilizationAdjustments(value.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setItems(res);
     setIsDataLoading(false);
   };
 
+  const query = useQuery();
 
   const init = async function () {
     setIsLoading(true);
+    setIsNew(false);
     populateClassifications();
     setIsLoading(false);
+    if(query) {
+      let querySizeClassId = query.get("sizeClassId");
+      if(querySizeClassId && querySizeClassId !== '') {
+        setSizeClassId(querySizeClassId);
+        onSelectSizeClass({value: querySizeClassId, label: querySizeClassId, key: querySizeClassId});
+      } else {
+        console.log("no query params")
+      }
+    }
   };
 
   useEffect(() => {
@@ -307,7 +341,7 @@ const UtilizationAdjustments = (props) => {
                   <h5>Classification</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     placeholder="Classification"
                     labelInValue
@@ -321,7 +355,7 @@ const UtilizationAdjustments = (props) => {
                   <h5>Category</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedCategory}
@@ -334,7 +368,7 @@ const UtilizationAdjustments = (props) => {
                   <h5>Subtype</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSubtype}
@@ -347,7 +381,7 @@ const UtilizationAdjustments = (props) => {
                   <h5>Size Class</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSizeClass}
@@ -386,12 +420,11 @@ const UtilizationAdjustments = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="sizeClassId"
-            class="wide-table"
-            tableLayout="fixed"
             size="small"
             loading={isDataLoading}
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             pagination={{
               hideOnSinglePage: true,
               pageSize: items ? items.length : 10,
@@ -406,6 +439,7 @@ const UtilizationAdjustments = (props) => {
       >
         <UpdateAdjustment
           adjustment={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateAdjustment>

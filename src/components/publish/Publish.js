@@ -239,9 +239,14 @@ const Publish = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="modelId"
-              size="small"
+            size="small"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

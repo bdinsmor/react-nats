@@ -18,12 +18,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdatePopularity = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.popularity);
 
       setIsLoading(false);
@@ -52,7 +53,7 @@ const UpdatePopularity = (props) => {
         hundredPercent: values.popularity.hundredPercent
       };
 
-      await DataService.updateUsage(updates);
+      await DataService.updatePopularity(isNew,updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

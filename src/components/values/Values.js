@@ -63,6 +63,7 @@ const Values = (props) => {
   const [manufacturerId, setManufacturerId] = useState('');
   const [modelId, setModelId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isNew, setIsNew] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const [isDataLoading, setIsDataLoading] = useState(false);
@@ -329,6 +330,7 @@ const Values = (props) => {
  
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -338,7 +340,7 @@ const Values = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -421,9 +423,10 @@ const Values = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             size="small"
             loading={isDataLoading}
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             pagination={{
               hideOnSinglePage: true,
               pageSize: items ? items.length : 10,
@@ -440,6 +443,7 @@ const Values = (props) => {
       >
         <UpdateValue
           value={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateValue>

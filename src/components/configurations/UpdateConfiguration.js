@@ -20,30 +20,32 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateConfiguration = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.configuration);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.configuration]);
+  }, [form, props.configuration, props.isNew]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const configurationUpdates = {
+      const updates = {
+        configurationId: props.configuration.configurationId,
         sizeClassId: props.configuration.sizeClassId,
         modelId: values.configuration.modelId,
         modelYear: values.configuration.modelYear,
         vinModelNumber: values.configuration.vinModelNumber,
       };
 
-      await DataService.updateUser(configurationUpdates);
+      await DataService.updateConfiguration(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

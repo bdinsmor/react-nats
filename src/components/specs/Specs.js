@@ -22,7 +22,7 @@ const { Search } = Input;
 
 const Specs = (props) => {
   const [configurationId, setConfigurationId] = useState("");
-
+  const [isNew, setIsNew] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
@@ -126,21 +126,21 @@ const Specs = (props) => {
     {
       title: "Spec Name",
       dataIndex: "specName",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.specName - b.specName,
       ...getColumnSearchProps('specName'),
     },
     {
       title: "Spec Value",
       dataIndex: "specValue",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.specValue - b.specValue,
       ...getColumnSearchProps('specValue'),
     },
     {
       title: "Spec Uom",
       dataIndex: "specUom",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.specUom - b.specUom,
       ...getColumnSearchProps('specUom'),
     },
@@ -186,6 +186,7 @@ const Specs = (props) => {
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -209,13 +210,13 @@ const Specs = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
-  const onExport = () => {};
 
   const onAdd = () => {
+    setIsNew(true);
     setItem({ configurationId: configurationId });
     setShowUpdateDrawer(true);
   };
@@ -280,14 +281,11 @@ const Specs = (props) => {
             loading={isDataLoading}
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
-            
-            size="small"
-            pagination={{
-              hideOnSinglePage: true,
-              pageSize: items ? items.length : 10,
-            }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="id"
+            size="small"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
       </Layout>
@@ -300,6 +298,7 @@ const Specs = (props) => {
       >
         <UpdateSpec
           spec={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateSpec>

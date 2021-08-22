@@ -61,6 +61,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 const ManufacturerAliases = (props) => {
   const [manufacturerId, setManufacturerId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isNew, setIsNew] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
@@ -150,12 +151,14 @@ const ManufacturerAliases = (props) => {
   ];
 
   const onAdd = () => {
+    setIsNew(true);
     setItem({manufacturerId: manufacturerId});
     setShowUpdateDrawer(true);
   }
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -165,7 +168,7 @@ const ManufacturerAliases = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -234,8 +237,9 @@ const ManufacturerAliases = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ y: 400, x: 500 }}
             size="small"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             rowKey="manufacturerId"
             loading={isDataLoading}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
@@ -251,6 +255,7 @@ const ManufacturerAliases = (props) => {
       >
         <UpdateManufacturerAlias
           manufacturer={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateManufacturerAlias>

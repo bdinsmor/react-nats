@@ -20,12 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateSizeClass = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(false);
       form.setFieldsValue(props.sizeClass);
 
       setIsLoading(false);
@@ -41,12 +42,13 @@ const UpdateSizeClass = (props) => {
       const updates = {
         subtypeId: props.sizeClass.subtypeId,
         sizeClassId: props.sizeClass.sizeClassId,
-        sizeClassMin: props.sizeClass.sizeClassMin,
-        sizeClassMax: props.sizeClass.sizeClassMax,
-        sizeClassUom: props.sizeClass.sizeClassUom
+        sizeClassMin: values.sizeClass.sizeClassMin,
+        sizeClassMax: values.sizeClass.sizeClassMax,
+        sizeClassUom: values.sizeClass.sizeClassUom,
+        sizeClassName: values.sizeClass.sizeClassName
       };
 
-      await DataService.updateSizeClass(updates);
+      await DataService.updateSizeClass(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

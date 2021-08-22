@@ -20,12 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateManufacturer = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(false);
       form.setFieldsValue(props.manufacturer);
 
       setIsLoading(false);
@@ -39,12 +40,11 @@ const UpdateManufacturer = (props) => {
     setIsLoading(true);
     try {
       const updates = {
-        sizeClassId: props.manufacturer.sizeClassId,
-        manufacturerName: props.manufacturer.manufacturerName,
+        manufacturerName: values.manufacturer.manufacturerName,
         manufacturerId: props.manufacturer.manufacturerId
       };
 
-      await DataService.updateManufacturer(updates);
+      await DataService.updateManufacturer(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

@@ -234,8 +234,14 @@ const Sync = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="modelId"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            size="small"
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

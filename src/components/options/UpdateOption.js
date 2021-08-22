@@ -18,18 +18,19 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateOption = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.option);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.option]);
+  }, [form, props.isNew, props.option]);
 
   const save = async (values) => {
     setIsLoading(true);
@@ -42,7 +43,7 @@ const UpdateOption = (props) => {
         optionFamilyId: values.option.openFamilyId,
       };
 
-      await DataService.updateOption(updates);
+      await DataService.updateOption(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

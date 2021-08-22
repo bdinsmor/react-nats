@@ -62,7 +62,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 
 const Popularity = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
-
+  const [isNew, setIsNew] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -148,87 +148,103 @@ const Popularity = (props) => {
     {
       title: "Model Id",
       dataIndex: "modelId",
-      fixed: "left",
+      width: '100px',
       sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Record Count",
       dataIndex: "recordCount",
+      width: '120px',
       sorter: (a, b) => a.recordCount - b.recordCount,
     },
     {
       title: "Market Popularity Index",
       dataIndex: "markeyPopularityIndex",
+      width: '180px',
       sorter: (a, b) => a.markeyPopularityIndex - b.markeyPopularityIndex,
     },
     {
       title: "Benchmark Group",
       dataIndex: "benchmarkGroup",
+      width: '150px',
       sorter: (a, b) => a.benchmarkGroup - b.benchmarkGroup,
     },
     {
       title: "Market Popularity Label",
       dataIndex: "marketPopularityLabel",
+      width: '180px',
       sorter: (a, b) => a.marketPopularityLabel - b.marketPopularityLabel,
     },
     {
       title: "Twenty",
       dataIndex: "twenty",
+      width: '100px',
       sorter: (a, b) => a.twenty - b.twenty,
     },
     {
       title: "Forty",
       dataIndex: "forty",
+      width: '100px',
       sorter: (a, b) => a.forty - b.forty,
     },
     {
       title: "Sixty",
       dataIndex: "sixty",
+      width: '100px',
       sorter: (a, b) => a.sixty - b.sixty,
     },
     {
       title: "Eighty",
       dataIndex: "eighty",
+      width: '100px',
       sorter: (a, b) => a.eighty - b.eighty,
     },
     {
       title: "Hundred",
       dataIndex: "hundred",
+      width: '100px',
       sorter: (a, b) => a.hundred - b.hundred,
     },
     {
       title: "Twenty %",
       dataIndex: "twentyPercent",
+      width: '100px',
       sorter: (a, b) => a.twentyPercent - b.twentyPercent,
     },
     {
       title: "Forty %",
       dataIndex: "fortyPercent",
+      width: '100px',
       sorter: (a, b) => a.fortyPercent - b.fortyPercent,
     },
     {
       title: "Sixty %",
       dataIndex: "sixtyPercent",
+      width: '100px',
       sorter: (a, b) => a.sixtyPercent - b.sixtyPercent,
     },
     {
       title: "Eighty %",
       dataIndex: "eightyPercent",
+      width: '100px',
       sorter: (a, b) => a.eightyPercent - b.eightyPercent,
     },
     {
       title: "Hundred %",
       dataIndex: "hundredPercent",
+      width: '100px',
       sorter: (a, b) => a.hundredPercent - b.hundredPercent,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
+      width: '150px',
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -252,11 +268,13 @@ const Popularity = (props) => {
 
   const onAdd = () => {
     setItem({ modelId: modelId });
+    setIsNew(true);
     setShowUpdateDrawer(true);
   };
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -266,7 +284,7 @@ const Popularity = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -345,12 +363,11 @@ const Popularity = (props) => {
             </Row>
           </div>
           <Table
-          class="wide-table"
-          tableLayout="fixed"
+          style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             size="small"
             rowKey="modelId"
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
@@ -366,6 +383,7 @@ const Popularity = (props) => {
       >
         <UpdatePopularity
           popularity={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdatePopularity>

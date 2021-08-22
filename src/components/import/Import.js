@@ -1,184 +1,115 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import { EditOutlined } from "@ant-design/icons";
-import {
-  Space,
-  Row,
-  Col,
-  Table,
-  Drawer,
-  Layout,
-  Select,
-  Spin,
-  Button,
-} from "antd";
-import debounce from "lodash/debounce";
+import { UploadOutlined } from "@ant-design/icons";
+import reqwest from 'reqwest';
+import { Row, Col, Layout, Select, Button, Upload, message, Typography } from "antd";
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+import tables from "../../data/tables";
+import find from "lodash/find";
+
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
-
-function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
-  const [fetching, setFetching] = React.useState(false);
-  const [options, setOptions] = React.useState([]);
-  const fetchRef = React.useRef(0);
-  const debounceFetcher = React.useMemo(() => {
-    const loadOptions = (value) => {
-      fetchRef.current += 1;
-      const fetchId = fetchRef.current;
-      setOptions([]);
-      setFetching(true);
-      fetchOptions(value).then((newOptions) => {
-        if (fetchId !== fetchRef.current) {
-          // for fetch callback order
-          return;
-        }
-        setOptions(newOptions);
-        setFetching(false);
-      });
-    };
-
-    return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
-  return (
-    <Select
-      labelInValue
-      showSearch
-      showArrow={false}
-      filterOption={false}
-      onSearch={debounceFetcher}
-      notFoundContent={fetching ? <Spin size="small" /> : null}
-      {...props}
-      options={options}
-    />
-  );
-} // Usage of DebounceSelect
-
+const { Dragger } = Upload;
+const { Text } = Typography;
 const Import = (props) => {
-  const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDataLoading, setIsDataLoading] = useState(false);
-  const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
-  const [items, setItems] = useState([]);
-  const [item, setItem] = useState({});
-  const [selectedManufacturer, setSelectedManufacturer] = useState([]);
-  const [selectedModel, setSelectedModel] = useState([]);
-
-  const handleManufacturerSearch = async (value) => {
-    const res = await DataService.getManufacturers(value);
-    const manuResults = res.map((item) => ({
-      label: `${item.manufacturerName}`,
-      value: item.manufacturerId,
-    }));
-    return manuResults;
-  };
-
-  const handleModelSearch = async (value) => {
-    if (!value || value === "") {
-      return [];
-    }
-    const res = await DataService.getModelsForManufacturer(
-      manufacturerId,
-      value
-    );
-    const modelResults = res.map((item) => ({
-      label: `${item.modelName}`,
-      value: item.modelId,
-    }));
-    return modelResults;
-  };
+  const [selectedTable, setSelectedTable] = useState({});
+  const [selectedTableImportOption, setSelectedTableImportOption] = useState({});
+  const [selectedTableImportOptions, setSelectedTableImportOptions] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [tableOptions, setTableOptions] = useState([]);
+  const [importFiles, setImportFiles] = useState([]);
+  const [importHeaders, setImportHeaders] = useState([]);
 
 
-  const onManufacturerSelect = (option) => {
-    setSelectedModel(null);
-    handleModelSearch("");
-    setItems([]);
-    if (!option || option === null) {
-      setSelectedManufacturer(null);
-      setManufacturerId(null);
-
-      return;
-    }
-    setSelectedManufacturer(option);
-    setManufacturerId(option.value);
-  };
-
-  const onModelSelect = async (option) => {
-    if (!option || option === null) {
-      setModelId("");
-      setSelectedModel(null);
-      return;
-    }
-    setModelId(option.value);
-    setSelectedModel(option);
-    const res = await DataService.getAliasesForModelId(option.value);
-    let index = 1;
-    res.forEach(function (element) {
-      element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
-      index++;
-    });
-    setItems(res);
-  };
-
-  const onUpdateModelAlias = (record) => {};
-
-  const columns = [
-    {
-      title: "#",
-      dataIndex: "index",
-      width: '5%',
+  const uploadProps = {
+    onRemove: file => {
+      const index = importFiles.indexOf(file);
+        const newFileList = importFiles.slice();
+        newFileList.splice(index, 1);
+        setImportFiles(newFileList);
     },
-    {
-      title: "Model Id",
-      dataIndex: "modelId"
+    beforeUpload: file => {
+      setImportFiles([...importFiles, file])
+      return false;
     },
-    {
-      title: "Alias",
-      dataIndex: "modelAlias"
-    },
+    importFiles,
+  };
+
+  const handleUpload = () => {
     
-    {
-      title: "Last Modified",
-      dataIndex: "formattedDate"
-    },
-    {
-      title: "Last Modified By" ,
-      dataIndex: "user"
-    },
-    {
-      title: "",
-      key: "action",width: '50px',
-      fixed: 'right',
-      render: (text, record) => (
-        <Space size="middle">
-           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
-            Edit
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+    const formData = new FormData();
+    importFiles.forEach(file => {
+      formData.append('files[]', file);
+    });
 
-  const openUpdateDrawer = (item) => {
-    setItem(item);
-    setShowUpdateDrawer(true);
+    setUploading(true);
+
+    // You can use any AJAX library you like
+    reqwest({
+      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      method: 'post',
+      processData: false,
+      data: formData,
+      success: () => {
+        setUploading(true);
+        setImportFiles([]);
+        message.success('upload successfully.');
+      },
+      error: () => {
+        setUploading(false);
+        message.error('upload failed.');
+      },
+    });
   };
-  const onUpdateSuccess = () => {
-    setShowUpdateDrawer(false);
-    init();
+
+  const populateTableImportOptions = () => {
+    if(!selectedTable || !selectedTable.value) {
+      return;
+    }
+    const table = find(tables, ['name', selectedTable.value]);
+   
+    const keys = Object.keys(table.header).map((k) => {
+      return {label: k, value: k};
+    })
+    
+    setSelectedTableImportOptions(keys);
   };
+
+  const onTableSelect = (value) => {
+    setSelectedTable(value);
+  }
+
+  const onSelectImportOption = (value) => {
+    setSelectedTableImportOption(value);
+    const table = find(tables, ['name', selectedTable.value]);
+    const headers = table.header[value.value];
+    setImportHeaders(headers);
+  }
 
   const init = async function () {
     setIsLoading(true);
-
+    if(tables || tables.length > 0) {
+      setTableOptions(tables.map((t) => {
+        return {value: t.name, label: t.title};
+      }));
+    }
+    
     setIsLoading(false);
   };
+
 
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    if(!selectedTable) {
+      return;
+    }
+    populateTableImportOptions();
+  }, [selectedTable]);
 
   return (
     <React.Fragment>
@@ -189,55 +120,84 @@ const Import = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
-            <Row>
-              <Space>
-                <Col>
-                  <h5>Manufacturer</h5>
-                  <DebounceSelect
-                    placeholder="Search Manufacturers"
-                    value={selectedManufacturer}
-                    fetchOptions={handleManufacturerSearch}
-                    allowClear={true}
-                    onChange={onManufacturerSelect}
-                    style={{
-                      width: "300px",
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <h5>Model</h5>
-                  <DebounceSelect
-                    placeholder="Search Models"
-                    value={selectedModel}
-                    fetchOptions={handleModelSearch}
-                    onChange={onModelSelect}
-                    allowClear={true}
-                    style={{
-                      width: "300px",
-                    }}
-                  />
-                </Col>
-
-              
-              </Space>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col>
+                <h5>Table</h5>
+                <Select
+                  style={{
+                    width: "175px",
+                  }}
+                  labelInValue
+                  value={selectedTable}
+                  disabled={!tableOptions || tableOptions.length === 0}
+                  options={tableOptions}
+                  onSelect={onTableSelect}
+                />
+              </Col>
+              <Col>
+                <h5>Import Options</h5>
+                <Select
+                  style={{
+                    width: "175px",
+                  }}
+                  labelInValue
+                  value={selectedTableImportOption}
+                  disabled={
+                    !selectedTable ||
+                    !selectedTableImportOptions ||
+                    selectedTableImportOptions.length === 0
+                  }
+                  onSelect={onSelectImportOption}
+                  options={selectedTableImportOptions}
+                />
+              </Col>
+              <Col>
+                <h5>&nbsp;</h5>
+                <Button
+          type="primary"
+          onClick={handleUpload}
+          disabled={importFiles.length === 0}
+          loading={uploading}
+        >
+          {uploading ? 'Uploading' : 'Start Upload'}
+        </Button>
+              </Col>
             </Row>
+            <div style={{marginTop: '8px', marginBottom:'8px'}}>
+              {(importHeaders &&  importHeaders.length > 0) && 
+              <>
+              <Row><Typography style={{fontSize: '14px'}}>Required CSV headers:</Typography></Row>
+              <Row><Text code>{importHeaders.join(', ')}</Text></Row>
+              </>
+              }
+            </div>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
-          <Table
-            columns={columns}
-            dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
-            rowKey="modelId"
-            loading={isDataLoading}
-          />
+          
+        <Row>
+        <Dragger {...uploadProps} style={{paddingLeft: 16,
+            paddingRight: 16}}>
+    <p className="ant-upload-drag-icon">
+      <UploadOutlined />
+    </p>
+    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+    <p className="ant-upload-hint">
+      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+      band files
+    </p>
+  </Dragger>
+  </Row>
+  <Row>
+        
+          </Row>
         </Content>
       </Layout>
-     
     </React.Fragment>
   );
 };

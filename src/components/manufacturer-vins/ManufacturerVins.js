@@ -60,6 +60,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 const ManufacturerVins = (props) => {
   const [manufacturerId, setManufacturerId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isNew, setIsNew] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
@@ -102,42 +103,50 @@ const ManufacturerVins = (props) => {
       title: "#",
       dataIndex: "index",
       width: '50px',
+      fixed: 'left',
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Year",
       dataIndex: "modelYear",
+      width: '100px',
       sorter: (a, b) => a.modelYear - b.modelYear,
     },
     {
       title: "Vin Manufacturer Code",
       dataIndex: "vinManufacturerCode",
+      width: '120px',
       sorter: (a, b) => a.vinManufacturerCode - b.vinManufacturerCode,
     },
     {
       title: "Vin Year Code",
       dataIndex: "vinYearCode",
+      width: '120px',
       sorter: (a, b) => a.vinYearCode - b.vinYearCode,
     },
     {
       title: "Short Vin",
       dataIndex: "shortVin",
+      width: '120px',
       sorter: (a, b) => a.shortVin - b.shortVin,
     },
     {
       title: "Cic Code",
       dataIndex: "cicCode",
+      width: '120px',
       sorter: (a, b) => a.cicCode - b.cicCode,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By" ,
       dataIndex: "user",
+      width: '150px',
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -155,12 +164,14 @@ const ManufacturerVins = (props) => {
   ];
 
   const onAdd = () => {
+    setIsNew(true);
     setItem({manufacturerId: manufacturerId, manufacturerName: selectedManufacturer.label});
     setShowUpdateDrawer(true);
   }
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -170,7 +181,7 @@ const ManufacturerVins = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -238,9 +249,10 @@ const ManufacturerVins = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="id"
             size="small"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
@@ -255,6 +267,7 @@ const ManufacturerVins = (props) => {
       >
         <UpdateManufacturerVin
           manufacturerVin={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateManufacturerVin>

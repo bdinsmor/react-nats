@@ -20,18 +20,19 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateAttachment = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.attachment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.attachment]);
+  }, [form, props.attachment, props.isNew]);
 
   const save = async (values) => {
     setIsLoading(true);
@@ -43,7 +44,7 @@ const UpdateAttachment = (props) => {
         vinModelNumber: values.attachment.vinModelNumber,
       };
 
-      await DataService.updateUser(updates);
+      await DataService.updateAttachment(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

@@ -381,10 +381,9 @@ const ResidualValuesModels = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="modelId"
-            class="wide-table"
-            tableLayout="fixed"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             size="small"
             loading={isDataLoading}
             pagination={{

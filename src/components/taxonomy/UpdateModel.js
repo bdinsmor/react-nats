@@ -20,12 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateModel = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(false);
       form.setFieldsValue(props.model);
 
       setIsLoading(false);
@@ -41,10 +42,10 @@ const UpdateModel = (props) => {
       const updates = {
         modelId: props.model.modelId,
         manufacturerId: props.model.manufacturerId,
-        modelName: props.model.modelName
+        modelName: values.model.modelName
       };
 
-      await DataService.updateModel(updates);
+      await DataService.updateModel(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

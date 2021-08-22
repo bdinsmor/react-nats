@@ -265,33 +265,34 @@ const Taxonomys = (props) => {
     {
       title: "Classification Id",
       dataIndex: "classificationId",
-      width: '200px',
+      width: '80px',
       sorter: (a, b) => a.classificationId - b.classificationId,
     },
     {
       title: "Classification Name",
       dataIndex: "classificationName",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.classificationName - b.classificationName,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
       width: '50px',
+      fixed: 'right',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -316,33 +317,34 @@ const Taxonomys = (props) => {
     {
       title: "Category Id",
       dataIndex: "categoryId",
-      width: "200px",
+      width: "80px",
       sorter: (a, b) => a.categoryId - b.categoryId,
     },
     {
       title: "Category Name",
       dataIndex: "categoryName",
-      width: "200px",
+      width: "150px",
       sorter: (a, b) => a.categoryName - b.categoryName,
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
-      width: "200px",
-      sorter: (a, b) => a.index - b.index,
+      dataIndex: "formattedDate",
+      width: "150px",
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: "200px",
+      width: "100px",
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
       width: '50px',
+      fixed: 'right',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -381,33 +383,34 @@ const Taxonomys = (props) => {
     {
       title: "Subtype Id",
       dataIndex: "subtypeId",
-      width: '200px',
+      width: "80px",
       sorter: (a, b) => a.subtypeId - b.subtypeId,
     },
     {
       title: "Subtype Name",
       dataIndex: "subtypeName",
-      width: '200px',
+      width: "150px",
       sorter: (a, b) => a.subtypeName - b.subtypeName,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
+      width: "100px",
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      fixed: 'right',
       width: '50px',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -432,51 +435,52 @@ const Taxonomys = (props) => {
     {
       title: "Size Class Id",
       dataIndex: "sizeClassId",
-      width: '200px',
+      width: '80px',
       sorter: (a, b) => a.sizeClassId - b.sizeClassId,
     },
     {
       title: "Size Class Name",
       dataIndex: "sizeClassName",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.sizeClassName - b.sizeClassName,
     },
     {
       title: "Min",
       dataIndex: "sizeClassMin",
-      width: '200px',
+      width: '75px',
       sorter: (a, b) => a.sizeClassMin - b.sizeClassMin,
     },
     {
       title: "Max",
       dataIndex: "sizeClassMax",
-      width: '200px',
+      width: '75px',
       sorter: (a, b) => a.sizeClassMax - b.sizeClassMax,
     },
     {
       title: "Uom",
       dataIndex: "sizeClassUom",
-      width: '200px',
+      width: '50px',
       sorter: (a, b) => a.sizeClassUom - b.sizeClassUom,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
+      width: '150px',
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
-      width: '50px',
+      width: '150px',
+      fixed: 'right',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -509,32 +513,34 @@ const Taxonomys = (props) => {
     {
       title: "Manufacturer Id",
       dataIndex: "manufacturerId",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.manufacturerId - b.manufacturerId,
     },
     {
       title: "Manufacturer Name",
       dataIndex: "manufacturerName",
-      width: '200px',
+      width: '150px',
       sorter: (a, b) => a.manufacturerName - b.manufacturerName,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
+      width: '150px',
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",width: '50px',
+      key: "action",
+      fixed: 'right',
+      width: '50px',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -571,21 +577,22 @@ const Taxonomys = (props) => {
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
+      width: '100px',
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
       width: '50px',
+      fixed: 'right',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="left">
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -730,7 +737,7 @@ const Taxonomys = (props) => {
                   <h5>Classification</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     placeholder="Classification"
                     labelInValue
@@ -744,7 +751,7 @@ const Taxonomys = (props) => {
                   <h5>Category</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedCategory}
@@ -757,7 +764,7 @@ const Taxonomys = (props) => {
                   <h5>Subtype</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSubtype}
@@ -770,7 +777,7 @@ const Taxonomys = (props) => {
                   <h5>Size Class</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSizeClass}
@@ -783,7 +790,7 @@ const Taxonomys = (props) => {
                   <h5>Manufacturer</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedManufacturer}
@@ -813,13 +820,13 @@ const Taxonomys = (props) => {
           </div>
           <div style={{ marginBottom: 16 }}></div>
           <Table
-            style={{ height: "400px" }}
-            scroll={{ y: 400 }}
+            scroll={{ y: 400, x: 500 }}
             size="small"
             columns={columns}
             dataSource={items}
             rowKey={rowKey}
             loading={isDataLoading}
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>

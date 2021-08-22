@@ -24,7 +24,7 @@ const { Content } = Layout;
 
 const Options = (props) => {
   const [form] = Form.useForm();
-
+  const [isNew, setIsNew] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
@@ -122,30 +122,35 @@ const Options = (props) => {
       title: "#",
       dataIndex: "index",
       width: '50px',
+      fixed: 'left',
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Option Name",
       dataIndex: "optionName",
+      width: '100px',
       sorter: (a, b) => a.optionName - b.optionName,
       ...getColumnSearchProps('optionName'),
     },
     {
       title: "Option Value",
       dataIndex: "optionValue",
+      width: '100px',
       sorter: (a, b) => a.optionValue - b.optionValue,
       ...getColumnSearchProps('optionValue'),
     },
     {
       title: "Option Family Id",
       dataIndex: "optionFamilyId",
+      width: '120px',
       sorter: (a, b) => a.optionFamilyId - b.optionFamilyId,
       ...getColumnSearchProps('optionFamilyId'),
     },
     {
       title: "Option Family Name",
       dataIndex: "optionFamilyName",
+      width: '150px',
       sorter: (a, b) => a.optionFamilyName - b.optionFamilyName,
       ...getColumnSearchProps('optionFamilyName'),
     },
@@ -153,12 +158,14 @@ const Options = (props) => {
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: '120px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
       ...getColumnSearchProps('formattedDate'),
     },
     {
       title: "Last Modified By" ,
       dataIndex: "user",
+      width: '120px',
       sorter: (a, b) => a.user - b.user,
       ...getColumnSearchProps('user'),
     },
@@ -177,17 +184,15 @@ const Options = (props) => {
     },
   ];
 
-  const onExport = () => {
-
-  }
-
   const onAdd = () => {
+    setIsNew(true);
     setItem({sizeClassId: formValues.sizeClassId, modelYear: formValues.modelYear});
     setShowUpdateDrawer(true);
   }
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -197,7 +202,7 @@ const Options = (props) => {
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -270,9 +275,10 @@ const Options = (props) => {
             loading={isDataLoading}
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="id"
             size="small"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
@@ -287,6 +293,7 @@ const Options = (props) => {
       >
         <UpdateOption
           option={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateOption>

@@ -231,8 +231,9 @@ const ExportFile = (props) => {
           <Table
             columns={columns}
             dataSource={items}
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             rowKey="modelId"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
           />
         </Content>

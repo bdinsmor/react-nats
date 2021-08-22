@@ -20,12 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateManufacturerVin = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.manufacturerVin);
 
       setIsLoading(false);
@@ -46,7 +47,7 @@ const UpdateManufacturerVin = (props) => {
       modelYear: values.manufacturerVin.modelYear
       };
 
-      await DataService.updateManufacturerVin(updates);
+      await DataService.updateManufacturerVin(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

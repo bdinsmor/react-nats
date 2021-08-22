@@ -21,18 +21,19 @@ const { Option } = Select;
 
 const UpdateAdjustment = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.adjustment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.adjustment]);
+  }, [form, props.adjustment, props.isNew]);
 
   const save = async (values) => {
     setIsLoading(true);
@@ -43,7 +44,7 @@ const UpdateAdjustment = (props) => {
         adjustmentFactor: values.adjustment.adjustmentFactor,
       };
 
-      await DataService.updateUser(updates);
+      await DataService.updateConditionAdjustment(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

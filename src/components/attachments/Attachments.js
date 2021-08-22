@@ -135,31 +135,37 @@ const Taxonomys = (props) => {
     {
       title: "Subtype Id",
       dataIndex: "subtypeId",
+      width: "100px",
       sorter: (a, b) => a.subtypeId - b.subtypeId,
     },
     {
       title: "Subtype Name",
       dataIndex: "subtypeName",
+      width: "120px",
       sorter: (a, b) => a.subtypeName - b.subtypeName,
     },
     {
       title: "Attachment Category Id",
       dataIndex: "attachmentCategoryId",
+      width: "170px",
       sorter: (a, b) => a.attachmentCategoryId - b.attachmentCategoryId,
     },
     {
       title: "Attachment Category Name",
       dataIndex: "categoryName",
+      width: "180px",
       sorter: (a, b) => a.categoryName - b.categoryName,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
+      width: "150px",
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -263,7 +269,7 @@ const Taxonomys = (props) => {
                   <h5>Classification</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     placeholder="Classification"
                     labelInValue
@@ -277,7 +283,7 @@ const Taxonomys = (props) => {
                   <h5>Category</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedCategory}
@@ -290,7 +296,7 @@ const Taxonomys = (props) => {
                   <h5>Subtype</h5>
                   <Select
                     style={{
-                      width: "210px",
+                      width: "175px",
                     }}
                     labelInValue
                     value={selectedSubtype}
@@ -328,11 +334,12 @@ const Taxonomys = (props) => {
           </div>
           <div style={{ marginBottom: 16 }}></div>
           <Table
-            scroll={{ x: 1500, y: 400 }}
+            scroll={{ x: 500, y: 400 }}
             size="small"
             columns={columns}
             dataSource={items}
             rowKey="index"
+            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />

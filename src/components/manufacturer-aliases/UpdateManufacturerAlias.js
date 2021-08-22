@@ -20,29 +20,30 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateManufacturerAlias = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
       form.setFieldsValue(props.manufacturerAlias);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturerAlias]);
+  }, [form, props.isNew, props.manufacturerAlias]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
+      const updates = {
         manufacturerId: values.manufacturerAlias.manufacturerId,
         manufacturerName: values.manufacturerAlias.manufacturerName,
         manufacturerAlias: values.manufacturerAlias.manufacturerAlias,
       };
 
-      await DataService.updateUser(modelAliasUpdates);
+      await DataService.updateUser(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

@@ -4,6 +4,7 @@ import authHeader from "./AuthHeader";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const DataService = {
+  //GETS
   async getManufacturers(searchTerm) {
     const response = await axios.get(
       API_URL + "/analyst/search/manufacturers",
@@ -170,41 +171,50 @@ const DataService = {
 
   async getResidualValuesModels(modelId) {
     try {
-    const response = await axios.get(
-      API_URL + "/analyst/residual-values-models/" + modelId,
-      { headers: authHeader() }
-    );
-    return response.data;
+      const response = await axios.get(
+        API_URL + "/analyst/residual-values-models/" + modelId,
+        { headers: authHeader() }
+      );
+      return response.data;
     } catch (err) {
-        console.error("caught error trying to get residual values for model: ", err)
-        return [];
+      console.error(
+        "caught error trying to get residual values for model: ",
+        err
+      );
+      return [];
     }
   },
 
   async getResidualValuesSizes(sizeClassId) {
     try {
-    const response = await axios.get(
-      API_URL + "/analyst/residual-values-sizes/" + sizeClassId,
-      { headers: authHeader() }
-    );
-    return response.data;
-} catch (err) {
-    console.error("caught error trying to get residual values for size class: ", err)
-    return [];
-}
+      const response = await axios.get(
+        API_URL + "/analyst/residual-values-sizes/" + sizeClassId,
+        { headers: authHeader() }
+      );
+      return response.data;
+    } catch (err) {
+      console.error(
+        "caught error trying to get residual values for size class: ",
+        err
+      );
+      return [];
+    }
   },
 
   async getResidualValuesSubtypes(subtypeId) {
     try {
-    const response = await axios.get(
-      API_URL + "/analyst/residual-values-subtypes/" + subtypeId,
-      { headers: authHeader() }
-    );
-    return response.data;
-} catch (err) {
-    console.error("caught error trying to get residual values for subtype: ", err)
-    return [];
-}
+      const response = await axios.get(
+        API_URL + "/analyst/residual-values-subtypes/" + subtypeId,
+        { headers: authHeader() }
+      );
+      return response.data;
+    } catch (err) {
+      console.error(
+        "caught error trying to get residual values for subtype: ",
+        err
+      );
+      return [];
+    }
   },
 
   async getConditionAdjustments(sizeClassId) {
@@ -260,6 +270,250 @@ const DataService = {
       headers: authHeader(),
       params: { subtypeId: subtypeId },
     });
+    return response.data;
+  },
+
+  async exportTable(data) {
+    const response = await axios.post(API_URL + "/analyst/export-table", data, {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
+  // UPDATES
+
+  async updateConfiguration(isNew, data) {
+    let response;
+    if(!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/configurations",data,{headers: authHeader(),});
+    } else {
+      response = await axios.post(API_URL + "/analyst/taxonomy/configurations",data,{headers: authHeader()});
+    }
+    return response.data;
+  },
+
+  async updateModelAlias(isNew, data) {
+    let response;
+    if(!isNew) {
+      response = await axios.put(API_URL + "/analyst/model-alias",data,{headers: authHeader(),});
+    } else {
+      response = await axios.post(API_URL + "/analyst/model-alias",data,{headers: authHeader()});
+    }
+    return response.data;
+  },
+
+  async updateManufacturerAlias(isNew, data) {
+    let response;
+    if(!isNew) {
+      response = await axios.put(API_URL + "/analyst/manufacturer-alias",data,{headers: authHeader(),});
+    } else {
+      response = await axios.post(API_URL + "/analyst/manufacturer-alias",data,{headers: authHeader()});
+    }
+    return response.data;
+  },
+
+
+  async updateClassifcation(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/classifications", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateCategory(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/categories", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateSubtype(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/subtypes", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateSizeClass(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/sizes", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateManufacturer(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/manufacturers", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateModel(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/taxonomy/models", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateConditionAdjustment(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/condition-adjustments", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/condition-adjustments", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateRegiondjustment(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/region-adjustments", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/region-adjustments", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateUtilizationAdjustment(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/utilization-adjustments", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/utilization-adjustments", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateWaterAdjustment(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/water-adjustments", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/water-adjustments", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateOption(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(
+        API_URL + "/analyst/options/" + data.id,
+        data,
+        {
+          headers: authHeader(),
+        }
+      );
+    } else {
+      response = await axios.post(API_URL + "/analyst/options", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateSpec(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/specs/" + data.id, data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/specs/", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateValue(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/values", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/values", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateUsage(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/usage", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/specs", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updateManufacturerVin(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/manufacturer-vins", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/manufacturer-vins", data, {
+        headers: authHeader(),
+      });
+    }
+    return response.data;
+  },
+
+  async updatePopularity(isNew, data) {
+    let response;
+    if (!isNew) {
+      response = await axios.put(API_URL + "/analyst/popularity", data, {
+        headers: authHeader(),
+      });
+    } else {
+      response = await axios.post(API_URL + "/analyst/popularity", data, {
+        headers: authHeader(),
+      });
+    }
     return response.data;
   },
 

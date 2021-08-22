@@ -20,12 +20,13 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateSubtype = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(false);
       form.setFieldsValue(props.subtype);
 
       setIsLoading(false);
@@ -41,10 +42,10 @@ const UpdateSubtype = (props) => {
       const updates = {
         categoryId: props.subtype.categoryId,
         subTypeId: props.subtype.subtypeId,
-        subTypeName: props.subtype.subTypeName
+        subTypeName: values.subtype.subTypeName
       };
 
-      await DataService.updateSubtype(updates);
+      await DataService.updateSubtype(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Configurations from "./configurations/Configurations";
 
-import { Switch, Route, NavLink } from "react-router-dom";
-import { Menu, Layout } from "antd";
+import { Switch, Route, NavLink, useLocation } from "react-router-dom";
+import { Menu, Layout, Col, Row } from "antd";
 import HeaderBar from "./HeaderBar";
-
-import { useLocation } from "react-router-dom";
 import ModelAliases from "./model-aliases/ModelAliases";
 import ManufacturerAliases from "./manufacturer-aliases/ManufacturerAliases";
 import Taxonomys from "./taxonomy/Taxonomys";
@@ -28,13 +26,13 @@ import ConditionAdjustments from "./adjustments/condition-adjustments/ConditionA
 import RegionAdjusmtents from "./adjustments/region-adjustments/RegionAdjustments";
 import UtilizationAdjustments from "./adjustments/utilization-adjustments/UtilizationAdjustments";
 import WaterAdjustments from "./adjustments/water-adjustments/WaterAdjustments";
-import { uniqueId } from "lodash-es";
 
 
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 const { Header, Content, Sider } = Layout;
+
 
 const Home = (props) => {
   const location = useLocation();
@@ -159,23 +157,10 @@ const Home = (props) => {
         <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
           <HeaderBar title={location.pathname} />
         </Header>
-        <Sider
-            collapsible
-            collapsedWidth="75"
-            width="250px"
-            collapsed={siderCollapsed}
-            onCollapse={setSiderCollapsed}
-            style={{ width: "250px" }}
-          >
-            <div
-              style={{
-                maxHeight: "90%",
-                height: "90%",
-                overflow: "auto",
-                marginBottom: "8px",
-              }}
-            >
-               <Menu className="nav-menu" mode="inline" theme="dark" style={{marginTop:'44px', overflow: 'auto', minHeight: '80vh', maxHeight:'80vh'}}>
+        <Row>
+        <Col style={{maxWidth:'230px', width:'230px', overflow:'auto', minHeight:'100vh', backgroundColor: 'rgb(0, 21, 41)'}}>
+            
+               <Menu className="nav-menu" mode="inline" theme="dark" style={{paddingTop:'44px', maxHeight:'95vh', overflow:'auto'}}>
 
                 {listItems.map(function(group){
                     return <MenuItemGroup key={group.key} title="">{group.children.map(function(child) {
@@ -184,16 +169,8 @@ const Home = (props) => {
                     
                   })}
               </Menu>
-            </div>
-          </Sider>
-        <Content
-          style={{
-            backgroundColor: "white",
-            marginTop: "64px",
-            height: "calc(100vh - 64px)",
-          }}
-        >
-         
+          </Col>
+        <Col style={{width: '100%', maxWidth: '80vw', overflow:'auto', marginTop: '64px', display:'inline-flex'}}>
           <Switch>
             <Route exact path="/">
               <Taxonomys />
@@ -268,7 +245,8 @@ const Home = (props) => {
               <Publish />
             </Route>
           </Switch>
-        </Content>
+        </Col>
+        </Row>
       </Layout>
     </React.Fragment>
   );
