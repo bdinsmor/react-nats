@@ -12,6 +12,7 @@ import {
   Dropdown,
   Button,
 } from "antd";
+import { ExportTableButton } from "ant-table-extensions";
 import { Link } from "react-router-dom";
 
 import { DownOutlined, EditOutlined } from "@ant-design/icons";
@@ -100,7 +101,9 @@ const Taxonomys = (props) => {
     setClassifications(options);
     let index = 1;
     res.forEach(function (element) {
-      element.index = index;
+      element.index = index; 
+      element.key = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setRowKey("classificationId");
@@ -127,7 +130,9 @@ const Taxonomys = (props) => {
     setCategories(options);
     let index = 1;
     res.forEach(function (element) {
-      element.index = index;
+      element.index = index; 
+      element.key = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setRowKey("categoryId");
@@ -156,7 +161,9 @@ const Taxonomys = (props) => {
     setSubtypes(options);
     let index = 1;
     res.forEach(function (element) {
-      element.index = index;
+      element.index = index; 
+      element.key = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setRowKey("subtypeId");
@@ -192,7 +199,9 @@ const Taxonomys = (props) => {
     setSizeClasses(options);
     let index = 1;
     res.forEach(function (element) {
-      element.index = index;
+      element.index = index; 
+      element.key = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setRowKey("sizeClassId");
@@ -219,6 +228,8 @@ const Taxonomys = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.key = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setRowKey("manufacturerId");
@@ -232,10 +243,12 @@ const Taxonomys = (props) => {
     const res = await DataService.getTaxonomyModels(sizeClassId, value.value);
     let index = 1;
     res.forEach(function (element) {
-      element.index = index;
+      element.index = index; 
+      element.modelIdKey = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
-    setRowKey("modelId");
+    setRowKey("modelIdKey");
     setItems(res);
     setIsDataLoading(false);
   };
@@ -244,31 +257,39 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: '50px',
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Classification Id",
       dataIndex: "classificationId",
-      width: "15%",
+      width: '200px',
+      sorter: (a, b) => a.classificationId - b.classificationId,
     },
     {
       title: "Classification Name",
       dataIndex: "classificationName",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.classificationName - b.classificationName,
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
-      editable: true,
+      dataIndex: "formattedDate",
+      width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       render: (text, record) => (
         <Space size="middle">
           <Button
@@ -287,31 +308,39 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: '50px',
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Category Id",
       dataIndex: "categoryId",
-      width: "10%",
+      width: "200px",
+      sorter: (a, b) => a.categoryId - b.categoryId,
     },
     {
       title: "Category Name",
       dataIndex: "categoryName",
-      editable: true,
+      width: "200px",
+      sorter: (a, b) => a.categoryName - b.categoryName,
     },
     {
       title: "Last Modified",
       dataIndex: "ts",
-      editable: true,
+      width: "200px",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      width: "200px",
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       render: (text, record) => (
         <Space size="middle">
           <Button
@@ -344,31 +373,39 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: '50px',
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Subtype Id",
       dataIndex: "subtypeId",
-      width: "10%",
+      width: '200px',
+      sorter: (a, b) => a.subtypeId - b.subtypeId,
     },
     {
       title: "Subtype Name",
       dataIndex: "subtypeName",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.subtypeName - b.subtypeName,
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
-      editable: true,
+      dataIndex: "formattedDate",
+      width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       render: (text, record) => (
         <Space size="middle">
           <Button
@@ -387,46 +424,57 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: '50px',
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Size Class Id",
       dataIndex: "sizeClassId",
-      width: "10%",
+      width: '200px',
+      sorter: (a, b) => a.sizeClassId - b.sizeClassId,
     },
     {
       title: "Size Class Name",
       dataIndex: "sizeClassName",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.sizeClassName - b.sizeClassName,
     },
     {
       title: "Min",
       dataIndex: "sizeClassMin",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.sizeClassMin - b.sizeClassMin,
     },
     {
       title: "Max",
       dataIndex: "sizeClassMax",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.sizeClassMax - b.sizeClassMax,
     },
     {
       title: "Uom",
       dataIndex: "sizeClassUom",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.sizeClassUom - b.sizeClassUom,
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
-      editable: true,
+      dataIndex: "formattedDate",
+      width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       render: (text, record) => (
         <Space size="middle">
           <Button
@@ -453,31 +501,38 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: '50px',
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Manufacturer Id",
       dataIndex: "manufacturerId",
-      width: "15%",
+      width: '200px',
+      sorter: (a, b) => a.manufacturerId - b.manufacturerId,
     },
     {
       title: "Manufacturer Name",
       dataIndex: "manufacturerName",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.manufacturerName - b.manufacturerName,
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
-      editable: true,
+      dataIndex: "formattedDate",
+      width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       render: (text, record) => (
         <Space size="middle">
           <Button
@@ -496,31 +551,39 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: '50px',
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Id",
       dataIndex: "modelId",
-      width: "10%",
+      width: '100px',
+      sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Model Name",
       dataIndex: "modelName",
-      editable: true,
+      width: '100px',
+      sorter: (a, b) => a.modelName - b.modelName,
     },
     {
       title: "Last Modified",
-      dataIndex: "ts",
-      editable: true,
+      dataIndex: "formattedDate",
+      width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       render: (text, record) => (
         <Space size="middle">
           <Button
@@ -631,8 +694,8 @@ const Taxonomys = (props) => {
         setCurrentView("manufacturer");
         setColumns(manufacturerColumns);
         break;
-      case "modelId":
-        setCurrentView("model");
+      case "modelIdKey":
+        setCurrentView("modelId");
         setColumns(modelColumns);
         break;
       default:
@@ -650,7 +713,10 @@ const Taxonomys = (props) => {
       <Layout>
         <Content
           style={{
-            paddingTop: 12,
+            paddingTop: 24,
+            marginTop: 8,
+            marginLeft: 8,
+            marginRight: 8,
             paddingLeft: 16,
             paddingRight: 16,
             backgroundColor: "white",
@@ -733,7 +799,14 @@ const Taxonomys = (props) => {
             <Row gutter={12}>
               <Col span={24}>
                 <Space>
-                  <Button type="ghost">Export</Button>
+                <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
                 </Space>
               </Col>
             </Row>
@@ -747,6 +820,7 @@ const Taxonomys = (props) => {
             dataSource={items}
             rowKey={rowKey}
             loading={isDataLoading}
+            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
       </Layout>

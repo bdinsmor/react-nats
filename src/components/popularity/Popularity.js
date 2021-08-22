@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreatePopularity from "./CreatePopularity";
 import UpdatePopularity from "./UpdatePopularity";
 import { EditOutlined } from "@ant-design/icons";
 import {
@@ -14,9 +13,10 @@ import {
   Spin,
   Button,
 } from "antd";
+import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
@@ -24,6 +24,10 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   const [fetching, setFetching] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const fetchRef = React.useRef(0);
+
+  const clearOptions = () => {
+    setOptions([]);
+  }
   const debounceFetcher = React.useMemo(() => {
     const loadOptions = (value) => {
       fetchRef.current += 1;
@@ -32,7 +36,6 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
       setFetching(true);
       fetchOptions(value).then((newOptions) => {
         if (fetchId !== fetchRef.current) {
-          // for fetch callback order
           return;
         }
         setOptions(newOptions);
@@ -48,6 +51,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
       showSearch
       showArrow={false}
       filterOption={false}
+      onClear={clearOptions}
       onSearch={debounceFetcher}
       notFoundContent={fetching ? <Spin size="small" /> : null}
       {...props}
@@ -58,9 +62,10 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 
 const Popularity = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
+
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -78,7 +83,8 @@ const Popularity = (props) => {
 
   const handleModelSearch = async (value) => {
     if (!value || value === "") {
-      return [];
+      console.log("clearing models")
+      return [{label: 'test', value:'1', key:'1'}];
     }
     const res = await DataService.getModelsForManufacturer(
       manufacturerId,
@@ -91,10 +97,12 @@ const Popularity = (props) => {
     return modelResults;
   };
 
-
   const onManufacturerSelect = (option) => {
     setSelectedModel(null);
     handleModelSearch("");
+    setSelectedModel(null);
+    
+    
     setItems([]);
     if (!option || option === null) {
       setSelectedManufacturer(null);
@@ -107,57 +115,134 @@ const Popularity = (props) => {
   };
 
   const onModelSelect = async (option) => {
-    if (!option || option === null) {
+    if (!option || option === null || option === '') {
+
       setModelId("");
       setSelectedModel(null);
+    handleModelSearch("");
       return;
     }
+    setIsDataLoading(true);
     setModelId(option.value);
     setSelectedModel(option);
-    const res = await DataService.getAliasesForModelId(option.value);
+    const res = await DataService.getPopularityForModelId(option.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const columns = [
     {
       title: "#",
       dataIndex: "index",
-      width: '5%',
+      width: "50px",
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Id",
       dataIndex: "modelId",
-      editable: true,
+      fixed: "left",
+      sorter: (a, b) => a.modelId - b.modelId,
     },
     {
-      title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      title: "Record Count",
+      dataIndex: "recordCount",
+      sorter: (a, b) => a.recordCount - b.recordCount,
     },
-    
+    {
+      title: "Market Popularity Index",
+      dataIndex: "markeyPopularityIndex",
+      sorter: (a, b) => a.markeyPopularityIndex - b.markeyPopularityIndex,
+    },
+    {
+      title: "Benchmark Group",
+      dataIndex: "benchmarkGroup",
+      sorter: (a, b) => a.benchmarkGroup - b.benchmarkGroup,
+    },
+    {
+      title: "Market Popularity Label",
+      dataIndex: "marketPopularityLabel",
+      sorter: (a, b) => a.marketPopularityLabel - b.marketPopularityLabel,
+    },
+    {
+      title: "Twenty",
+      dataIndex: "twenty",
+      sorter: (a, b) => a.twenty - b.twenty,
+    },
+    {
+      title: "Forty",
+      dataIndex: "forty",
+      sorter: (a, b) => a.forty - b.forty,
+    },
+    {
+      title: "Sixty",
+      dataIndex: "sixty",
+      sorter: (a, b) => a.sixty - b.sixty,
+    },
+    {
+      title: "Eighty",
+      dataIndex: "eighty",
+      sorter: (a, b) => a.eighty - b.eighty,
+    },
+    {
+      title: "Hundred",
+      dataIndex: "hundred",
+      sorter: (a, b) => a.hundred - b.hundred,
+    },
+    {
+      title: "Twenty %",
+      dataIndex: "twentyPercent",
+      sorter: (a, b) => a.twentyPercent - b.twentyPercent,
+    },
+    {
+      title: "Forty %",
+      dataIndex: "fortyPercent",
+      sorter: (a, b) => a.fortyPercent - b.fortyPercent,
+    },
+    {
+      title: "Sixty %",
+      dataIndex: "sixtyPercent",
+      sorter: (a, b) => a.sixtyPercent - b.sixtyPercent,
+    },
+    {
+      title: "Eighty %",
+      dataIndex: "eightyPercent",
+      sorter: (a, b) => a.eightyPercent - b.eightyPercent,
+    },
+    {
+      title: "Hundred %",
+      dataIndex: "hundredPercent",
+      sorter: (a, b) => a.hundredPercent - b.hundredPercent,
+    },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      editable: true,
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
-      title: "Last Modified By" ,
+      title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
-      fixed: 'right',
+      width: '50px',
+      fixed: "right",
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -165,13 +250,11 @@ const Popularity = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
+  const onAdd = () => {
+    setItem({ modelId: modelId });
+    setShowUpdateDrawer(true);
   };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
+
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);
@@ -200,11 +283,13 @@ const Popularity = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
+          <div style={{ marginBottom: 8 }}>
             <Row>
               <Space>
                 <Col>
@@ -233,32 +318,45 @@ const Popularity = (props) => {
                     }}
                   />
                 </Col>
-
-              
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Space>
+                  <Button
+                    type="ghost"
+                    onClick={onAdd}
+                    disabled={!modelId || modelId === ""}
+                  >
+                    Add
+                  </Button>
+                  <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
+                </Space>
+              </Col>
+            </Row>
+          </div>
           <Table
+          class="wide-table"
+          tableLayout="fixed"
+            loading={isDataLoading}
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
+            size="small"
             rowKey="modelId"
+            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
       </Layout>
-      <Drawer
-        placement="right"
-        closable={false}
-        onClose={() => setShowCreateDrawer(false)}
-        visible={showCreateDrawer}
-        width={600}
-      >
-        <CreatePopularity
-          onSaveSuccess={onCreateSuccess}
-          onCancel={() => setShowCreateDrawer(false)}
-        ></CreatePopularity>
-      </Drawer>
       <Drawer
         placement="right"
         closable={false}

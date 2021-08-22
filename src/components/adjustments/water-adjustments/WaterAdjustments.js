@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../../services/DataService";
-import { Space, Row, Col, Table, Layout, Select, Spin } from "antd";
+import { Space, Drawer, Button, Input, Row, Col, Table, Layout, Select, Spin } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { ExportTableButton } from "ant-table-extensions";
+import UpdateAdjustment from "./UpdateAdjustment";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
+
+
 const { Content } = Layout;
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
@@ -43,15 +47,14 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
     />
   );
 } // Usage of DebounceSelect
-
-const ResidualValuesSubtypes = (props) => {
+const WaterAdjustments = (props) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
-
+  const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [classifications, setClassifications] = useState([]);
   const [classificationId, setClassificationId] = useState("");
   const [selectedClassification, setSelectedClassification] = useState({});
@@ -64,6 +67,13 @@ const ResidualValuesSubtypes = (props) => {
   const [subtypeId, setSubtypeId] = useState({});
   const [selectedSubtype, setSelectedSubtype] = useState({});
 
+  const [sizeClasses, setSizeClasses] = useState([]);
+  const [sizeClassId, setSizeClassId] = useState("");
+  const [selectedSizeClass, setSelectedSizeClass] = useState({});
+
+  const [manufacturers, setManufacturers] = useState([]);
+  const [manufacturerId, setManufacturerId] = useState("");
+  const [selectedManufacturer, setSelectedManufacturer] = useState({});
 
   const columns = [
     {
@@ -75,187 +85,82 @@ const ResidualValuesSubtypes = (props) => {
       sorter: (a, b) => a.index - b.index,
     },
     {
-      title: "Subtype Id",
-      dataIndex: "subtypeId",
-      width: '200px',
-      sorter: (a, b) => a.subtypeId - b.subtypeId,
+      title: "Size Class Id",
+      dataIndex: "sizeClassId",
+      sorter: (a, b) => a.sizeClassId - b.sizeClassId,
     },
     {
-      title: "1",
-      dataIndex: "1",
-      width: '100px',
-      sorter: (a, b) => a['1'] - b['1'],
+      title: "Manfacturer Id",
+      dataIndex: "manufacturerId",
+      sorter: (a, b) => a.manufacturerId - b.manufacturerId,
     },
     {
-      title: "2",
-      dataIndex: "2",
-      width: '100px',
-      sorter: (a, b) => a['2'] - b['2'],
+      title: "Model Year",
+      dataIndex: "modelYear",
+      sorter: (a, b) => a.modelYear - b.modelYear,
     },
     {
-      title: "3",
-      dataIndex: "3",
-      width: '100px',
-      sorter: (a, b) => a['3'] - b['3'],
+      title: "Fw Adj",
+      dataIndex: "fwAdj",
+      sorter: (a, b) => a.fwAdj - b.fwAdj,
     },
     {
-      title: "4",
-      dataIndex: "4",
-      width: '100px',
-      sorter: (a, b) => a['4'] - b['4'],
-    },
-    {
-      title: "5",
-      dataIndex: "5",
-      width: '100px',
-      sorter: (a, b) => a['5'] - b['5'],
-    },
-    {
-      title: "6",
-      dataIndex: "6",
-      width: '100px',
-      sorter: (a, b) => a['6'] - b['6'],
-    },
-    {
-      title: "7",
-      dataIndex: "7",
-      width: '100px',
-      sorter: (a, b) => a['7'] - b['7'],
-    },
-    {
-      title: "8",
-      dataIndex: "8",
-      width: '100px',
-      sorter: (a, b) => a['8'] - b['8'],
-    },
-    {
-      title: "9",
-      dataIndex: "9",
-      width: '100px',
-      sorter: (a, b) => a['9'] - b['9'],
-    },
-    {
-      title: "10",
-      dataIndex: "10",
-      width: '100px',
-      sorter: (a, b) => a['10'] - b['10'],
-    },
-    {
-      title: "11",
-      dataIndex: "11",
-      width: '100px',
-      sorter: (a, b) => a['11'] - b['11'],
-    },
-    {
-      title: "12",
-      dataIndex: "12",
-      width: '100px',
-      sorter: (a, b) => a['12'] - b['12'],
-    },
-    {
-      title: "13",
-      dataIndex: "13",
-      width: '100px',
-      sorter: (a, b) => a['13'] - b['13'],
-    },
-    {
-      title: "14",
-      dataIndex: "14",
-      width: '100px',
-      sorter: (a, b) => a['14'] - b['14'],
-    },
-    {
-      title: "15",
-      dataIndex: "15",
-      width: '100px',
-      sorter: (a, b) => a['15'] - b['15'],
-    },
-    {
-      title: "16",
-      dataIndex: "16",
-      width: '100px',
-      sorter: (a, b) => a['16'] - b['16'],
-    },
-    {
-      title: "17",
-      dataIndex: "17",
-      width: '100px',
-      sorter: (a, b) => a['17'] - b['17'],
-    },
-    {
-      title: "18",
-      dataIndex: "18",
-      width: '100px',
-      sorter: (a, b) => a['18'] - b['18'],
-    },
-    {
-      title: "19",
-      dataIndex: "19",
-      width: '100px',
-      sorter: (a, b) => a['19'] - b['19'],
-    },
-    {
-      title: "20",
-      dataIndex: "20",
-      width: '100px',
-      sorter: (a, b) => a['20'] - b['20'],
-    },
-    {
-      title: "21",
-      dataIndex: "21",
-      width: '100px',
-      sorter: (a, b) => a['21'] - b['21'],
-    },
-    {
-      title: "22",
-      dataIndex: "22",
-      width: '100px',
-      sorter: (a, b) => a['22'] - b['22'],
-    },
-    {
-      title: "23",
-      dataIndex: "23",
-      width: '100px',
-      sorter: (a, b) => a['23'] - b['23'],
-    },
-    {
-      title: "24",
-      dataIndex: "24",
-      width: '100px',
-      sorter: (a, b) => a['24'] - b['24'],
-    },
-    {
-      title: "25",
-      dataIndex: "25",
-      width: '100px',
-      sorter: (a, b) => a['25'] - b['25'],
-    },
-    {
-      title: "26",
-      dataIndex: "26",
-      width: '100px',
-      sorter: (a, b) => a['26'] - b['26'],
+      title: "Sw Adj",
+      dataIndex: "swAdj",
+      sorter: (a, b) => a.swAdj - b.swAdj,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
-     
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
-     
+      sorter: (a, b) => a.user - b.user,
+    },
+    {
+      title: "",
+      key: "action",
+      width: '50px',
+      fixed: "right",
+      render: (text, record) => (
+        <Space size="middle">
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
+            Edit
+          </Button>
+        </Space>
+      ),
     },
   ];
+
+
+  const onAdd = () => {
+    setItem({sizeClassId: sizeClassId, manufacturerId: manufacturerId});
+    setShowUpdateDrawer(true);
+  }
+
+  const openUpdateDrawer = (item) => {
+    setItem(item);
+    setShowUpdateDrawer(true);
+  };
+  const onUpdateSuccess = () => {
+    setShowUpdateDrawer(false);
+    init();
+  };
 
   const resetChoices = () => {
     setSelectedCategory({});
     setSelectedClassification({});
+    setSelectedSizeClass({});
     setSelectedSubtype({});
     setCategories([]);
     setSubtypes([]);
+    setSizeClasses([]);
   };
 
   const populateClassifications = async () => {
@@ -309,11 +214,68 @@ const ResidualValuesSubtypes = (props) => {
     setSubtypes(options);
   };
 
-  const onSelectSubtype = async (value) => {
+  const onSelectSubtype = (value) => {
     setSubtypeId(value.value);
     setSelectedSubtype(value);
+  };
+
+  const populateSizeClasses = async () => {
+    if (!classificationId || classificationId === "") {
+      return;
+    }
+    if (!categoryId || categoryId === "") {
+      return;
+    }
+    if (!subtypeId || subtypeId === "") {
+      return;
+    }
+    const res = await DataService.getSizeClasses(
+      classificationId,
+      categoryId,
+      subtypeId
+    );
+    const options = res.map((item) => ({
+      label: `${item.sizeClassName} (${item.sizeClassMin} - ${item.sizeClassMax} ${item.sizeClassUom})`,
+      value: item.sizeClassId,
+      key: item.sizeClassId,
+    }));
+    setSizeClasses(options);
+  };
+
+  const onSelectSizeClass = (value) => {
+    setSizeClassId(value.value);
+    setSelectedSizeClass(value);
+  };
+
+  const handleManufacturerSearch = async (value) => {
+    const res = await DataService.getManufacturers(value);
+    const manuResults = res.map((item) => ({
+      label: `${item.manufacturerName}`,
+      value: item.manufacturerId,
+    }));
+    return manuResults;
+  };
+
+  const onManufacturerSelect = (option) => {
+    setItems([]);
+    if (!option || option === null) {
+      setSelectedManufacturer(null);
+      setManufacturerId(null);
+
+      return;
+    }
+    setSelectedManufacturer(option);
+    setManufacturerId(option.value);
+  };
+
+  
+
+  const findAdjustments = async () => {
+    if(!manufacturerId || manufacturerId === '') {
+      return;
+    }
     setIsDataLoading(true);
-    const res = await DataService.getResidualValuesSubtypes(value.value);
+    const res = await DataService.getWaterAdjustments(manufacturerId, sizeClassId);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
@@ -322,6 +284,7 @@ const ResidualValuesSubtypes = (props) => {
     setItems(res);
     setIsDataLoading(false);
   };
+
 
 
   const init = async function () {
@@ -334,20 +297,29 @@ const ResidualValuesSubtypes = (props) => {
     init();
   }, []);
 
+  useEffect(() => {
+    findAdjustments();
+  }, [selectedManufacturer])
 
   useEffect(() => {
+    setSelectedSizeClass(null);
+    populateSizeClasses();
+  }, [selectedSubtype]);
+
+  useEffect(() => {
+    setSubtypes([]);
+    setSelectedSubtype(null);
+    setSelectedSizeClass(null);
     if(!selectedCategory || selectedCategory === null) {
       return;
     }
-    setSubtypes([]);
-    setSelectedSubtype(null);
-    
     populateSubtypes();
   }, [selectedCategory]);
 
   useEffect(() => {
     setSubtypes([]);
     setSelectedSubtype(null);
+    setSelectedSizeClass(null);
     setSelectedCategory(null);
     setCategories([]);
     populateCategories();
@@ -410,9 +382,34 @@ const ResidualValuesSubtypes = (props) => {
                     disabled={!subtypes || subtypes.length === 0}
                     options={subtypes}
                   />
-                 
                 </Col>
-                
+                <Col>
+                  <h5>Size Class</h5>
+                  <Select
+                    style={{
+                      width: "210px",
+                    }}
+                    labelInValue
+                    value={selectedSizeClass}
+                    onSelect={onSelectSizeClass}
+                    disabled={!sizeClasses || sizeClasses.length === 0}
+                    options={sizeClasses}
+                  />
+                </Col>
+                <Col>
+                  <h5>Manufacturer</h5>
+                  <DebounceSelect
+                    placeholder="Search Manufacturers"
+                    value={selectedManufacturer}
+                    fetchOptions={handleManufacturerSearch}
+                    allowClear={true}
+                    disabled={!sizeClassId || sizeClassId === ''}
+                    onChange={onManufacturerSelect}
+                    style={{
+                      width: "200px",
+                    }}
+                  />
+                </Col>
               </Space>
             </Row>
           </div>
@@ -421,6 +418,13 @@ const ResidualValuesSubtypes = (props) => {
             <Row gutter={12}>
               <Col span={24}>
                 <Space>
+                  <Button
+                    type="ghost"
+                    onClick={onAdd}
+                    disabled={!sizeClassId || sizeClassId === "" || !manufacturerId || manufacturerId === ''}
+                  >
+                    Add
+                  </Button>
                   <ExportTableButton
                     type="ghost"
                     dataSource={items}
@@ -447,10 +451,23 @@ const ResidualValuesSubtypes = (props) => {
               pageSize: items ? items.length : 10,
             }}
           />
+          <Drawer
+        placement="right"
+        closable={false}
+        onClose={() => setShowUpdateDrawer(false)}
+        visible={showUpdateDrawer}
+        width={600}
+      >
+        <UpdateAdjustment
+          adjustment={item}
+          onSaveSuccess={onUpdateSuccess}
+          onCancel={() => setShowUpdateDrawer(false)}
+        ></UpdateAdjustment>
+      </Drawer>
         </Content>
       </Layout>
     </React.Fragment>
   );
 };
 
-export default ResidualValuesSubtypes;
+export default WaterAdjustments;

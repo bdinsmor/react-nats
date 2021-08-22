@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
 import UpdateValue from "./UpdateValue";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined} from "@ant-design/icons";
 import {
   Space,
   Row,
   Col,
   Table,
+  Input,
   Drawer,
   Layout,
   Select,
   Spin,
   Button,
 } from "antd";
+import Highlighter from 'react-highlight-words';
+import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
+const { Search } = Input;
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   const [fetching, setFetching] = React.useState(false);
@@ -56,10 +60,12 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 } // Usage of DebounceSelect
 
 const Values = (props) => {
-  const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
+  const [manufacturerId, setManufacturerId] = useState('');
+  const [modelId, setModelId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -90,6 +96,75 @@ const Values = (props) => {
     return modelResults;
   };
 
+  const getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+              
+            }}
+          >
+            Filter
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : '',
+    render: text =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+    
+  };
+
+  const handleReset = clearFilters => {
+    clearFilters();
+    setSearchText('');
+  };
+
 
   const onManufacturerSelect = (option) => {
     setSelectedModel(null);
@@ -113,7 +188,22 @@ const Values = (props) => {
     }
     setModelId(option.value);
     setSelectedModel(option);
-    const res = await DataService.getAliasesForModelId(option.value);
+    setIsDataLoading(true);
+    const res = await DataService.getValues(option.value);
+    let index = 1;
+    res.forEach(function (element) {
+      element.index = index;
+      element.formattedDate = dayjs(element.ts).format('lll');
+      index++;
+    });
+    setItems(res);
+    setIsDataLoading(false);
+  };
+
+  const onLoadConfigurationId = async (value) => {
+    setManufacturerId('');
+    setModelId('');
+    const res = await DataService.getValuesForConfigurationId(value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
@@ -123,38 +213,108 @@ const Values = (props) => {
     setItems(res);
   };
 
-  const onUpdateModelAlias = (record) => {};
-
   const columns = [
     {
       title: "#",
       dataIndex: "index",
-      width: '5%',
+      width: '100px',
+      fixed: 'left',
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
-      title: "Model Id",
-      dataIndex: "modelId",
-      editable: true,
+      title: "Configuration Id",
+      dataIndex: "configurationId",
+      width: '200px',
+      sorter: (a, b) => a.configurationId - b.configurationId,
+      ...getColumnSearchProps('configurationId'),
     },
     {
-      title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      title: "Model Year",
+      dataIndex: "modelYear",
+      width: '200px',
+      sorter: (a, b) => a.modelYear - b.modelYear,
+      ...getColumnSearchProps('modelYear'),
     },
-    
+    {
+      title: "Revision Date",
+      dataIndex: "revisionDate",
+      width: '200px',
+      sorter: (a, b) => a.revisionDate - b.revisionDate,
+      ...getColumnSearchProps('revisionDate'),
+    },
+    {
+      title: "MSRP",
+      dataIndex: "msrp",
+      width: '200px',
+      sorter: (a, b) => a.msrp - b.msrp,
+    },
+    {
+      title: "Finance",
+      dataIndex: "finance",
+      width: '200px',
+      sorter: (a, b) => a.finance - b.finance,
+    },
+    {
+      title: "Retail",
+      dataIndex: "retail",
+      width: '200px',
+      sorter: (a, b) => a.retail - b.retail,
+    },
+    {
+      title: "Whole",
+      dataIndex: "wholesale",
+      width: '200px',
+      sorter: (a, b) => a.wholesale - b.wholesale,
+    },
+    {
+      title: "Trade In",
+      dataIndex: "tradeIn",
+      width: '200px',
+      sorter: (a, b) => a.tradeIn - b.tradeIn,
+    },
+    {
+      title: "Asking Price",
+      dataIndex: "askingPrice",
+      width: '200px',
+      sorter: (a, b) => a.askingPrice - b.askingPrice,
+    },
+    {
+      title: "Auction Price",
+      dataIndex: "auctionPrice",
+      width: '200px',
+      sorter: (a, b) => a.auctionPrice - b.auctionPrice,
+    },
+    {
+      title: "Low",
+      dataIndex: "low",
+      width: '200px',
+      sorter: (a, b) => a.low - b.low,
+    },
+    {
+      title: "High",
+      dataIndex: "high",
+      width: '200px',
+      sorter: (a, b) => a.high - b.high,
+    },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
+      ...getColumnSearchProps('formattedDate'),
     },
     {
       title: "Last Modified By" ,
       dataIndex: "user",
-      editable: true,
+      width: '200px',
+      sorter: (a, b) => a.user - b.user,
+      ...getColumnSearchProps('user'),
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -166,13 +326,7 @@ const Values = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
-  };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
+ 
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);
@@ -201,11 +355,13 @@ const Values = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
+          <div style={{ marginBottom: 8}}>
             <Row>
               <Space>
                 <Col>
@@ -234,17 +390,44 @@ const Values = (props) => {
                     }}
                   />
                 </Col>
-
+                <Col span={12} offset={12}>
+                  <h5>Configuration Id</h5>
+                  <Search
+                    placeholder="Configuration Id"
+                    onSearch={onLoadConfigurationId}
+                    style={{ width: 200 }}
+                  />
+                </Col>
               
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Space>
+                  <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
+                </Space>
+              </Col>
+            </Row>
+          </div>
           <Table
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
-            rowKey="modelId"
+            size="small"
+            loading={isDataLoading}
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

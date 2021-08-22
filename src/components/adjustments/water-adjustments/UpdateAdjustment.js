@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import DataService from "../../services/DataService";
+import DataService from "../../../services/DataService";
 import {
   notification,
   Input,
@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Form,
+  Select,
   Space,
   Divider,
   Typography,
@@ -16,9 +17,9 @@ import {
 
 
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+const { Option } = Select;
 
-
-const UpdateTaxonomy = (props) => {
+const UpdateAdjustment = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +27,35 @@ const UpdateTaxonomy = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturer);
+      form.setFieldsValue(props.adjustment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturer]);
+  }, [form, props.adjustment]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.manufacturer.modelId,
-        modelAlias: values.manufacturer.modelAlias
+      const updates = {
+        sizeClassId: props.adjustment.sizeClassId,
+        manufacturerId: values.adjustment.manufacturerId,
+        modelYear: values.adjustment.modelYear,
+        fwValue: values.adjustment.fwValue,
+        swValue: values.adjustment.swValue
       };
 
-      await DataService.updateManufacturerAlias(modelAliasUpdates);
+      await DataService.updateUser(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Adjustment Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Adjusment",
         duration: 2,
       });
       setIsLoading(false);
@@ -74,58 +78,80 @@ const UpdateTaxonomy = (props) => {
         layout="vertical"
         hideRequiredMark
       >
-        <Row align="middle">
+        <Row align="left">
           <Col>
             <div>
-              <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer Alias
+              <Typography style={{ fontSize: "24px" }}>
+                Water Adjustment
               </Typography>
             </div>
           </Col>
         </Row>
+        <Row align="left">
+          <Col>
+            <div>
+              <Typography style={{ fontSize: "18px" }}>
+                Size Class Id: {props.adjustment.sizeClassId}
+              </Typography>
+            </div>
+          </Col>
+        </Row>
+        <Row align="left">
+          <Col>
+            <div>
+              <Typography style={{ fontSize: "18px" }}>
+                Manufacturer Id: {props.adjustment.manufacturerId}
+              </Typography>
+            </div>
+          </Col>
+        </Row>
+        
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerId"
+              name="modelYear"
+              label="Model Year"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Id cannot be empty",
+                  message: "Model Year cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Id" />
+              <Input placeholder="Model Year" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerName"
+              name="fwValue"
+              label="Freshwater Value"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer cannot be empty",
+                  message: "Freshwater Value cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Freshwater Value" />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="manufacturerAlias"
+              name="swValue"
+              label="Saltwater Value"
               rules={[
                 {
                   required: true,
-                  message: "Manufacturer Alias cannot be empty",
+                  message: "Saltwater Value cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Manufacturer Alias" />
+              <Input placeholder="Saltwater Value" />
             </Form.Item>
           </Col>
         </Row>
@@ -156,4 +182,4 @@ const UpdateTaxonomy = (props) => {
   );
 };
 
-export default UpdateTaxonomy;
+export default UpdateAdjustment;

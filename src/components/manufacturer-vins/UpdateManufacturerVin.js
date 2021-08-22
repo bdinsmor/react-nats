@@ -18,7 +18,7 @@ import {
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 
-const UpdateModelAlias = (props) => {
+const UpdateManufacturerVin = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,12 +26,12 @@ const UpdateModelAlias = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.modelAlias);
+      form.setFieldsValue(props.manufacturerVin);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.modelAlias]);
+  }, [form, props.manufacturerVin]);
 
   const save = async (values) => {
     setIsLoading(true);
@@ -79,71 +79,56 @@ const UpdateModelAlias = (props) => {
         layout="vertical"
         hideRequiredMark
       >
-        <Row align="middle">
+        <Row align="left">
           <Col>
             <div>
-              <Typography style={{ fontSize: "20px" }}>
-                Edit Manufacturer VIN
+              <Typography style={{ fontSize: "24px" }}>
+                Manufacturer VIN
+              </Typography>
+            </div>
+          </Col>
+        </Row>
+        <Row align="left">
+          <Col>
+            <div>
+              <Typography style={{ fontSize: "18px" }}>
+                Manufacturer: {props.manufacturerVin.manufacturerName}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row align="middle">
-          <Col>
-            <div>
-              <Typography style={{ fontSize: "20px" }}>
-                {props.model.modelId}
-              </Typography>
-            </div>
-          </Col>
-        </Row>
-        <Divider />
         <Row>
           <Col span={24}>
-            <Form.Item name="manufacturerId">
-              <Input placeholder="Manufacturer Id" disabled />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="manufacturerName">
-              <Input placeholder="Manufacturer Name" disabled />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="modelYear">
+            <Form.Item name="modelYear" label="Model Year">
               <Input placeholder="Model Year" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item name="vinManufacturerCode">
+            <Form.Item name="vinManufacturerCode" label="VIN Manufacturer Code">
               <Input placeholder="VIN Manufacturer Code" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item name="vinYearCode">
-              <Input placeholder="Manufacturer Id" />
+            <Form.Item name="vinYearCode" label="VIN Year Code">
+              <Input placeholder="VIN Year Code" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item name="shortVin">
+            <Form.Item name="shortVin" label="Short VIN">
               <Input placeholder="Short VIN" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item name="cicCode">
+            <Form.Item name="cicCode" label="CIC Code">
               <Input placeholder="CIC Code" />
             </Form.Item>
           </Col>
@@ -175,4 +160,4 @@ const UpdateModelAlias = (props) => {
   );
 };
 
-export default UpdateModelAlias;
+export default UpdateManufacturerVin;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import DataService from "../../services/DataService";
+import DataService from "../../../services/DataService";
 import {
   notification,
   Input,
@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Form,
+  Select,
   Space,
   Divider,
   Typography,
@@ -16,9 +17,9 @@ import {
 
 
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+const { Option } = Select;
 
-
-const CreatePopularity = (props) => {
+const UpdateAdjustment = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,32 +27,34 @@ const CreatePopularity = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.model);
+      form.setFieldsValue(props.adjustment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.model]);
+  }, [form, props.adjustment]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: props.model.modelId,
-        modelAlias: values.model.modelAlias
+      const updates = {
+        sizeClassId: props.adjustment.sizeClassId,
+        country: values.adjustment.country,
+        state: values.adjustment.state,
+        adjustmentValue: values.adjustment.adjustmentValue
       };
 
-      await DataService.updateModelAlias(modelAliasUpdates);
+      await DataService.updateUser(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Saved",
+        message: "Adjustment Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Saving Model Alias",
+        message: "Error Updating Adjusment",
         duration: 2,
       });
       setIsLoading(false);
@@ -78,24 +81,58 @@ const CreatePopularity = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                {props.model.modelId}
+                Region Adjustment for Size Class Id: {props.adjustment.sizeClassId}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="modelId"
+              name="country"
+              label="Country"
               rules={[
                 {
                   required: true,
-                  message: "Model Id cannot be empty",
+                  message: "Country cannot be empty",
                 },
               ]}
             >
-              <Input placeholder="Model Id" />
+              <Input placeholder="Country" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="state"
+              label="State"
+              rules={[
+                {
+                  required: true,
+                  message: "State cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="State" />
+            </Form.Item>
+          </Col>
+        </Row>
+        
+        <Row gutter={12}>
+          <Col span={24}>
+            <Form.Item
+              name="adjustmentFactor"
+              label="Adjustment Factor"
+              rules={[
+                {
+                  required: true,
+                  message: "Adjustment Factor cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Adjustment Factor" />
             </Form.Item>
           </Col>
         </Row>
@@ -126,4 +163,4 @@ const CreatePopularity = (props) => {
   );
 };
 
-export default CreatePopularity;
+export default UpdateAdjustment;

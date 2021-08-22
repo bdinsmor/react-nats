@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import DataService from "../../services/DataService";
+import DataService from "../../../services/DataService";
 import {
   notification,
   Input,
@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Form,
+  Select,
   Space,
   Divider,
   Typography,
@@ -16,9 +17,9 @@ import {
 
 
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+const { Option } = Select;
 
-
-const CreateManufacturerVin = (props) => {
+const UpdateAdjustment = (props) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,37 +27,33 @@ const CreateManufacturerVin = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.manufacturerVin);
+      form.setFieldsValue(props.adjustment);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturerVin]);
+  }, [form, props.adjustment]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
       const updates = {
-        manufacturerId: props.manufacturerVin.manufacturerId,
-        manufacturerName: props.manufacturerVin.manufacturerName,
-        shortVin: values.manufacturerVin.shortVin,
-        vinManufacturerCode: values.manufacturerVin.vinManufacturerCode,
-        vinYearCode: values.manufacturerVin.vinYearCode,
-        cicCode: values.manufacturerVin.cicCode,
-        modelYear: values.manufacturerVin.modelYear
+        sizeClassId: props.adjustment.sizeClassId,
+        condition: values.adjustment.condition,
+        adjustmentFactor: values.adjustment.adjustmentFactor,
       };
 
-      await DataService.createManufacturerVin(updates);
+      await DataService.updateUser(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Manufacturer Vin Created",
+        message: "Adjustment Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Creating Manufacturer Vin",
+        message: "Error Updating Adjusment",
         duration: 2,
       });
       setIsLoading(false);
@@ -83,58 +80,41 @@ const CreateManufacturerVin = (props) => {
           <Col>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Create Manufacturer VIN
+                Condition Adjustment for Size Class Id: {props.adjustment.sizeClassId}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
-            <Form.Item name="manufacturerId">
-              <Input placeholder="Manufacturer Id" disabled />
-            </Form.Item>
+          <Form.Item name="condition" label="Condition" rules={[{ required: true }]}>
+          <Select
+            placeholder="Select a condition"
+            allowClear
+          >
+            <Option value="Excellent">Excellent</Option>
+            <Option value="Very Good">Very Good</Option>
+            <Option value="Good">Good</Option>
+            <Option value="Fair">Fair</Option>
+            <Option value="Poor">Poor</Option>
+          </Select>
+        </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={12}>
           <Col span={24}>
-            <Form.Item name="manufacturerName">
-              <Input placeholder="Manufacturer Name" disabled />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="modelYear">
-              <Input placeholder="Model Year" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="vinManufacturerCode">
-              <Input placeholder="VIN Manufacturer Code" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="vinYearCode">
-              <Input placeholder="Manufacturer Id" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="shortVin">
-              <Input placeholder="Short VIN" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item name="cicCode">
-              <Input placeholder="CIC Code" />
+            <Form.Item
+              name="adjustmentFactor"
+              label="Adjustment Factor"
+              rules={[
+                {
+                  required: true,
+                  message: "Adjustment Factor cannot be empty",
+                },
+              ]}
+            >
+              <Input placeholder="Adjustment Factor" />
             </Form.Item>
           </Col>
         </Row>
@@ -165,4 +145,4 @@ const CreateManufacturerVin = (props) => {
   );
 };
 
-export default CreateManufacturerVin;
+export default UpdateAdjustment;

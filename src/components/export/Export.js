@@ -6,7 +6,6 @@ import {
   Row,
   Col,
   Table,
-  Drawer,
   Layout,
   Select,
   Spin,
@@ -58,8 +57,7 @@ const Export = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
   const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
-  const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
   const [selectedManufacturer, setSelectedManufacturer] = useState([]);
@@ -131,54 +129,32 @@ const Export = (props) => {
     },
     {
       title: "Model Id",
-      dataIndex: "modelId",
-      editable: true,
+      dataIndex: "modelId"
     },
     {
       title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      dataIndex: "modelAlias"
     },
     
     {
       title: "Last Modified",
-      dataIndex: "formattedDate",
-      editable: true,
+      dataIndex: "formattedDate"
     },
     {
       title: "Last Modified By" ,
-      dataIndex: "user",
-      editable: true,
+      dataIndex: "user"
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
-            Edit
-          </Button>
+           
         </Space>
       ),
     },
   ];
-
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
-  };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
-  const openUpdateDrawer = (item) => {
-    setItem(item);
-    setShowUpdateDrawer(true);
-  };
-  const onUpdateSuccess = () => {
-    setShowUpdateDrawer(false);
-    init();
-  };
 
   const init = async function () {
     setIsLoading(true);
@@ -242,7 +218,7 @@ const Export = (props) => {
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
-            rowKey="modelId"
+            rowKey="modelId" loading={isDataLoading}
           />
         </Content>
       </Layout>

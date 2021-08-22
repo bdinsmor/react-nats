@@ -58,7 +58,7 @@ const Import = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
   const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -132,28 +132,24 @@ const Import = (props) => {
     },
     {
       title: "Model Id",
-      dataIndex: "modelId",
-      editable: true,
+      dataIndex: "modelId"
     },
     {
       title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      dataIndex: "modelAlias"
     },
     
     {
       title: "Last Modified",
-      dataIndex: "formattedDate",
-      editable: true,
+      dataIndex: "formattedDate"
     },
     {
       title: "Last Modified By" ,
-      dataIndex: "user",
-      editable: true,
+      dataIndex: "user"
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -165,13 +161,6 @@ const Import = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
-  };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);
@@ -244,6 +233,7 @@ const Import = (props) => {
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
             rowKey="modelId"
+            loading={isDataLoading}
           />
         </Content>
       </Layout>

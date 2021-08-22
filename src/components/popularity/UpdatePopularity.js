@@ -14,9 +14,7 @@ import {
   Skeleton,
 } from "antd";
 
-
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
-
 
 const UpdatePopularity = (props) => {
   const [form] = Form.useForm();
@@ -26,33 +24,45 @@ const UpdatePopularity = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.modelAlias);
+      form.setFieldsValue(props.popularity);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.modelAlias]);
+  }, [form, props.popularity]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: values.modelAlias.modelId,
-        modelName: values.modelAlias.modelName,
-        modelAlias: values.modelAlias.modelAlias,
+      const updates = {
+        modelId: props.popularity.modelId,
+        benchmarkGroup: values.popularity.benchmarkGroup,
+        marketPopularityIndex: values.popularity.marketPopularityIndex,
+        marketPopularityLabel: values.popularity.marketPopularityLabel,
+        recordCount: values.popularity.recordCount,
+        twenty: values.popularity.twenty,
+        forty: values.popularity.forty,
+        sixty: values.popularity.sixty,
+        eighty: values.popularity.eighty,
+        hundred: values.popularity.hundred,
+        twentyPercent: values.popularity.twentyPercent,
+        fortyPercent: values.popularity.fortyPercent,
+        sixtyPercent: values.popularity.sixtyPercent,
+        eightyPercent: values.popularity.eightyPercent,
+        hundredPercent: values.popularity.hundredPercent
       };
 
-      await DataService.updateUser(modelAliasUpdates);
+      await DataService.updateUsage(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Updated",
+        message: "Popularity Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Updating Model Alias",
+        message: "Error Updating Popularity",
         duration: 2,
       });
       setIsLoading(false);
@@ -76,54 +86,120 @@ const UpdatePopularity = (props) => {
         hideRequiredMark
       >
         <Row align="middle">
-          <Col>
+          <Col span={12}>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Model Alias
+              Popularity for Model Id: {props.popularity.modelId}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={8}>
             <Form.Item
-              name="modelId"
-              label="Model Id"
-              rules={[
-                {
-                  required: true,
-                  message: "Model Id cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Model Id" disabled />
+              name="recordCount"
+              label="Record Count">
+              <Input placeholder="Record Count" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="twenty"
+              label="Twenty" >
+              <Input placeholder="Twenty" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="twentyPercent"
+              label="Twenty %" >
+              <Input placeholder="Twenty %" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={8}>
             <Form.Item
-              name="modelName"
-              label="Model Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Model Name cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Model Name" disabled />
+              name="Market Popularity Index"
+              label="marketPopularityIndex">
+              <Input placeholder="Market Popularity Index" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="forty"
+              label="Forty" >
+              <Input placeholder="Forty" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="fortyPercent"
+              label="Forty %" >
+              <Input placeholder="Forty %" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={8}>
             <Form.Item
-              name="modelAlias"
-              label="Model Alias"
-            >
-              <Input placeholder="Model Alias" />
+              name="benchmarkGroup"
+              label="Benchmark Group">
+              <Input placeholder="Benchmark Group" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="sixty"
+              label="Sixty" >
+              <Input placeholder="Sixty" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="sixtyPercent"
+              label="Sixty %" >
+              <Input placeholder="Sixty %" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={8}>
+            <Form.Item
+              name="marketPopularityLabel"
+              label="Market Popularity Label">
+              <Input placeholder="Market Popularity Label" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="eighty"
+              label="Eighty" >
+              <Input placeholder="Eighty" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="eightyPercent"
+              label="Eighty %" >
+              <Input placeholder="Eighty %" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={8} offset={8}>
+            <Form.Item
+              name="hundred"
+              label="Hundred" >
+              <Input placeholder="Hundred" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="hundredPercent"
+              label="Hundred %" >
+              <Input placeholder="Hundred %" />
             </Form.Item>
           </Col>
         </Row>
@@ -143,6 +219,7 @@ const UpdatePopularity = (props) => {
             <Button
               className="login-form-button"
               icon={<CloseOutlined />}
+              type="ghost"
               onClick={() => cancel()}
             >
               Cancel

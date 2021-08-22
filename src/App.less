@@ -1,10 +1,9 @@
 @import '~antd/dist/antd.css';
-@import '~antd/dist/antd.css';
 .header{
-    backgroundColor: #01283a;
+    background-color: #01283a;
 }
 .footer{
-    backgroundColor: #01283a;
+    background-color: #01283a;
     color: white;
     text-align: center;
 }
@@ -13,6 +12,52 @@
    align-items: flex-end;
    align-content: flex-end;
 }
+
+
+.nav-menu .ant-menu-item-group .ant-menu-item {
+    height: 30px !important;
+    line-height: 30px !important;
+    border-bottom: none !important;
+}
+
+.ant-list-item a.active-link {
+    color: #afe491 !important;
+}
+
+.nav-menu a {
+    color: rgba(255, 255, 255, 0.65) !important;
+    cursor: pointer;
+}
+
+.nav-menu a:hover {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.nav-menu .ant-menu-item:hover {
+    background-color: rgba(106, 166, 189, 0.4) !important;
+}
+
+
+.wide-table table {
+    width: auto;
+    background-color: black;
+    min-width: unset !important;
+  }
+
+  .react-resizable {
+    position: relative;
+    background-clip: padding-box;
+  }
+  
+  .react-resizable-handle {
+    position: absolute;
+    right: -5px;
+    bottom: 0;
+    z-index: 1;
+    width: 10px;
+    height: 100%;
+    cursor: col-resize;
+  }
 
 .menu-style {
 
@@ -32,21 +77,22 @@
 }
 .logo-header {
     height:30px;
+    margin-left: -15px;
 }
 
 .list-light{
-    backgroundColor:white
+    background-color:white
 }
 .list-light li:hover{
-    backgroundColor:whitesmoke;
+    background-color:whitesmoke;
     cursor: pointer;
 }
 
 .switch-stoplight{
-    backgroundColor: red;
+    background-color: red;
 }
-.switch-stoplight.ant-switch-checked{
-    backgroundColor: green;
+.switch-stoplight.ant-switch-checked {
+    background-color: green;
 }
 
 .popover-200 .ant-popover-inner {
@@ -59,4 +105,32 @@
 .ant-menu-vertical > .ant-menu-item, .ant-menu-vertical-left > .ant-menu-item, .ant-menu-vertical-right > .ant-menu-item, .ant-menu-inline > .ant-menu-item, .ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-vertical-left > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-vertical-right > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
     height: 25px !important;
     line-height: 25px !important;
+}
+.ant-menu-inline>:not(:first-of-type).ant-menu-item-group>.ant-menu-item-group-title {
+    padding-bottom: 32px;
+}
+.ant-menu-inline>:not(:first-of-type).ant-menu-item-group>.ant-menu-item-group-title:after {
+    position: relative;
+    top: 12px;
+    display: block;
+    width: calc(100% - 20px);
+    height: 1px;
+    background-image: initial;
+    background-position-x: initial;
+    background-position-y: initial;
+    background-size: initial;
+    background-attachment: initial;
+    background-origin: initial;
+    background-clip: initial;
+    background-color: rgba(240, 240, 240, 0.5);
+    content: "";
+}
+
+
+.ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after {
+    border-right: 5px solid #7AAC5E !important;
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: rgba(106,166,189,0.2) !important;
 }

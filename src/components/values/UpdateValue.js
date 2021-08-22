@@ -14,9 +14,7 @@ import {
   Skeleton,
 } from "antd";
 
-
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
-
 
 const UpdateValue = (props) => {
   const [form] = Form.useForm();
@@ -25,7 +23,7 @@ const UpdateValue = (props) => {
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      console.log("value: " + JSON.stringify(props.value,null,2))
       form.setFieldsValue(props.value);
 
       setIsLoading(false);
@@ -37,22 +35,30 @@ const UpdateValue = (props) => {
     setIsLoading(true);
     try {
       const updates = {
-        modelId: values.modelAlias.modelId,
-        modelName: values.modelAlias.modelName,
-        modelAlias: values.modelAlias.modelAlias,
+        configurationId: props.value.configurationId,
+        revisionDate: props.value.revisionDate,
+        msrp: values.value.msrp,
+        finance: values.value.finance,
+        retail: values.value.retail,
+        askingPrice: values.value.askingPrice,
+        auctionPrice: values.value.auctionPrice,
+        tradeIn: values.value.tradeIn,
+        low: values.value.low,
+        high: values.value.high,
+        wholesale: values.value.wholesale,
       };
 
-      await DataService.updateUser(updates);
+      await DataService.updateUsage(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Updated",
+        message: "Value Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Updating Model Alias",
+        message: "Error Updating Value",
         duration: 2,
       });
       setIsLoading(false);
@@ -75,55 +81,96 @@ const UpdateValue = (props) => {
         layout="vertical"
         hideRequiredMark
       >
-        <Row align="middle">
-          <Col>
+        <Row align="left">
+          <Col span={12}>
             <div>
-              <Typography style={{ fontSize: "20px" }}>
-                Model Alias
+              <Typography style={{ fontSize: "30px" }}>
+              {props.value.configurationId}
+              </Typography>
+            </div>
+          </Col>
+        </Row>
+        <Row align="left">
+          <Col span={12}>
+            <div>
+              <Typography style={{ fontSize: "14px", color: 'rgba(0,0,0,0.47)' }}>
+              {props.value.revisionDate}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
-              name="modelId"
-              label="Model Id"
-              rules={[
-                {
-                  required: true,
-                  message: "Model Id cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Model Id" disabled />
+              name="msrp"
+              label="MSRP">
+              <Input placeholder="MSRP" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="askingPrice"
+              label="Asking Price" >
+              <Input placeholder="Asking Price" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
-              name="modelName"
-              label="Model Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Model Name cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Model Name" disabled />
+              name="Finance"
+              label="finance">
+              <Input placeholder="Finance" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="askingPrice"
+              label="Asking Price" >
+              <Input placeholder="Asking Price" />
+            </Form.Item>
+          </Col>          
+        </Row>
+        <Row gutter={12}>
+          <Col span={12}>
+            <Form.Item
+              name="retail"
+              label="Retail">
+              <Input placeholder="Retail" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="low"
+              label="Low" >
+              <Input placeholder="Low" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
-              name="modelAlias"
-              label="Model Alias"
-            >
-              <Input placeholder="Model Alias" />
+              name="wholesale"
+              label="Wholesale">
+              <Input placeholder="Wholesale" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="high"
+              label="High" >
+              <Input placeholder="High" />
+            </Form.Item>
+          </Col>
+          
+        </Row>
+        <Row gutter={12}>
+          <Col span={12}>
+            <Form.Item
+              name="tradeIn"
+              label="Trade In" >
+              <Input placeholder="Trade In" />
             </Form.Item>
           </Col>
         </Row>
@@ -143,6 +190,7 @@ const UpdateValue = (props) => {
             <Button
               className="login-form-button"
               icon={<CloseOutlined />}
+              type="ghost"
               onClick={() => cancel()}
             >
               Cancel

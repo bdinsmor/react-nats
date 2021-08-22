@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreateModelAlias from "./CreateModelAlias";
 import UpdateModelAlias from "./UpdateModelAlias";
 import { EditOutlined } from "@ant-design/icons";
 import {
   Space,
   Row,
   Col,
-  Table,
   Drawer,
   Layout,
+  Table,
   Select,
   Spin,
   Button,
 } from "antd";
+
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
+import { ExportTableButton } from "ant-table-extensions";
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
@@ -57,10 +58,10 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 } // Usage of DebounceSelect
 
 const ModelAliases = (props) => {
-  const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
+  const [manufacturerId, setManufacturerId] = useState("");
+  const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -114,6 +115,7 @@ const ModelAliases = (props) => {
     }
     setModelId(option.value);
     setSelectedModel(option);
+    setIsDataLoading(true);
     const res = await DataService.getAliasesForModelId(option.value);
     let index = 1;
     res.forEach(function (element) {
@@ -122,6 +124,7 @@ const ModelAliases = (props) => {
       index++;
     });
     setItems(res);
+    setIsDataLoading(false);
   };
 
 
@@ -129,32 +132,34 @@ const ModelAliases = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: '5%',
+      width: '50px',
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Id",
       dataIndex: "modelId",
-      editable: true,
+      sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Alias",
       dataIndex: "modelAlias",
-      editable: true,
+      sorter: (a, b) => a.modelAlias - b.modelAlias,
     },
     
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      editable: true,
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By" ,
       dataIndex: "user",
-      editable: true,
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -166,13 +171,6 @@ const ModelAliases = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
-  };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);
@@ -182,11 +180,20 @@ const ModelAliases = (props) => {
     init();
   };
 
+  
+
+
+  const onAdd = () => {
+    setItem({modelId: modelId});
+    setShowUpdateDrawer(true);
+  }
+
   const init = async function () {
     setIsLoading(true);
 
     setIsLoading(false);
   };
+
 
   useEffect(() => {
     init();
@@ -241,27 +248,40 @@ const ModelAliases = (props) => {
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Space>
+                  <Button
+                    type="ghost"
+                    onClick={onAdd}
+                    disabled={!modelId || modelId === ""}
+                  >
+                    Add
+                  </Button>
+                  <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
+                </Space>
+              </Col>
+            </Row>
+          </div>
           <Table
+          size="small"
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
             rowKey="modelId"
+            loading={isDataLoading}
+            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
       </Layout>
-      <Drawer
-        placement="right"
-        closable={false}
-        onClose={() => setShowCreateDrawer(false)}
-        visible={showCreateDrawer}
-        width={600}
-      >
-        <CreateModelAlias
-          onSaveSuccess={onCreateSuccess}
-          onCancel={() => setShowCreateDrawer(false)}
-        ></CreateModelAlias>
-      </Drawer>
       <Drawer
         placement="right"
         closable={false}

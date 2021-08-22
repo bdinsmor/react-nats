@@ -14,9 +14,7 @@ import {
   Skeleton,
 } from "antd";
 
-
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
-
 
 const UpdateUsage = (props) => {
   const [form] = Form.useForm();
@@ -26,33 +24,46 @@ const UpdateUsage = (props) => {
     const init = async function () {
       setIsLoading(true);
 
-      form.setFieldsValue(props.modelAlias);
+      form.setFieldsValue(props.usage);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.modelAlias]);
+  }, [form, props.usage]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
-      const modelAliasUpdates = {
-        modelId: values.modelAlias.modelId,
-        modelName: values.modelAlias.modelName,
-        modelAlias: values.modelAlias.modelAlias,
+      const updates = {
+        modelId: props.usage.modelId,
+        modelYear: values.usage.modelYear,
+        age: values.usage.age,
+        benchmarkLevel: values.usage.benchmarkLevel,
+        meanAnnualUsage: values.usage.meanAnnualUsage,
+        recordCount: values.usage.recordCount,
+        percentile25: values.usage.percentile25,
+        percentile45: values.usage.percentile45,
+        percentile55: values.usage.percentile55,
+        percentile75: values.usage.percentile75,
+        percentile99: values.usage.percentile99,
+        distribution25: values.usage.distribution25,
+        distribution45: values.usage.distribution45,
+        distribution55: values.usage.distribution55,
+        distribution75: values.usage.distribution75,
+        distribution99: values.usage.distribution99
       };
 
-      await DataService.updateUser(modelAliasUpdates);
+      await DataService.updateUsage(updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
-        message: "Model Alias Updated",
+        message: "Usage Updated",
         duration: 2,
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
       notification.error({
-        message: "Error Updating Model Alias",
+        message: "Error Updating Usage",
         duration: 2,
       });
       setIsLoading(false);
@@ -76,54 +87,127 @@ const UpdateUsage = (props) => {
         hideRequiredMark
       >
         <Row align="middle">
-          <Col>
+          <Col span={12}>
             <div>
               <Typography style={{ fontSize: "20px" }}>
-                Model Alias
+                Usage for Model Id: {props.usage.modelId}
               </Typography>
             </div>
           </Col>
         </Row>
         <Divider />
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={8}>
             <Form.Item
-              name="modelId"
-              label="Model Id"
-              rules={[
-                {
-                  required: true,
-                  message: "Model Id cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Model Id" disabled />
+              name="modelYear"
+              label="Model Year">
+              <Input placeholder="Model Year" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="percentile25"
+              label="Percentile 25" >
+              <Input placeholder="Percentile 25" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="distrubution25"
+              label="Distribution 25" >
+              <Input placeholder="Distribution 25" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={8}>
             <Form.Item
-              name="modelName"
-              label="Model Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Model Name cannot be empty",
-                },
-              ]}
-            >
-              <Input placeholder="Model Name" disabled />
+              name="age"
+              label="Age">
+              <Input placeholder="Age" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="percentile45"
+              label="Percentile 45" >
+              <Input placeholder="Percentile 45" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="distrubution45"
+              label="Distribution 45" >
+              <Input placeholder="Distribution 45" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={8}>
             <Form.Item
-              name="modelAlias"
-              label="Model Alias"
-            >
-              <Input placeholder="Model Alias" />
+              name="benchmarkLevel"
+              label="Benchmark Level">
+              <Input placeholder="Benchmark Level" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="percentile55"
+              label="Percentile 55" >
+              <Input placeholder="Percentile 55" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="distrubution55"
+              label="Distribution 55" >
+              <Input placeholder="Distribution 55" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={8}>
+            <Form.Item
+              name="meanAnnualUsage"
+              label="Mean Annual Usage">
+              <Input placeholder="Mean Annual Usage" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="percentile75"
+              label="Percentile 75" >
+              <Input placeholder="Percentile 75" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="distrubution75"
+              label="Distribution 75" >
+              <Input placeholder="Distribution 75" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={12}>
+          <Col span={8}>
+            <Form.Item
+              name="recordCount"
+              label="Record Count">
+              <Input placeholder="Record Count" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="percentile99"
+              label="Percentile 99" >
+              <Input placeholder="Percentile 99" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="distrubution99"
+              label="Distribution 99" >
+              <Input placeholder="Distribution 99" />
             </Form.Item>
           </Col>
         </Row>
@@ -143,6 +227,7 @@ const UpdateUsage = (props) => {
             <Button
               className="login-form-button"
               icon={<CloseOutlined />}
+              type="ghost"
               onClick={() => cancel()}
             >
               Cancel

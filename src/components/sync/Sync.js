@@ -58,6 +58,7 @@ const Sync = (props) => {
   const [manufacturerId, setManufacturerId] = useState([]);
   const [modelId, setModelId] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [showCreateDrawer, setShowCreateDrawer] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
@@ -112,6 +113,7 @@ const Sync = (props) => {
     }
     setModelId(option.value);
     setSelectedModel(option);
+    setIsDataLoading(true);
     const res = await DataService.getAliasesForModelId(option.value);
     let index = 1;
     res.forEach(function (element) {
@@ -120,6 +122,7 @@ const Sync = (props) => {
       index++;
     });
     setItems(res);
+    setIsDataLoading(false);
   };
 
 
@@ -131,28 +134,24 @@ const Sync = (props) => {
     },
     {
       title: "Model Id",
-      dataIndex: "modelId",
-      editable: true,
+      dataIndex: "modelId"
     },
     {
       title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      dataIndex: "modelAlias"
     },
     
     {
       title: "Last Modified",
-      dataIndex: "formattedDate",
-      editable: true,
+      dataIndex: "formattedDate"
     },
     {
       title: "Last Modified By" ,
-      dataIndex: "user",
-      editable: true,
+      dataIndex: "user"
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -164,13 +163,7 @@ const Sync = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
-  };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
+  
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);

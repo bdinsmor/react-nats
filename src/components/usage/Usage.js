@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreateUsage from "./CreateUsage";
 import UpdateUsage from "./UpdateUsage";
 import { EditOutlined } from "@ant-design/icons";
 import {
@@ -14,9 +13,10 @@ import {
   Spin,
   Button,
 } from "antd";
+import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
@@ -56,11 +56,12 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   );
 } // Usage of DebounceSelect
 
-const ModelAliases = (props) => {
-  const [manufacturerId, setManufacturerId] = useState([]);
-  const [modelId, setModelId] = useState([]);
+const Usage = (props) => {
+  const [manufacturerId, setManufacturerId] = useState("");
+
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -91,7 +92,6 @@ const ModelAliases = (props) => {
     return modelResults;
   };
 
-
   const onManufacturerSelect = (option) => {
     setSelectedModel(null);
     handleModelSearch("");
@@ -112,54 +112,127 @@ const ModelAliases = (props) => {
       setSelectedModel(null);
       return;
     }
+    setIsDataLoading(true);
     setModelId(option.value);
     setSelectedModel(option);
-    const res = await DataService.getAliasesForModelId(option.value);
+    const res = await DataService.getUsageForModelId(option.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
     setItems(res);
+    setIsDataLoading(false);
   };
-
-  const onUpdateModelAlias = (record) => {};
 
   const columns = [
     {
       title: "#",
       dataIndex: "index",
-      width: '5%',
+      width: "50px",
+      fixed: "left",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Id",
       dataIndex: "modelId",
-      editable: true,
+      fixed: "left",
+      sorter: (a, b) => a.modelId - b.modelId,
     },
     {
-      title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      title: "Model Year",
+      dataIndex: "modelYear",
+      sorter: (a, b) => a.modelYear - b.modelYear,
     },
-    
+    {
+      title: "Age",
+      dataIndex: "age",
+      sorter: (a, b) => a.age - b.age,
+    },
+    {
+      title: "Benchmark Level",
+      dataIndex: "benchmarkLevel",
+      sorter: (a, b) => a.benchmarkLevel - b.benchmarkLevel,
+    },
+    {
+      title: "Mean Annual Usage",
+      dataIndex: "meanAnnualUsage",
+      sorter: (a, b) => a.meanAnnualUsage - b.meanAnnualUsage,
+    },
+    {
+      title: "Record Count",
+      dataIndex: "recordCount",
+      sorter: (a, b) => a.recordCount - b.recordCount,
+    },
+    {
+      title: "Percentile25",
+      dataIndex: "percentile25",
+      sorter: (a, b) => a.percentile25 - b.percentile25,
+    },
+    {
+      title: "Percentile45",
+      dataIndex: "percentile45",
+      sorter: (a, b) => a.percentile45 - b.percentile45,
+    },
+    {
+      title: "Percentile55",
+      dataIndex: "percentile55",
+      sorter: (a, b) => a.percentile55 - b.percentile55,
+    },
+    {
+      title: "Percentile75",
+      dataIndex: "percentile75",
+      sorter: (a, b) => a.percentile75 - b.percentile75,
+    },
+    {
+      title: "Distribution25",
+      dataIndex: "distribution25",
+      sorter: (a, b) => a.distribution25 - b.distribution25,
+    },
+    {
+      title: "Distribution45",
+      dataIndex: "distribution45",
+      sorter: (a, b) => a.distribution45 - b.distribution45,
+    },
+    {
+      title: "Distribution55",
+      dataIndex: "distribution55",
+      sorter: (a, b) => a.distribution55 - b.distribution55,
+    },
+    {
+      title: "Distribution75",
+      dataIndex: "distribution75",
+      sorter: (a, b) => a.distribution75 - b.distribution75,
+    },
+    {
+      title: "Distribution99",
+      dataIndex: "distribution99",
+      sorter: (a, b) => a.distribution99 - b.distribution99,
+    },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      editable: true,
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
-      title: "Last Modified By" ,
+      title: "Last Modified By",
       dataIndex: "user",
-      editable: true,
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
-      fixed: 'right',
+      width: '50px',
+      fixed: "right",
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -167,13 +240,12 @@ const ModelAliases = (props) => {
     },
   ];
 
-  const openCreateDrawer = () => {
-    setShowCreateDrawer(true);
+
+  const onAdd = () => {
+    setItem({ modelId: modelId });
+    setShowUpdateDrawer(true);
   };
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
+
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);
@@ -202,11 +274,13 @@ const ModelAliases = (props) => {
             marginTop: 8,
             marginLeft: 8,
             marginRight: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
             backgroundColor: "white",
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8, paddingLeft: 16 }}>
+          <div style={{ marginBottom: 8 }}>
             <Row>
               <Space>
                 <Col>
@@ -235,32 +309,44 @@ const ModelAliases = (props) => {
                     }}
                   />
                 </Col>
-
-              
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
+          <div style={{ marginBottom: 8 }}>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Space>
+                  <Button
+                    type="ghost"
+                    onClick={onAdd}
+                    disabled={!modelId || modelId === ""}
+                  >
+                    Add
+                  </Button>
+                  <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
+                </Space>
+              </Col>
+            </Row>
+          </div>
           <Table
+          class="wide-table"
+          tableLayout="fixed"
+            loading={isDataLoading}
             columns={columns}
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
+            size="small"
             rowKey="modelId"
           />
         </Content>
       </Layout>
-      <Drawer
-        placement="right"
-        closable={false}
-        onClose={() => setShowCreateDrawer(false)}
-        visible={showCreateDrawer}
-        width={600}
-      >
-        <CreateUsage
-          onSaveSuccess={onCreateSuccess}
-          onCancel={() => setShowCreateDrawer(false)}
-        ></CreateUsage>
-      </Drawer>
       <Drawer
         placement="right"
         closable={false}
@@ -269,7 +355,7 @@ const ModelAliases = (props) => {
         width={600}
       >
         <UpdateUsage
-          model={item}
+          usage={item}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateUsage>
@@ -278,4 +364,4 @@ const ModelAliases = (props) => {
   );
 };
 
-export default ModelAliases;
+export default Usage;

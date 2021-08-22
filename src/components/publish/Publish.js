@@ -133,28 +133,24 @@ const Publish = (props) => {
     },
     {
       title: "Model Id",
-      dataIndex: "modelId",
-      editable: true,
+      dataIndex: "modelId"
     },
     {
       title: "Alias",
-      dataIndex: "modelAlias",
-      editable: true,
+      dataIndex: "modelAlias"
     },
     
     {
       title: "Last Modified",
-      dataIndex: "formattedDate",
-      editable: true,
+      dataIndex: "formattedDate"
     },
     {
       title: "Last Modified By" ,
-      dataIndex: "user",
-      editable: true,
+      dataIndex: "user"
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -245,6 +241,7 @@ const Publish = (props) => {
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
             rowKey="modelId"
+              size="small"
           />
         </Content>
       </Layout>

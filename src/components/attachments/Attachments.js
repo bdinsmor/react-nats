@@ -4,12 +4,13 @@ import {
   Space,
   Row,
   Col,
-  Table,
   Drawer,
   Layout,
   Select,
   Button,
+  Table
 } from "antd";
+import { ExportTableButton } from "ant-table-extensions";
 
 import { EditOutlined } from "@ant-design/icons";
 import UpdateAttachment from "./UpdateAttachment";
@@ -125,41 +126,46 @@ const Taxonomys = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: "5%",
+      width: "50px",
+      fixed:'left',
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
+
     },
     {
       title: "Subtype Id",
       dataIndex: "subtypeId",
-      width: "10%",
+      sorter: (a, b) => a.subtypeId - b.subtypeId,
     },
     {
       title: "Subtype Name",
       dataIndex: "subtypeName",
-      width: "12%",
+      sorter: (a, b) => a.subtypeName - b.subtypeName,
     },
     {
       title: "Attachment Category Id",
       dataIndex: "attachmentCategoryId",
-      width: "15%",
+      sorter: (a, b) => a.attachmentCategoryId - b.attachmentCategoryId,
     },
     {
       title: "Attachment Category Name",
       dataIndex: "categoryName",
-      width: "20%",
+      sorter: (a, b) => a.categoryName - b.categoryName,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: "15%",
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: "100",
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
+      width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -174,6 +180,11 @@ const Taxonomys = (props) => {
       ),
     },
   ];
+
+  const onAdd = () => {
+    setAttachment({subtypeId: subtypeId});
+    setShowUpdateDrawer(true);
+  }
 
   const openUpdateDrawer = (item) => {
     setAttachment(item);
@@ -221,7 +232,6 @@ const Taxonomys = (props) => {
     if (!subtypeId || subtypeId === "") {
       return;
     }
-    console.log("subtypeId:  "+ JSON.stringify(subtypeId,null,2))
     loadAttachments();
   }, [subtypeId]);
 
@@ -236,7 +246,10 @@ const Taxonomys = (props) => {
       <Layout>
         <Content
           style={{
-            paddingTop: 12,
+            paddingTop: 24,
+            marginTop: 8,
+            marginLeft: 8,
+            marginRight: 8,
             paddingLeft: 16,
             paddingRight: 16,
             backgroundColor: "white",
@@ -291,10 +304,24 @@ const Taxonomys = (props) => {
             </Row>
           </div>
           <div style={{ marginBottom: 8 }}>
-            <Row gutter={12}>
+          <Row gutter={12}>
               <Col span={24}>
                 <Space>
-                  <Button type="ghost">Export</Button>
+                  <Button
+                    type="ghost"
+                    onClick={onAdd}
+                    disabled={!subtypeId || subtypeId === ""}
+                  >
+                    Add
+                  </Button>
+                  <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
                 </Space>
               </Col>
             </Row>
@@ -307,6 +334,7 @@ const Taxonomys = (props) => {
             dataSource={items}
             rowKey="index"
             loading={isDataLoading}
+            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
       </Layout>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
-import CreateManufacturerVin from "./CreateManufacturerVin";
 import UpdateManufacturerVin from "./UpdateManufacturerVin";
 
 import { EditOutlined } from "@ant-design/icons";
@@ -15,6 +14,7 @@ import {
   Spin,
   Button,
 } from "antd";
+import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
 var localizedFormat = require('dayjs/plugin/localizedFormat')
@@ -58,9 +58,9 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 } // Usage of DebounceSelect
 
 const ManufacturerVins = (props) => {
-  const [manufacturerId, setManufacturerId] = useState([]);
+  const [manufacturerId, setManufacturerId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
@@ -85,6 +85,7 @@ const ManufacturerVins = (props) => {
     }
     setSelectedManufacturer(option);
     setManufacturerId(option.value);
+    setIsDataLoading(true);
     const res = await DataService.getVINsForManufacturer(option.value);
     let index = 1;
     res.forEach(function (element) {
@@ -93,47 +94,55 @@ const ManufacturerVins = (props) => {
       index++;
     });
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const columns = [
     {
       title: "#",
       dataIndex: "index",
-      width: '5%',
+      width: '50px',
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Year",
       dataIndex: "modelYear",
+      sorter: (a, b) => a.modelYear - b.modelYear,
     },
     {
       title: "Vin Manufacturer Code",
       dataIndex: "vinManufacturerCode",
+      sorter: (a, b) => a.vinManufacturerCode - b.vinManufacturerCode,
     },
     {
       title: "Vin Year Code",
       dataIndex: "vinYearCode",
+      sorter: (a, b) => a.vinYearCode - b.vinYearCode,
     },
     {
       title: "Short Vin",
       dataIndex: "shortVin",
+      sorter: (a, b) => a.shortVin - b.shortVin,
     },
     {
       title: "Cic Code",
       dataIndex: "cicCode",
+      sorter: (a, b) => a.cicCode - b.cicCode,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      editable: true,
+      sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By" ,
       dataIndex: "user",
-      editable: true,
+      sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",
+      key: "action",width: '50px',
       fixed: 'right',
       render: (text, record) => (
         <Space size="middle">
@@ -145,10 +154,11 @@ const ManufacturerVins = (props) => {
     },
   ];
 
-  const onCreateSuccess = () => {
-    setShowCreateDrawer(false);
-    init();
-  };
+  const onAdd = () => {
+    setItem({manufacturerId: manufacturerId, manufacturerName: selectedManufacturer.label});
+    setShowUpdateDrawer(true);
+  }
+
   const openUpdateDrawer = (item) => {
     setItem(item);
     setShowUpdateDrawer(true);
@@ -206,8 +216,21 @@ const ManufacturerVins = (props) => {
             <Row gutter={12}>
               <Col span={24}>
                 <Space>
-                  <Button type="ghost">Add</Button>
-                  <Button type="ghost">Export</Button>
+                  <Button
+                    type="ghost"
+                    onClick={onAdd}
+                    disabled={!manufacturerId || manufacturerId === ""}
+                  >
+                    Add
+                  </Button>
+                  <ExportTableButton
+                    type="ghost"
+                    dataSource={items}
+                    columns={columns}
+                    disabled={!items || items.length === 0}
+                  >
+                    Export
+                  </ExportTableButton>
                 </Space>
               </Col>
             </Row>
@@ -217,21 +240,12 @@ const ManufacturerVins = (props) => {
             dataSource={items}
             scroll={{ x: 1500, y: 400 }}
             rowKey="id"
+            size="small"
+            loading={isDataLoading}
+            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
           />
         </Content>
       </Layout>
-      <Drawer
-        placement="right"
-        closable={false}
-        onClose={() => setShowCreateDrawer(false)}
-        visible={showCreateDrawer}
-        width={600}
-      >
-        <CreateManufacturerVin
-          onSaveSuccess={onCreateSuccess}
-          onCancel={() => setShowCreateDrawer(false)}
-        ></CreateManufacturerVin>
-      </Drawer>
       <Drawer
         placement="right"
         closable={false}
