@@ -46,7 +46,7 @@ const Import = (props) => {
     },
     maxCount: 1,
     accept: 'text/csv',
-    importFiles,
+    fileList: importFiles,
   };
   
   function readCSV(file) {
@@ -73,8 +73,12 @@ const Import = (props) => {
     const uploadResponse = await DataService.uploadData(presignedUrl, {body: importFiles[0]});
     if(uploadResponse) {
       setUploading(false);
-      setImportFiles([]);
+      setImportFiles([...[]]);
+      setImportHeaders(null);
+      setSelectedTableImportOption(null);
+      setSelectedTable(null);
       message.success("Upload successfully.");
+      init();
     } else {
       setUploading(false);
       message.error("Upload failed.");
@@ -217,7 +221,7 @@ const Import = (props) => {
               )}
             </div>
             <div style={{ marginTop: "16px", marginBottom: "16px" }}>
-              {importFiles && foundHeaders && foundHeaders.length > 0 && (
+              {importFiles && importFiles.length > 0 && foundHeaders && foundHeaders.length > 0 && (
                 <>
                   <Row>
                     <Typography style={{ fontSize: "14px" }}>
@@ -235,7 +239,7 @@ const Import = (props) => {
           <Row style={{marginBottom: 24}}><Button
                   type="primary"
                   onClick={() => handleUpload()}
-                  disabled={importFiles.length === 0 || !selectedTable || selectedTable === '' || !selectedTableImportOption || selectedTableImportOption === ''}
+                  disabled={!importFiles || importFiles.length === 0 || !selectedTable || selectedTable === '' || !selectedTableImportOption || selectedTableImportOption === ''}
                   loading={uploading}
                 >
                   {uploading ? "Uploading" : "Start Upload"}
