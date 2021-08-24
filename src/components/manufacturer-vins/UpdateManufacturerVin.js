@@ -32,12 +32,13 @@ const UpdateManufacturerVin = (props) => {
       setIsLoading(false);
     };
     init();
-  }, [form, props.manufacturerVin]);
+  }, [form, props.isNew, props.manufacturerVin]);
 
   const save = async (values) => {
     setIsLoading(true);
     try {
       const updates = {
+        id: props.manufacturerVin.id,
       manufacturerId: props.manufacturerVin.manufacturerId,
       manufacturerName: props.manufacturerVin.manufacturerName,
       shortVin: values.shortVin,

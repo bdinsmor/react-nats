@@ -41,7 +41,7 @@ const UpdateSizeClass = (props) => {
     try {
       const updates = {
         subtypeId: props.sizeClass.subtypeId,
-        sizeClassId: props.sizeClassId,
+        sizeClassId: props.sizeClass.sizeClassId,
         sizeClassMin: values.sizeClassMin,
         sizeClassMax: values.sizeClassMax,
         sizeClassUom: values.sizeClassUom,

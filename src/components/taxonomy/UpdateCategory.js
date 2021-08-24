@@ -87,24 +87,6 @@ const UpdateCategory = (props) => {
             </div>
           </Col>
         </Row>
-        <Row align="left">
-          <Col>
-            <div>
-              <Typography style={{ fontSize: "18px" }}>
-              Update Category Id: {props.category.categoryId}
-              </Typography>
-            </div>
-          </Col>
-        </Row>
-        <Row align="left">
-          <Col>
-            <div>
-              <Typography style={{ fontSize: "18px" }}>
-              Update Category Id: {props.category.classificationId}
-              </Typography>
-            </div>
-          </Col>
-        </Row>
         <Divider />
         
         <Row gutter={12}>

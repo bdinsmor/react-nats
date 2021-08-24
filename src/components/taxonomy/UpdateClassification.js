@@ -40,7 +40,7 @@ const UpdateClassification = (props) => {
     setIsLoading(true);
     try {
       const updates = {
-        classifcationId: props.classification.classifcationId,
+        classificationId: props.classification.classificationId,
         classificationName: values.classificationName
       };
 

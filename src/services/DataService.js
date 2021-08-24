@@ -362,7 +362,7 @@ const DataService = {
   },
 
 
-  async updateClassifcation(isNew, data) {
+  async updateClassification(isNew, data) {
     let response;
     if (!isNew) {
       response = await axios.put(API_URL + "/analyst/taxonomy/classifications", data, {

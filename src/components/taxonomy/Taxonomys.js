@@ -240,7 +240,11 @@ const Taxonomys = (props) => {
   const onSelectManufacturer = async (value) => {
     setManufacturerId(value.value);
     setSelectedManufacturer(value);
-    const res = await DataService.getTaxonomyModels(sizeClassId, value.value);
+    
+  };
+
+  const populateModels = async () => {
+    const res = await DataService.getTaxonomyModels(sizeClassId, manufacturerId);
     let index = 1;
     res.forEach(function (element) {
       element.index = index; 
@@ -251,7 +255,7 @@ const Taxonomys = (props) => {
     setRowKey("modelIdKey");
     setItems(res);
     setIsDataLoading(false);
-  };
+  }
 
   const classificationColumns = [
     {
@@ -611,7 +615,7 @@ const Taxonomys = (props) => {
   };
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
-    init();
+    refreshData(true);
   };
 
   const init = async function () {
@@ -656,6 +660,7 @@ const Taxonomys = (props) => {
     if (!categoryId || categoryId === "") {
       return;
     }
+    clearRows();
     populateSubtypes();
   }, [categoryId]);
 
@@ -668,6 +673,7 @@ const Taxonomys = (props) => {
     if (!subtypeId || subtypeId === "") {
       return;
     }
+    clearRows();
     populateSizeClasses();
   }, [subtypeId]);
 
@@ -680,40 +686,67 @@ const Taxonomys = (props) => {
   }, [sizeClassId]);
 
   useEffect(() => {
+    if (!manufacturerId || manufacturerId === "") {
+      return;
+    }
+    clearRows();
+    populateModels();
+  }, [manufacturerId]);
+
+  useEffect(() => {
+    refreshData();
+  }, [rowKey]);
+
+  const clearRows = () => {
+    setItems([]);
+  };
+
+  const refreshData = (loadData) => {
     switch (rowKey) {
       case "classificationId":
         setCurrentView("classification");
         setColumns(classificationColumns);
+        if(loadData) {
+          populateClassifications();
+        }
         break;
       case "categoryId":
         setCurrentView("category");
         setColumns(categoryColumns);
+        if(loadData) {
+          populateCategories();
+        }
         break;
       case "subtypeId":
         setCurrentView("subtype");
         setColumns(subtypeColumns);
+        if(loadData) {
+          populateSubtypes();
+        }
         break;
       case "sizeClassId":
         setCurrentView("sizeClass");
         setColumns(sizeClassColumns);
+        if(loadData) {
+          populateSizeClasses();
+        }
         break;
       case "manufacturerId":
         setCurrentView("manufacturer");
         setColumns(manufacturerColumns);
+        if(loadData) {
+          populateManufacturers();
+        }
         break;
       case "modelIdKey":
         setCurrentView("modelId");
         setColumns(modelColumns);
+        
         break;
       default:
         setColumns(classificationColumns);
     }
-  }, [rowKey]);
-
-  const clearRows = () => {
-    setIsDataLoading(true);
-    setItems([]);
-  };
+  }
 
   return (
     <React.Fragment>

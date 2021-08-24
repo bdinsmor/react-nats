@@ -38,9 +38,10 @@ const UpdateManufacturerAlias = (props) => {
     setIsLoading(true);
     try {
       const updates = {
-        manufacturerId: values.manufacturerAlias.manufacturerId,
-        manufacturerName: values.manufacturerAlias.manufacturerName,
-        manufacturerAlias: values.manufacturerAlias.manufacturerAlias,
+        id: props.manufacturerAlias.id,
+        manufacturerId: props.manufacturerAlias.manufacturerId,
+        manufacturerName: values.manufacturerName,
+        manufacturerAlias: values.manufacturerAlias,
       };
 
       await DataService.updateUser(isNew, updates);

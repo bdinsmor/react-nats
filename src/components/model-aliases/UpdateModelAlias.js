@@ -27,7 +27,6 @@ const UpdateModelAlias = (props) => {
     const init = async function () {
       setIsLoading(true);
       setIsNew(props.isNew);
-      console.log("model alias: " + JSON.stringify(props.modelAlias,null,2))
       form.setFieldsValue(props.modelAlias);
 
       setIsLoading(false);
@@ -40,11 +39,11 @@ const UpdateModelAlias = (props) => {
   
     try {
       const updates = {
+        id: props.modelAlias.id,
         modelId: props.modelAlias.modelId,
-        model: props.modelAlias.model,
-        modelAlias: values.modelAlias,
+        modelName: props.modelAlias.model,
+        modelAlias: values.modelAlias
       };
-      console.log("updates: " + JSON.stringify(updates,null,2))
       await DataService.updateModelAlias(isNew, updates);
       form.resetFields();
       setIsLoading(false);

@@ -38,11 +38,12 @@ const UpdateSubtype = (props) => {
 
   const save = async (values) => {
     setIsLoading(true);
+    console.log("values: " + JSON.stringify(values,null,2))
     try {
       const updates = {
         categoryId: props.subtype.categoryId,
-        subTypeId: props.subtype.subtypeId,
-        subTypeName: values.subTypeName
+        subtypeId: props.subtype.subtypeId,
+        subtypeName: values.subtypeName
       };
 
       await DataService.updateSubtype(isNew, updates);

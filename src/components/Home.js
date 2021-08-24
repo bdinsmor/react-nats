@@ -27,121 +27,185 @@ import RegionAdjusmtents from "./adjustments/region-adjustments/RegionAdjustment
 import UtilizationAdjustments from "./adjustments/utilization-adjustments/UtilizationAdjustments";
 import WaterAdjustments from "./adjustments/water-adjustments/WaterAdjustments";
 
-
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 const { Header, Content, Sider } = Layout;
 
-
 const Home = (props) => {
   const location = useLocation();
-  const [siderCollapsed, setSiderCollapsed] = useState(false);
+  const [currentPage, setCurrentPage] = useState('Taxonomy');
 
   const listItems = [
     {
-      type: "group", key:'tax-group',
+      type: "group",
+      key: "tax-group",
       children: [
-        { key: 'taxonomy', label: "Taxonomy", link: "./taxonomy", type: "navlink" },
-        { key: 'configurations',label: "Configurations", link: "./configurations", type: "navlink" },
-        { key: 'model-aliases',label: "Model Aliases", link: "./model-aliases", type: "navlink" },
         {
-          key: 'manufacturer-aliases',label: "Manufacturer Aliases",
+          key: "taxonomy",
+          label: "Taxonomy",
+          link: "./taxonomy",
+          type: "navlink",
+        },
+        {
+          key: "configurations",
+          label: "Configurations",
+          link: "./configurations",
+          type: "navlink",
+        },
+        {
+          key: "model-aliases",
+          label: "Model Aliases",
+          link: "./model-aliases",
+          type: "navlink",
+        },
+        {
+          key: "manufacturer-aliases",
+          label: "Manufacturer Aliases",
           link: "./manufacturer-aliases",
           type: "navlink",
         },
-        { key: 'attachments',label: "Attachments", link: "./attachments", type: "navlink" },
+        {
+          key: "attachments",
+          label: "Attachments",
+          link: "./attachments",
+          type: "navlink",
+        },
       ],
     },
     {
-      type: "group", key:'specs-group',
+      type: "group",
+      key: "specs-group",
       children: [
         {
-          key: 'manufacturer-vins',
+          key: "manufacturer-vins",
           label: "Manufactuerer VINs",
           link: "./manufacturer-vins",
           type: "navlink",
         },
-        { label: "Options", link: "./options", type: "navlink", key: 'options' },
-        { label: "Specifications", link: "./specs", type: "navlink", key:'specs' },
+        {
+          label: "Options",
+          link: "./options",
+          type: "navlink",
+          key: "options",
+        },
+        {
+          label: "Specifications",
+          link: "./specs",
+          type: "navlink",
+          key: "specs",
+        },
       ],
     },
     {
-      type: "group", key: 'values-group',
+      type: "group",
+      key: "values-group",
       children: [
-        { key: 'values',label: "Values", link: "./values", type: "navlink" },
+        { key: "values", label: "Values", link: "./values", type: "navlink" },
         {
           label: "Residual Values - Models",
           link: "./residual-values-models",
           type: "navlink",
-          key: 'residual-models'
+          key: "residual-models",
         },
         {
           label: "Residual values - Sizes",
           link: "./residual-values-sizes",
           type: "navlink",
-          key: 'residual-sizes'
+          key: "residual-sizes",
         },
         {
           label: "Residual Values - Subtypes",
           link: "./residual-values-subtypes",
           type: "navlink",
-          key: 'residual-subtypes'
+          key: "residual-subtypes",
         },
       ],
     },
     {
-      type: "group", key:'adjustments-group',
+      type: "group",
+      key: "adjustments-group",
       children: [
         {
           label: "Condition Adjustments",
           link: "./condition-adjustments",
           type: "navlink",
-          key: 'condition'
+          key: "condition",
         },
         {
           label: "Region Adjustments",
           link: "./region-adjustments",
           type: "navlink",
-          key: 'region'
+          key: "region",
         },
         {
           label: "Utilization Adjustments",
           link: "./utilization-adjustments",
           type: "navlink",
-          key: 'utilization'
+          key: "utilization",
         },
         {
           label: "Water Adjustments",
           link: "./water-adjustments",
           type: "navlink",
-          key: 'water'
+          key: "water",
         },
       ],
     },
     {
-      type: "group", key: 'u-group',
+      type: "group",
+      key: "u-group",
       children: [
-        { label: "Usage", link: "./usage", type: "navlink",key: 'usage' },
-        { label: "Popularity", link: "./popularity", type: "navlink",key: 'popularity' },
+        { label: "Usage", link: "./usage", type: "navlink", key: "usage" },
+        {
+          label: "Popularity",
+          link: "./popularity",
+          type: "navlink",
+          key: "popularity",
+        },
       ],
     },
     {
       type: "group",
       children: [
-        { label: "Import Data", link: "./import", type: "navlink",key: 'import' },
-        { label: "Export Data", link: "./export", type: "navlink",key: 'export' },
-        { label: "Export File", link: "./export-file", type: "navlink",key: 'export-file' },
+        {
+          label: "Import Data",
+          link: "./import",
+          type: "navlink",
+          key: "import",
+        },
+        {
+          label: "Export Data",
+          link: "./export",
+          type: "navlink",
+          key: "export",
+        },
+        {
+          label: "Export File",
+          link: "./export-file",
+          type: "navlink",
+          key: "export-file",
+        },
       ],
     },
     {
-      type: "group", key: 'sync-group',
+      type: "group",
+      key: "sync-group",
       children: [
-        { label: "QA Sync", link: "./sync", type: "navlink",key: 'sync' },
-        { label: "Publish", link: "./publish", type: "navlink",key: 'publish' },
+        { label: "QA Sync", link: "./sync", type: "navlink", key: "sync" },
+        {
+          label: "Publish",
+          link: "./publish",
+          type: "navlink",
+          key: "publish",
+        },
       ],
     },
   ];
+
+  const updateCurrentPage = (pageName) => {
+    setCurrentPage(pageName);
+  }
 
   const init = async function () {};
 
@@ -149,104 +213,140 @@ const Home = (props) => {
     init();
   }, []);
 
-
-
   return (
     <React.Fragment>
       <Layout>
         <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
-          <HeaderBar title={location.pathname} />
+          <HeaderBar title={currentPage} />
         </Header>
-        <Row>
-        <Col style={{maxWidth:'230px', width:'230px', overflow:'auto', minHeight:'100vh', backgroundColor: 'rgb(0, 21, 41)'}}>
-            
-               <Menu className="nav-menu" mode="inline" theme="dark" style={{paddingTop:'44px', maxHeight:'95vh', overflow:'auto'}}>
-
-                {listItems.map(function(group){
-                    return <MenuItemGroup key={group.key} title="">{group.children.map(function(child) {
-                      return <Menu.Item key={child.key}><NavLink activeClassName="active-link" to={child.link}>{child.label}</NavLink></Menu.Item>
-                    })}</MenuItemGroup>
-                    
-                  })}
-              </Menu>
-          </Col>
-        <Col style={{width: '100%', maxWidth: '80vw', overflow:'auto', marginTop: '64px', display:'inline-flex'}}>
-          <Switch>
-            <Route exact path="/">
-              <Taxonomys />
-            </Route>
-            <Route exact path="/taxonomy">
-              <Taxonomys />
-            </Route>
-            <Route exact path="/configurations">
-              <Configurations />
-            </Route>
-            <Route exact path="/model-aliases">
-              <ModelAliases />
-            </Route>
-            <Route exact path="/manufacturer-aliases">
-              <ManufacturerAliases />
-            </Route>
-            <Route exact path="/manufacturer-vins">
-              <ManufacturerVins />
-            </Route>
-            <Route exact path="/attachments">
-              <Attachments />
-            </Route>
-            <Route exact path="/options">
-              <Options />
-            </Route>
-            <Route exact path="/specs">
-              <Specs />
-            </Route>
-            <Route exact path="/values">
-              <Values />
-            </Route>
-            <Route exact path="/residual-values-models">
-              <ResidualValuesModels />
-            </Route>
-            <Route exact path="/residual-values-sizes">
-              <ResidualValuesSizes />
-            </Route>
-            <Route exact path="/residual-values-subtypes">
-              <ResidualValuesSubtypes />
-            </Route>
-            <Route exact path="/condition-adjustments">
-              <ConditionAdjustments />
-            </Route>
-            <Route exact path="/region-adjustments">
-              <RegionAdjusmtents />
-            </Route>
-            <Route exact path="/utilization-adjustments">
-              <UtilizationAdjustments />
-            </Route>
-            <Route exact path="/water-adjustments">
-              <WaterAdjustments />
-            </Route>
-            <Route exact path="/usage">
-              <Usage />
-            </Route>
-            <Route exact path="/popularity">
-              <Popularity />
-            </Route>
-            <Route exact path="/import">
-              <Import />
-            </Route>
-            <Route exact path="/export">
-              <Export />
-            </Route>
-            <Route exact path="/export-file">
-              <ExportFile />
-            </Route>
-            <Route exact path="/sync">
-              <Sync />
-            </Route>
-            <Route exact path="/publish">
-              <Publish />
-            </Route>
-          </Switch>
-        </Col>
-        </Row>
+        <Layout>
+          <Sider
+            style={{
+              overflow: "auto",
+              height: "100vh",
+              width: '225px',
+              position: "fixed",
+              left: 0,
+            }}
+          >
+            <Menu
+              className="nav-menu"
+              mode="inline"
+              theme="dark"
+              style={{
+                paddingTop: "44px",
+                paddingBottom: '44px'
+              }}
+            >
+              {listItems.map(function (group) {
+                return (
+                  <MenuItemGroup key={group.key} title="">
+                    {group.children.map(function (child) {
+                      return (
+                        <Menu.Item key={child.key}>
+                          <NavLink
+                          onClick={() => updateCurrentPage(child.label)}
+                            activeClassName="active-link"
+                            to={child.link}
+                          >
+                            {child.label}
+                          </NavLink>
+                        </Menu.Item>
+                      );
+                    })}
+                  </MenuItemGroup>
+                );
+              })}
+            </Menu>
+          </Sider>
+          <Layout
+            className="site-layout"
+            style={{
+              marginLeft: 200,
+              width: "100%",
+              maxWidth: "80vw",
+              overflow: "auto",
+              marginTop: "64px",
+            }}
+          >
+            <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+              <Switch>
+                <Route exact path="/">
+                  <Taxonomys />
+                </Route>
+                <Route exact path="/taxonomy">
+                  <Taxonomys />
+                </Route>
+                <Route exact path="/configurations">
+                  <Configurations />
+                </Route>
+                <Route exact path="/model-aliases">
+                  <ModelAliases />
+                </Route>
+                <Route exact path="/manufacturer-aliases">
+                  <ManufacturerAliases />
+                </Route>
+                <Route exact path="/manufacturer-vins">
+                  <ManufacturerVins />
+                </Route>
+                <Route exact path="/attachments">
+                  <Attachments />
+                </Route>
+                <Route exact path="/options">
+                  <Options />
+                </Route>
+                <Route exact path="/specs">
+                  <Specs />
+                </Route>
+                <Route exact path="/values">
+                  <Values />
+                </Route>
+                <Route exact path="/residual-values-models">
+                  <ResidualValuesModels />
+                </Route>
+                <Route exact path="/residual-values-sizes">
+                  <ResidualValuesSizes />
+                </Route>
+                <Route exact path="/residual-values-subtypes">
+                  <ResidualValuesSubtypes />
+                </Route>
+                <Route exact path="/condition-adjustments">
+                  <ConditionAdjustments />
+                </Route>
+                <Route exact path="/region-adjustments">
+                  <RegionAdjusmtents />
+                </Route>
+                <Route exact path="/utilization-adjustments">
+                  <UtilizationAdjustments />
+                </Route>
+                <Route exact path="/water-adjustments">
+                  <WaterAdjustments />
+                </Route>
+                <Route exact path="/usage">
+                  <Usage />
+                </Route>
+                <Route exact path="/popularity">
+                  <Popularity />
+                </Route>
+                <Route exact path="/import">
+                  <Import />
+                </Route>
+                <Route exact path="/export">
+                  <Export />
+                </Route>
+                <Route exact path="/export-file">
+                  <ExportFile />
+                </Route>
+                <Route exact path="/sync">
+                  <Sync />
+                </Route>
+                <Route exact path="/publish">
+                  <Publish />
+                </Route>
+              </Switch>
+            </Content>
+          </Layout>
+        </Layout>
       </Layout>
     </React.Fragment>
   );
