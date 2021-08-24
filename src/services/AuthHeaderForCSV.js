@@ -1,10 +1,8 @@
-export default function authHeader() {
+export default function authHeaderForCSV() {
     const token = localStorage.getItem('token');
     if (token) {
-        return { Authorization: 'Bearer ' + token };
+        return { 'Content-Type': 'text/csv'};
     } else {
         return {};
     }
-};
-
-
+}

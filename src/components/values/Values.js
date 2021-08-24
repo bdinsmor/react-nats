@@ -375,7 +375,7 @@ const Values = (props) => {
                     allowClear={true}
                     onChange={onManufacturerSelect}
                     style={{
-                      width: "300px",
+                      width: "200px",
                     }}
                   />
                 </Col>
@@ -388,7 +388,7 @@ const Values = (props) => {
                     onChange={onModelSelect}
                     allowClear={true}
                     style={{
-                      width: "300px",
+                      width: "200px",
                     }}
                   />
                 </Col>

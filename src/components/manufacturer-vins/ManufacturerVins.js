@@ -216,7 +216,7 @@ const ManufacturerVins = (props) => {
                     allowClear={true}
                     onChange={onManufacturerSelect}
                     style={{
-                      width: "300px",
+                      width: "200px",
                     }}
                   />
                 </Col>

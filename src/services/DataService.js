@@ -1,5 +1,6 @@
 import axios from "axios";
 import authHeader from "./AuthHeader";
+import authHeaderForCSV from "./AuthHeaderForCSV";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -593,6 +594,27 @@ const DataService = {
     });
     return response.data;
   },
+
+  async getPresignedURL() {
+    const response = await axios.post(API_URL + "/analyst/import/url", null, {
+      headers: authHeader(),
+    });
+    return response.data;
+  },
+
+  async uploadData(url, formData) {
+    try {
+    const response = await axios.put(url, formData, {
+      headers: authHeaderForCSV(),
+    
+    });
+    return response;
+  } catch (err) {
+    console.error("Caught error uploading csv: ", err);
+    return null;
+  }
+  }
+
 };
 
 export default DataService;

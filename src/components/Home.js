@@ -221,10 +221,10 @@ const Home = (props) => {
         </Header>
         <Layout>
           <Sider
+          width="225px"
             style={{
               overflow: "auto",
               height: "100vh",
-              width: '225px',
               position: "fixed",
               left: 0,
             }}
@@ -262,14 +262,14 @@ const Home = (props) => {
           <Layout
             className="site-layout"
             style={{
-              marginLeft: 200,
+              marginLeft: 225,
               width: "100%",
               maxWidth: "80vw",
               overflow: "auto",
               marginTop: "64px",
             }}
           >
-            <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+            <Content style={{ overflow: "initial" }}>
               <Switch>
                 <Route exact path="/">
                   <Taxonomys />

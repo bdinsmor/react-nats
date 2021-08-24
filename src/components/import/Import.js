@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
 import { UploadOutlined } from "@ant-design/icons";
-import reqwest from 'reqwest';
-import { Row, Col, Layout, Select, Button, Upload, message, Typography } from "antd";
+import Papa from 'papaparse';
+import {
+  Row,
+  Col,
+  Layout,
+  Select,
+  Button,
+  Upload,
+  message,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
 import tables from "../../data/tables";
 import find from "lodash/find";
@@ -21,95 +30,128 @@ const Import = (props) => {
   const [tableOptions, setTableOptions] = useState([]);
   const [importFiles, setImportFiles] = useState([]);
   const [importHeaders, setImportHeaders] = useState([]);
+  const [foundHeaders, setFoundHeaders] = useState([]);
 
 
   const uploadProps = {
-    onRemove: file => {
+    onRemove: (file) => {
       const index = importFiles.indexOf(file);
-        const newFileList = importFiles.slice();
-        newFileList.splice(index, 1);
-        setImportFiles(newFileList);
+      const newFileList = importFiles.slice();
+      newFileList.splice(index, 1);
+      setImportFiles(newFileList);
     },
-    beforeUpload: file => {
-      setImportFiles([...importFiles, file])
+    beforeUpload: async (file) => {
+      setImportFiles([...importFiles, file]);
       return false;
     },
+    maxCount: 1,
+    accept: 'text/csv',
     importFiles,
   };
+  
+  function readCSV(file) {
+    return new Promise((resolve, reject) => {
+      Papa.parse(file, {
+        header: true,
+        error: err => {
+          console.error("Caught error parsing CSV file:",err);
+          reject(err);
+          
+        },
+        complete: results => {
+          resolve(results.meta)
+        }
+      });
+    })
+  }
 
-  const handleUpload = () => {
-    
-    const formData = new FormData();
-    importFiles.forEach(file => {
-      formData.append('files[]', file);
-    });
 
+  const handleUpload = async () => {
+    const res = await DataService.getPresignedURL();
+    const presignedUrl = res.url;
     setUploading(true);
-
-    // You can use any AJAX library you like
-    reqwest({
-      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-      method: 'post',
-      processData: false,
-      data: formData,
-      success: () => {
-        setUploading(true);
-        setImportFiles([]);
-        message.success('upload successfully.');
-      },
-      error: () => {
-        setUploading(false);
-        message.error('upload failed.');
-      },
-    });
+    const uploadResponse = await DataService.uploadData(presignedUrl, {body: importFiles[0]});
+    if(uploadResponse) {
+      setUploading(false);
+      setImportFiles([]);
+      message.success("Upload successfully.");
+    } else {
+      setUploading(false);
+      message.error("Upload failed.");
+    }
+   
   };
 
   const populateTableImportOptions = () => {
-    if(!selectedTable || !selectedTable.value) {
+    if (!selectedTable || !selectedTable.value) {
       return;
     }
-    const table = find(tables, ['name', selectedTable.value]);
-   
+    const table = find(tables, ["name", selectedTable.value]);
+
     const keys = Object.keys(table.header).map((k) => {
-      return {label: k, value: k};
-    })
-    
+      return { label: k, value: k };
+    });
+
     setSelectedTableImportOptions(keys);
   };
 
   const onTableSelect = (value) => {
     setSelectedTable(value);
-  }
+  };
 
   const onSelectImportOption = (value) => {
     setSelectedTableImportOption(value);
-    const table = find(tables, ['name', selectedTable.value]);
+    const table = find(tables, ["name", selectedTable.value]);
     const headers = table.header[value.value];
     setImportHeaders(headers);
-  }
+  };
 
   const init = async function () {
     setIsLoading(true);
-    if(tables || tables.length > 0) {
-      setTableOptions(tables.map((t) => {
-        return {value: t.name, label: t.title};
-      }));
+    if (tables || tables.length > 0) {
+      setTableOptions(
+        tables.map((t) => {
+          return { value: t.name, label: t.title };
+        })
+      );
     }
-    
+
     setIsLoading(false);
   };
-
 
   useEffect(() => {
     init();
   }, []);
 
+  useEffect( () => {
+    
+      async function fetchData() {
+        try {
+          const headers = await readCSV(importFiles[0]);
+          if(!headers || !headers.fields || headers.fields.length === 0) {
+            setFoundHeaders(null);
+            return;
+          }
+          setFoundHeaders(headers.fields);
+        
+        } catch (err) {
+          console.log("caught err: ",err)
+          setFoundHeaders(null);
+        }
+      }
+      if(importFiles && importFiles.length > 0) {
+        fetchData();
+      }    
+  }, [importFiles])
+
   useEffect(() => {
-    if(!selectedTable) {
+    if (!selectedTable) {
       return;
     }
     populateTableImportOptions();
   }, [selectedTable]);
+
+
 
   return (
     <React.Fragment>
@@ -158,44 +200,56 @@ const Import = (props) => {
                   options={selectedTableImportOptions}
                 />
               </Col>
-              <Col>
-                <h5>&nbsp;</h5>
-                <Button
-          type="primary"
-          onClick={() => handleUpload()}
-          disabled={importFiles.length === 0}
-          loading={uploading}
-        >
-          {uploading ? 'Uploading' : 'Start Upload'}
-        </Button>
-              </Col>
+              
             </Row>
-            <div style={{marginTop: '8px', marginBottom:'8px'}}>
-              {(importHeaders &&  importHeaders.length > 0) && 
-              <>
-              <Row><Typography style={{fontSize: '14px'}}>Required CSV headers:</Typography></Row>
-              <Row><Text code>{importHeaders.join(', ')}</Text></Row>
-              </>
-              }
+            <div style={{ marginTop: "8px", marginBottom: "8px" }}>
+              {importHeaders && importHeaders.length > 0 && (
+                <>
+                  <Row>
+                    <Typography style={{ fontSize: "14px" }}>
+                      Required CSV headers:
+                    </Typography>
+                  </Row>
+                  <Row>
+                    <Text code>{importHeaders.join(", ")}</Text>
+                  </Row>
+                </>
+              )}
             </div>
+            <div style={{ marginTop: "16px", marginBottom: "16px" }}>
+              {importFiles && foundHeaders && foundHeaders.length > 0 && (
+                <>
+                  <Row>
+                    <Typography style={{ fontSize: "14px" }}>
+                      {importFiles[0].name} has headers:
+                    </Typography>
+                  </Row>
+                  <Row>
+                    <Text code>{foundHeaders.join(", ")}</Text>
+                  </Row>
+                </>
+              )}
+            </div>
+
           </div>
-          
-        <Row>
-        <Dragger {...uploadProps} style={{paddingLeft: 16,
-            paddingRight: 16}}>
-    <p className="ant-upload-drag-icon">
-      <UploadOutlined />
-    </p>
-    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-    <p className="ant-upload-hint">
-      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-      band files
-    </p>
-  </Dragger>
-  </Row>
-  <Row>
-        
+          <Row style={{marginBottom: 24}}><Button
+                  type="primary"
+                  onClick={() => handleUpload()}
+                  disabled={importFiles.length === 0 || !selectedTable || selectedTable === '' || !selectedTableImportOption || selectedTableImportOption === ''}
+                  loading={uploading}
+                >
+                  {uploading ? "Uploading" : "Start Upload"}
+                </Button></Row>
+          <Row>
+            <Dragger {...uploadProps} style={{ paddingLeft: 16, paddingRight: 16, minWidth: '50vw' }} >
+              <p className="ant-upload-drag-icon"> <UploadOutlined /> </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              
+            </Dragger>
           </Row>
+         
         </Content>
       </Layout>
     </React.Fragment>

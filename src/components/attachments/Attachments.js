@@ -332,7 +332,7 @@ const Attachments = (props) => {
               </Col>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
+          
           <Table
             scroll={{ x: 500, y: 400 }}
             size="small"
