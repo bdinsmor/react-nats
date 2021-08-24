@@ -38,15 +38,15 @@ const UpdateValue = (props) => {
       const updates = {
         configurationId: props.value.configurationId,
         revisionDate: props.value.revisionDate,
-        msrp: values.value.msrp,
-        finance: values.value.finance,
-        retail: values.value.retail,
-        askingPrice: values.value.askingPrice,
-        auctionPrice: values.value.auctionPrice,
-        tradeIn: values.value.tradeIn,
-        low: values.value.low,
-        high: values.value.high,
-        wholesale: values.value.wholesale,
+        msrp: values.msrp,
+        finance: values.finance,
+        retail: values.retail,
+        askingPrice: values.askingPrice,
+        auctionPrice: values.auctionPrice,
+        tradeIn: values.tradeIn,
+        low: values.low,
+        high: values.high,
+        wholesale: values.wholesale,
       };
 
       await DataService.updateValue(isNew, updates);

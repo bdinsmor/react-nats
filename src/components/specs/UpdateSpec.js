@@ -39,11 +39,11 @@ const UpdateSpec = (props) => {
         id: props.spec.id,
         configurationId: props.spec.configurationId,
         specFamily: props.spec.specFamily,
-        specUom: values.spec.specUom,
-        specDescription: values.spec.specDescription,
-        specNameFriendly: values.spec.sepcNameFriendly,
-        specName: values.spec.specName,
-        specValue: values.spec.specValue
+        specUom: values.specUom,
+        specDescription: values.specDescription,
+        specNameFriendly: values.sepcNameFriendly,
+        specName: values.specName,
+        specValue: values.specValue
       };
 
       await DataService.updateSpec(isNew,updates);

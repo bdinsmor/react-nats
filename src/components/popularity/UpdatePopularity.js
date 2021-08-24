@@ -37,20 +37,20 @@ const UpdatePopularity = (props) => {
     try {
       const updates = {
         modelId: props.popularity.modelId,
-        benchmarkGroup: values.popularity.benchmarkGroup,
-        marketPopularityIndex: values.popularity.marketPopularityIndex,
-        marketPopularityLabel: values.popularity.marketPopularityLabel,
-        recordCount: values.popularity.recordCount,
-        twenty: values.popularity.twenty,
-        forty: values.popularity.forty,
-        sixty: values.popularity.sixty,
-        eighty: values.popularity.eighty,
-        hundred: values.popularity.hundred,
-        twentyPercent: values.popularity.twentyPercent,
-        fortyPercent: values.popularity.fortyPercent,
-        sixtyPercent: values.popularity.sixtyPercent,
-        eightyPercent: values.popularity.eightyPercent,
-        hundredPercent: values.popularity.hundredPercent
+        benchmarkGroup: values.benchmarkGroup,
+        marketPopularityIndex: values.marketPopularityIndex,
+        marketPopularityLabel: values.marketPopularityLabel,
+        recordCount: values.recordCount,
+        twenty: values.twenty,
+        forty: values.forty,
+        sixty: values.sixty,
+        eighty: values.eighty,
+        hundred: values.hundred,
+        twentyPercent: values.twentyPercent,
+        fortyPercent: values.fortyPercent,
+        sixtyPercent: values.sixtyPercent,
+        eightyPercent: values.eightyPercent,
+        hundredPercent: values.hundredPercent
       };
 
       await DataService.updatePopularity(isNew,updates);

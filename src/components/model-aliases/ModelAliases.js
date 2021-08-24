@@ -24,6 +24,7 @@ const { Content } = Layout;
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   const [fetching, setFetching] = React.useState(false);
   const [options, setOptions] = React.useState([]);
+  
   const fetchRef = React.useRef(0);
   const debounceFetcher = React.useMemo(() => {
     const loadOptions = (value) => {
@@ -61,6 +62,7 @@ const ModelAliases = (props) => {
   const [manufacturerId, setManufacturerId] = useState("");
   const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isNew, setIsNew] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
@@ -133,28 +135,33 @@ const ModelAliases = (props) => {
       title: "#",
       dataIndex: "index",
       width: '50px',
+      fixed: 'left',
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Id",
       dataIndex: "modelId",
+      width: '100px',
       sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Alias",
       dataIndex: "modelAlias",
+      width: '150px',
       sorter: (a, b) => a.modelAlias - b.modelAlias,
     },
     
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+      width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By" ,
       dataIndex: "user",
+      width: '150px',
       sorter: (a, b) => a.user - b.user,
     },
     {
@@ -173,6 +180,7 @@ const ModelAliases = (props) => {
 
   const openUpdateDrawer = (item) => {
     setItem(item);
+    setIsNew(false);
     setShowUpdateDrawer(true);
   };
   const onUpdateSuccess = () => {
@@ -184,13 +192,14 @@ const ModelAliases = (props) => {
 
 
   const onAdd = () => {
-    setItem({modelId: modelId});
+    setIsNew(true);
+    setItem({modelId: modelId, modelName: selectedModel.modelName});
     setShowUpdateDrawer(true);
   }
 
   const init = async function () {
     setIsLoading(true);
-
+    setIsNew(false);
     setIsLoading(false);
   };
 
@@ -291,7 +300,7 @@ const ModelAliases = (props) => {
         width={600}
       >
         <UpdateModelAlias
-          model={item}
+          modelAlias={item}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateModelAlias>

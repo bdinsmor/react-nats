@@ -42,7 +42,7 @@ const UpdateSubtype = (props) => {
       const updates = {
         categoryId: props.subtype.categoryId,
         subTypeId: props.subtype.subtypeId,
-        subTypeName: values.subtype.subTypeName
+        subTypeName: values.subTypeName
       };
 
       await DataService.updateSubtype(isNew, updates);

@@ -41,10 +41,10 @@ const UpdateClassification = (props) => {
     try {
       const updates = {
         classifcationId: props.classification.classifcationId,
-        classificationName: values.classification.classificationName
+        classificationName: values.classificationName
       };
 
-      await DataService.updateClassification(isNew, updates);
+      await DataService.updateClassification(isNew,updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({

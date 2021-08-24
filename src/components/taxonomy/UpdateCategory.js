@@ -42,7 +42,7 @@ const UpdateCategory = (props) => {
       const updates = {
         classificationId: props.category.classificationId,
         categoryId: props.category.categoryId,
-        categoryName: values.category.categoryName
+        categoryName: values.categoryName
       };
 
       await DataService.updateCategory(isNew, updates);

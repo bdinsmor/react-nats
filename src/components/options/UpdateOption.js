@@ -38,9 +38,9 @@ const UpdateOption = (props) => {
       const updates = {
         id: props.option.id,
         optionId: props.option.optionId,
-        optionName: values.option.optionName,
-        optionValue: values.option.value,
-        optionFamilyId: values.option.openFamilyId,
+        optionName: values.optionName,
+        optionValue: values.value,
+        optionFamilyId: values.openFamilyId,
       };
 
       await DataService.updateOption(isNew, updates);

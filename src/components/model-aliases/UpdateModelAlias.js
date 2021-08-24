@@ -20,29 +20,32 @@ import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 const UpdateModelAlias = (props) => {
   const [form] = Form.useForm();
+  const [isNew, setIsNew] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async function () {
       setIsLoading(true);
-
+      setIsNew(props.isNew);
+      console.log("model alias: " + JSON.stringify(props.modelAlias,null,2))
       form.setFieldsValue(props.modelAlias);
 
       setIsLoading(false);
     };
     init();
-  }, [form, props.modelAlias]);
+  }, [form, props.isNew, props.modelAlias]);
 
   const save = async (values) => {
     setIsLoading(true);
+  
     try {
-      const modelAliasUpdates = {
-        modelId: values.modelAlias.modelId,
-        modelName: values.modelAlias.modelName,
-        modelAlias: values.modelAlias.modelAlias,
+      const updates = {
+        modelId: props.modelAlias.modelId,
+        model: props.modelAlias.model,
+        modelAlias: values.modelAlias,
       };
-
-      await DataService.updateUser(modelAliasUpdates);
+      console.log("updates: " + JSON.stringify(updates,null,2))
+      await DataService.updateModelAlias(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
@@ -104,12 +107,12 @@ const UpdateModelAlias = (props) => {
         <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="modelName"
-              label="Model Name"
+              name="model"
+              label="Model"
               rules={[
                 {
                   required: true,
-                  message: "Model Name cannot be empty",
+                  message: "Model cannot be empty",
                 },
               ]}
             >

@@ -41,11 +41,11 @@ const UpdateSizeClass = (props) => {
     try {
       const updates = {
         subtypeId: props.sizeClass.subtypeId,
-        sizeClassId: props.sizeClass.sizeClassId,
-        sizeClassMin: values.sizeClass.sizeClassMin,
-        sizeClassMax: values.sizeClass.sizeClassMax,
-        sizeClassUom: values.sizeClass.sizeClassUom,
-        sizeClassName: values.sizeClass.sizeClassName
+        sizeClassId: props.sizeClassId,
+        sizeClassMin: values.sizeClassMin,
+        sizeClassMax: values.sizeClassMax,
+        sizeClassUom: values.sizeClassUom,
+        sizeClassName: values.sizeClassName
       };
 
       await DataService.updateSizeClass(isNew, updates);

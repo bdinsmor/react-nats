@@ -36,21 +36,21 @@ const UpdateUsage = (props) => {
     try {
       const updates = {
         modelId: props.usage.modelId,
-        modelYear: values.usage.modelYear,
-        age: values.usage.age,
-        benchmarkLevel: values.usage.benchmarkLevel,
-        meanAnnualUsage: values.usage.meanAnnualUsage,
-        recordCount: values.usage.recordCount,
-        percentile25: values.usage.percentile25,
-        percentile45: values.usage.percentile45,
-        percentile55: values.usage.percentile55,
-        percentile75: values.usage.percentile75,
-        percentile99: values.usage.percentile99,
-        distribution25: values.usage.distribution25,
-        distribution45: values.usage.distribution45,
-        distribution55: values.usage.distribution55,
-        distribution75: values.usage.distribution75,
-        distribution99: values.usage.distribution99
+        modelYear: values.modelYear,
+        age: values.age,
+        benchmarkLevel: values.benchmarkLevel,
+        meanAnnualUsage: values.meanAnnualUsage,
+        recordCount: values.recordCount,
+        percentile25: values.percentile25,
+        percentile45: values.percentile45,
+        percentile55: values.percentile55,
+        percentile75: values.percentile75,
+        percentile99: values.percentile99,
+        distribution25: values.distribution25,
+        distribution45: values.distribution45,
+        distribution55: values.distribution55,
+        distribution75: values.distribution75,
+        distribution99: values.distribution99
       };
 
       await DataService.updateUsage(isNew,updates);

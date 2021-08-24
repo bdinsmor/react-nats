@@ -42,7 +42,7 @@ const UpdateModel = (props) => {
       const updates = {
         modelId: props.model.modelId,
         manufacturerId: props.model.manufacturerId,
-        modelName: values.model.modelName
+        modelName: values.modelName
       };
 
       await DataService.updateModel(isNew, updates);

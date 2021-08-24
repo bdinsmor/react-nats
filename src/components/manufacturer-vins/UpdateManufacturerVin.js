@@ -40,11 +40,11 @@ const UpdateManufacturerVin = (props) => {
       const updates = {
       manufacturerId: props.manufacturerVin.manufacturerId,
       manufacturerName: props.manufacturerVin.manufacturerName,
-      shortVin: values.manufacturerVin.shortVin,
-      vinManufacturerCode: values.manufacturerVin.vinManufacturerCode,
-      vinYearCode: values.manufacturerVin.vinYearCode,
-      cicCode: values.manufacturerVin.cicCode,
-      modelYear: values.manufacturerVin.modelYear
+      shortVin: values.shortVin,
+      vinManufacturerCode: values.vinManufacturerCode,
+      vinYearCode: values.vinYearCode,
+      cicCode: values.cicCode,
+      modelYear: values.modelYear
       };
 
       await DataService.updateManufacturerVin(isNew, updates);

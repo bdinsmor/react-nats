@@ -40,7 +40,7 @@ const UpdateManufacturer = (props) => {
     setIsLoading(true);
     try {
       const updates = {
-        manufacturerName: values.manufacturer.manufacturerName,
+        manufacturerName: values.manufacturerName,
         manufacturerId: props.manufacturer.manufacturerId
       };
 
