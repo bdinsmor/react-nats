@@ -345,9 +345,9 @@ const DataService = {
   async updateModelAlias(isNew, data) {
     let response;
     if(!isNew) {
-      response = await axios.put(API_URL + "/analyst/model-alias",data,{headers: authHeader(),});
+      response = await axios.put(API_URL + "/analyst/model-aliases",data,{headers: authHeader(),});
     } else {
-      response = await axios.post(API_URL + "/analyst/model-alias",data,{headers: authHeader()});
+      response = await axios.post(API_URL + "/analyst/model-aliases",data,{headers: authHeader()});
     }
     return response.data;
   },
@@ -355,9 +355,9 @@ const DataService = {
   async updateManufacturerAlias(isNew, data) {
     let response;
     if(!isNew) {
-      response = await axios.put(API_URL + "/analyst/manufacturer-alias",data,{headers: authHeader(),});
+      response = await axios.put(API_URL + "/analyst/manufacturer-aliases",data,{headers: authHeader(),});
     } else {
-      response = await axios.post(API_URL + "/analyst/manufacturer-alias",data,{headers: authHeader()});
+      response = await axios.post(API_URL + "/analyst/manufacturer-aliases",data,{headers: authHeader()});
     }
     return response.data;
   },

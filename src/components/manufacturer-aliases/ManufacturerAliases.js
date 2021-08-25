@@ -17,7 +17,7 @@ import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 
 const { Content } = Layout;
@@ -77,9 +77,6 @@ const ManufacturerAliases = (props) => {
     return manuResults;
   };
 
-
-
-
   const onManufacturerSelect = async (option) => {
     setItems([]);
     if (!option || option === null) {
@@ -94,10 +91,10 @@ const ManufacturerAliases = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
-    
+
     setItems(res);
     setIsDataLoading(false);
   };
@@ -106,7 +103,7 @@ const ManufacturerAliases = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: '50px',
+      width: "50px",
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
@@ -125,24 +122,31 @@ const ManufacturerAliases = (props) => {
       dataIndex: "manufacturerAlias",
       sorter: (a, b) => a.manufacturerAlias - b.manufacturerAlias,
     },
-    
+
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
-      title: "Last Modified By" ,
+      title: "Last Modified By",
       dataIndex: "user",
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",width: '50px',
-      fixed: 'right',
+      key: "action",
+      width: "50px",
+      fixed: "right",
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" size="small" style={{fontSize:'12px'}} icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            size="small"
+            style={{ fontSize: "12px" }}
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -152,9 +156,9 @@ const ManufacturerAliases = (props) => {
 
   const onAdd = () => {
     setIsNew(true);
-    setItem({manufacturerId: manufacturerId});
+    setItem({ manufacturerId: manufacturerId });
     setShowUpdateDrawer(true);
-  }
+  };
 
   const openUpdateDrawer = (item) => {
     setItem(item);
@@ -164,6 +168,24 @@ const ManufacturerAliases = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
     init();
+    loadData();
+  };
+
+  const loadData = async () => {
+    if (manufacturerId && manufacturerId !== "") {
+      setIsDataLoading(true);
+      setItems([]);
+      const res = await DataService.getAliasesForManufacturer(manufacturerId);
+      let index = 1;
+      res.forEach(function (element) {
+        element.index = index;
+        element.formattedDate = dayjs(element.ts).format("lll");
+        index++;
+      });
+
+      setItems(res);
+      setIsDataLoading(false);
+    }
   };
 
   const init = async function () {
@@ -207,7 +229,6 @@ const ManufacturerAliases = (props) => {
                     }}
                   />
                 </Col>
-                
               </Space>
             </Row>
           </div>
@@ -239,10 +260,13 @@ const ManufacturerAliases = (props) => {
             dataSource={items}
             scroll={{ y: 400, x: 500 }}
             size="small"
-            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
             rowKey="manufacturerId"
             loading={isDataLoading}
-            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

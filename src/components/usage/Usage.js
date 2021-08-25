@@ -273,8 +273,26 @@ const Usage = (props) => {
     setIsNew(false);
     
     init();
+    loadData();
   };
 
+  const loadData = async () => {
+    if (modelId && modelId !== "") {
+      setItems([]);
+      setIsDataLoading(true);
+      const res = await DataService.getUsageForModelId(modelId);
+    let index = 1;
+    res.forEach(function (element) {
+      element.index = index;
+      element.formattedDate = dayjs(element.ts).format("lll");
+      index++;
+    });
+    setItems(res);
+    setIsDataLoading(false);
+    }
+  };
+
+  
   const init = async function () {
     setIsLoading(true);
     setIsNew(false);

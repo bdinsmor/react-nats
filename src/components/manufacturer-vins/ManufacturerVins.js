@@ -17,7 +17,7 @@ import {
 import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
@@ -91,7 +91,7 @@ const ManufacturerVins = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
     setItems(res);
@@ -102,60 +102,67 @@ const ManufacturerVins = (props) => {
     {
       title: "#",
       dataIndex: "index",
-      width: '50px',
-      fixed: 'left',
+      width: "50px",
+      fixed: "left",
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Year",
       dataIndex: "modelYear",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.modelYear - b.modelYear,
     },
     {
       title: "Vin Manufacturer Code",
       dataIndex: "vinManufacturerCode",
-      width: '120px',
+      width: "120px",
       sorter: (a, b) => a.vinManufacturerCode - b.vinManufacturerCode,
     },
     {
       title: "Vin Year Code",
       dataIndex: "vinYearCode",
-      width: '120px',
+      width: "120px",
       sorter: (a, b) => a.vinYearCode - b.vinYearCode,
     },
     {
       title: "Short Vin",
       dataIndex: "shortVin",
-      width: '120px',
+      width: "120px",
       sorter: (a, b) => a.shortVin - b.shortVin,
     },
     {
       title: "Cic Code",
       dataIndex: "cicCode",
-      width: '120px',
+      width: "120px",
       sorter: (a, b) => a.cicCode - b.cicCode,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
-      title: "Last Modified By" ,
+      title: "Last Modified By",
       dataIndex: "user",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",width: '50px',
-      fixed: 'right',
+      key: "action",
+      width: "50px",
+      fixed: "right",
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" size="small" style={{fontSize:'12px'}} icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            size="small"
+            style={{ fontSize: "12px" }}
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -165,9 +172,12 @@ const ManufacturerVins = (props) => {
 
   const onAdd = () => {
     setIsNew(true);
-    setItem({manufacturerId: manufacturerId, manufacturerName: selectedManufacturer.label});
+    setItem({
+      manufacturerId: manufacturerId,
+      manufacturerName: selectedManufacturer.label,
+    });
     setShowUpdateDrawer(true);
-  }
+  };
 
   const openUpdateDrawer = (item) => {
     setItem(item);
@@ -177,6 +187,24 @@ const ManufacturerVins = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
     init();
+    loadData();
+  };
+
+  const loadData = async () => {
+    if (manufacturerId && manufacturerId !== "") {
+      setIsDataLoading(true);
+      setItems([]);
+      const res = await DataService.getVINsForManufacturer(manufacturerId);
+      let index = 1;
+      res.forEach(function (element) {
+        element.index = index;
+        element.formattedDate = dayjs(element.ts).format("lll");
+        index++;
+      });
+
+      setItems(res);
+      setIsDataLoading(false);
+    }
   };
 
   const init = async function () {
@@ -252,9 +280,12 @@ const ManufacturerVins = (props) => {
             scroll={{ x: 500, y: 400 }}
             rowKey="id"
             size="small"
-            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
             loading={isDataLoading}
-            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

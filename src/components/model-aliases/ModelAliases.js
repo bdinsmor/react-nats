@@ -17,14 +17,14 @@ import {
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
 import { ExportTableButton } from "ant-table-extensions";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
   const [fetching, setFetching] = React.useState(false);
   const [options, setOptions] = React.useState([]);
-  
+
   const fetchRef = React.useRef(0);
   const debounceFetcher = React.useMemo(() => {
     const loadOptions = (value) => {
@@ -94,7 +94,6 @@ const ModelAliases = (props) => {
     return modelResults;
   };
 
-
   const onManufacturerSelect = (option) => {
     setSelectedModel(null);
     handleModelSearch("");
@@ -122,55 +121,61 @@ const ModelAliases = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
     setItems(res);
     setIsDataLoading(false);
   };
 
-
   const columns = [
     {
       title: "#",
       dataIndex: "index",
-      width: '50px',
-      fixed: 'left',
+      width: "50px",
+      fixed: "left",
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Model Id",
       dataIndex: "modelId",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Alias",
       dataIndex: "modelAlias",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.modelAlias - b.modelAlias,
     },
-    
+
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
-      title: "Last Modified By" ,
+      title: "Last Modified By",
       dataIndex: "user",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
-      key: "action",width: '50px',
-      fixed: 'right',
+      key: "action",
+      width: "50px",
+      fixed: "right",
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" size="small" style={{fontSize:'12px'}} icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            size="small"
+            style={{ fontSize: "12px" }}
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -186,23 +191,37 @@ const ModelAliases = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
     init();
+    loadData();
   };
 
-  
+  const loadData = async () => {
+    if (modelId && modelId !== "") {
+      setIsDataLoading(true);
+      setItems([]);
+      const res = await DataService.getAliasesForModelId(modelId);
+      let index = 1;
+      res.forEach(function (element) {
+        element.index = index;
+        element.formattedDate = dayjs(element.ts).format("lll");
+        index++;
+      });
 
+      setItems(res);
+      setIsDataLoading(false);
+    }
+  };
 
   const onAdd = () => {
     setIsNew(true);
-    setItem({modelId: modelId, modelName: selectedModel.modelName});
+    setItem({ modelId: modelId, modelName: selectedModel.modelName });
     setShowUpdateDrawer(true);
-  }
+  };
 
   const init = async function () {
     setIsLoading(true);
     setIsNew(false);
     setIsLoading(false);
   };
-
 
   useEffect(() => {
     init();
@@ -252,12 +271,10 @@ const ModelAliases = (props) => {
                     }}
                   />
                 </Col>
-
-              
               </Space>
             </Row>
           </div>
-          <div style={{ marginBottom: 8}}>
+          <div style={{ marginBottom: 8 }}>
             <Row gutter={12}>
               <Col span={24}>
                 <Space>
@@ -281,14 +298,17 @@ const ModelAliases = (props) => {
             </Row>
           </div>
           <Table
-          size="small"
+            size="small"
             columns={columns}
             dataSource={items}
             scroll={{ y: 400, x: 500 }}
             rowKey="modelId"
-            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
             loading={isDataLoading}
-            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

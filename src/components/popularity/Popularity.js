@@ -27,7 +27,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 
   const clearOptions = () => {
     setOptions([]);
-  }
+  };
   const debounceFetcher = React.useMemo(() => {
     const loadOptions = (value) => {
       fetchRef.current += 1;
@@ -83,8 +83,8 @@ const Popularity = (props) => {
 
   const handleModelSearch = async (value) => {
     if (!value || value === "") {
-      console.log("clearing models")
-      return [{label: 'test', value:'1', key:'1'}];
+      console.log("clearing models");
+      return [{ label: "test", value: "1", key: "1" }];
     }
     const res = await DataService.getModelsForManufacturer(
       manufacturerId,
@@ -101,8 +101,7 @@ const Popularity = (props) => {
     setSelectedModel(null);
     handleModelSearch("");
     setSelectedModel(null);
-    
-    
+
     setItems([]);
     if (!option || option === null) {
       setSelectedManufacturer(null);
@@ -115,11 +114,10 @@ const Popularity = (props) => {
   };
 
   const onModelSelect = async (option) => {
-    if (!option || option === null || option === '') {
-
+    if (!option || option === null || option === "") {
       setModelId("");
       setSelectedModel(null);
-    handleModelSearch("");
+      handleModelSearch("");
       return;
     }
     setIsDataLoading(true);
@@ -148,115 +146,117 @@ const Popularity = (props) => {
     {
       title: "Model Id",
       dataIndex: "modelId",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.modelId - b.modelId,
     },
     {
       title: "Record Count",
       dataIndex: "recordCount",
-      width: '120px',
+      width: "120px",
       sorter: (a, b) => a.recordCount - b.recordCount,
     },
     {
       title: "Market Popularity Index",
       dataIndex: "markeyPopularityIndex",
-      width: '180px',
+      width: "180px",
       sorter: (a, b) => a.markeyPopularityIndex - b.markeyPopularityIndex,
     },
     {
       title: "Benchmark Group",
       dataIndex: "benchmarkGroup",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.benchmarkGroup - b.benchmarkGroup,
     },
     {
       title: "Market Popularity Label",
       dataIndex: "marketPopularityLabel",
-      width: '180px',
+      width: "180px",
       sorter: (a, b) => a.marketPopularityLabel - b.marketPopularityLabel,
     },
     {
       title: "Twenty",
       dataIndex: "twenty",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.twenty - b.twenty,
     },
     {
       title: "Forty",
       dataIndex: "forty",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.forty - b.forty,
     },
     {
       title: "Sixty",
       dataIndex: "sixty",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.sixty - b.sixty,
     },
     {
       title: "Eighty",
       dataIndex: "eighty",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.eighty - b.eighty,
     },
     {
       title: "Hundred",
       dataIndex: "hundred",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.hundred - b.hundred,
     },
     {
       title: "Twenty %",
       dataIndex: "twentyPercent",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.twentyPercent - b.twentyPercent,
     },
     {
       title: "Forty %",
       dataIndex: "fortyPercent",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.fortyPercent - b.fortyPercent,
     },
     {
       title: "Sixty %",
       dataIndex: "sixtyPercent",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.sixtyPercent - b.sixtyPercent,
     },
     {
       title: "Eighty %",
       dataIndex: "eightyPercent",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.eightyPercent - b.eightyPercent,
     },
     {
       title: "Hundred %",
       dataIndex: "hundredPercent",
-      width: '100px',
+      width: "100px",
       sorter: (a, b) => a.hundredPercent - b.hundredPercent,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
-      width: '150px',
+      width: "150px",
       sorter: (a, b) => a.user - b.user,
     },
     {
       title: "",
       key: "action",
-      width: '50px',
+      width: "50px",
       fixed: "right",
       render: (text, record) => (
         <Space size="middle">
           <Button
             type="link"
-            size="small" style={{fontSize:'12px'}} icon={<EditOutlined />}
+            size="small"
+            style={{ fontSize: "12px" }}
+            icon={<EditOutlined />}
             onClick={() => openUpdateDrawer(record)}
           >
             Edit
@@ -280,6 +280,24 @@ const Popularity = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
     init();
+    loadData();
+  };
+
+  const loadData = async () => {
+    
+    if (modelId && modelId !== "") {
+      setItems([]);
+      setIsDataLoading(true);
+      const res = await DataService.getPopularityForModelId(modelId);
+      let index = 1;
+      res.forEach(function (element) {
+        element.index = index;
+        element.formattedDate = dayjs(element.ts).format("lll");
+        index++;
+      });
+      setItems(res);
+      setIsDataLoading(false);
+    }
   };
 
   const init = async function () {
@@ -363,14 +381,17 @@ const Popularity = (props) => {
             </Row>
           </div>
           <Table
-          style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
             loading={isDataLoading}
             columns={columns}
             dataSource={items}
             scroll={{ x: 500, y: 400 }}
             size="small"
             rowKey="modelId"
-            pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}
+            pagination={{
+              hideOnSinglePage: true,
+              pageSize: items ? items.length : 10,
+            }}
           />
         </Content>
       </Layout>

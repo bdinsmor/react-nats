@@ -851,7 +851,6 @@ const Taxonomys = (props) => {
               </Col>
             </Row>
           </div>
-          <div style={{ marginBottom: 16 }}></div>
           <Table
             scroll={{ y: 400, x: 500 }}
             size="small"

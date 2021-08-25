@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DataService from "../../services/DataService";
 import UpdateValue from "./UpdateValue";
-import { EditOutlined, SearchOutlined} from "@ant-design/icons";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Space,
   Row,
@@ -14,11 +14,11 @@ import {
   Spin,
   Button,
 } from "antd";
-import Highlighter from 'react-highlight-words';
+import Highlighter from "react-highlight-words";
 import { ExportTableButton } from "ant-table-extensions";
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
-var localizedFormat = require('dayjs/plugin/localizedFormat')
+var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat);
 const { Content } = Layout;
 const { Search } = Input;
@@ -60,12 +60,13 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, ...props }) {
 } // Usage of DebounceSelect
 
 const Values = (props) => {
-  const [manufacturerId, setManufacturerId] = useState('');
-  const [modelId, setModelId] = useState('');
+  const [manufacturerId, setManufacturerId] = useState("");
+  const [modelId, setModelId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isNew, setIsNew] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  const [configurationId, setConfigurationId] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
@@ -97,16 +98,22 @@ const Values = (props) => {
     return modelResults;
   };
 
-  const getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
-          
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: 'block' }}
+          style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
@@ -118,7 +125,11 @@ const Values = (props) => {
           >
             Search
           </Button>
-          <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          <Button
+            onClick={() => handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
             Reset
           </Button>
           <Button
@@ -128,7 +139,6 @@ const Values = (props) => {
               confirm({ closeDropdown: false });
               setSearchText(selectedKeys[0]);
               setSearchedColumn(dataIndex);
-              
             }}
           >
             Filter
@@ -136,18 +146,23 @@ const Values = (props) => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
     onFilter: (value, record) =>
       record[dataIndex]
-        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-        : '',
-    render: text =>
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
+    render: (text) =>
       searchedColumn === dataIndex ? (
         <Highlighter
-          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ''}
+          textToHighlight={text ? text.toString() : ""}
         />
       ) : (
         text
@@ -158,14 +173,12 @@ const Values = (props) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
-    
   };
 
-  const handleReset = clearFilters => {
+  const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
-
 
   const onManufacturerSelect = (option) => {
     setSelectedModel(null);
@@ -194,7 +207,7 @@ const Values = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
     setItems(res);
@@ -202,124 +215,133 @@ const Values = (props) => {
   };
 
   const onLoadConfigurationId = async (value) => {
-    setManufacturerId('');
-    setModelId('');
+    setManufacturerId("");
+    setModelId("");
+    setConfigurationId(value);
+    setIsDataLoading(true);
     const res = await DataService.getValuesForConfigurationId(value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
-      element.formattedDate = dayjs(element.ts).format('lll');
+      element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
     setItems(res);
+    setIsDataLoading(false);
   };
 
   const columns = [
     {
       title: "#",
       dataIndex: "index",
-      width: '100px',
-      fixed: 'left',
+      width: "100px",
+      fixed: "left",
       defaultSortOrder: "ascend",
       sorter: (a, b) => a.index - b.index,
     },
     {
       title: "Configuration Id",
       dataIndex: "configurationId",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.configurationId - b.configurationId,
-      ...getColumnSearchProps('configurationId'),
+      ...getColumnSearchProps("configurationId"),
     },
     {
       title: "Model Year",
       dataIndex: "modelYear",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.modelYear - b.modelYear,
-      ...getColumnSearchProps('modelYear'),
+      ...getColumnSearchProps("modelYear"),
     },
     {
       title: "Revision Date",
       dataIndex: "revisionDate",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.revisionDate - b.revisionDate,
-      ...getColumnSearchProps('revisionDate'),
+      ...getColumnSearchProps("revisionDate"),
     },
     {
       title: "MSRP",
       dataIndex: "msrp",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.msrp - b.msrp,
     },
     {
       title: "Finance",
       dataIndex: "finance",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.finance - b.finance,
     },
     {
       title: "Retail",
       dataIndex: "retail",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.retail - b.retail,
     },
     {
       title: "Whole",
       dataIndex: "wholesale",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.wholesale - b.wholesale,
     },
     {
       title: "Trade In",
       dataIndex: "tradeIn",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.tradeIn - b.tradeIn,
     },
     {
       title: "Asking Price",
       dataIndex: "askingPrice",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.askingPrice - b.askingPrice,
     },
     {
       title: "Auction Price",
       dataIndex: "auctionPrice",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.auctionPrice - b.auctionPrice,
     },
     {
       title: "Low",
       dataIndex: "low",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.low - b.low,
     },
     {
       title: "High",
       dataIndex: "high",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.high - b.high,
     },
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.formattedDate - b.formattedDate,
-      ...getColumnSearchProps('formattedDate'),
+      ...getColumnSearchProps("formattedDate"),
     },
     {
-      title: "Last Modified By" ,
+      title: "Last Modified By",
       dataIndex: "user",
-      width: '200px',
+      width: "200px",
       sorter: (a, b) => a.user - b.user,
-      ...getColumnSearchProps('user'),
+      ...getColumnSearchProps("user"),
     },
     {
       title: "",
       key: "action",
-      width: '50px',
-      fixed: 'right',
+      width: "50px",
+      fixed: "right",
       render: (text, record) => (
         <Space size="middle">
-           <Button type="link" size="small" style={{fontSize:'12px'}} icon={<EditOutlined />} onClick={() => openUpdateDrawer(record)}>
+          <Button
+            type="link"
+            size="small"
+            style={{ fontSize: "12px" }}
+            icon={<EditOutlined />}
+            onClick={() => openUpdateDrawer(record)}
+          >
             Edit
           </Button>
         </Space>
@@ -327,7 +349,6 @@ const Values = (props) => {
     },
   ];
 
- 
   const openUpdateDrawer = (item) => {
     setItem(item);
     setIsNew(false);
@@ -336,6 +357,37 @@ const Values = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
     init();
+    loadData();
+  };
+
+  const loadData = async () => {
+    if (modelId && modelId !== "") {
+      setItems([]);
+      setIsDataLoading(true);
+      const res = await DataService.getValues(modelId);
+      let index = 1;
+      res.forEach(function (element) {
+        element.index = index;
+        element.formattedDate = dayjs(element.ts).format("lll");
+        index++;
+      });
+      setItems(res);
+      setIsDataLoading(false);
+    } else if (configurationId && configurationId !== "") {
+      setItems([]);
+      setIsDataLoading(true);
+      const res = await DataService.getValuesForConfigurationId(
+        configurationId
+      );
+      let index = 1;
+      res.forEach(function (element) {
+        element.index = index;
+        element.formattedDate = dayjs(element.ts).format("lll");
+        index++;
+      });
+      setItems(res);
+      setIsDataLoading(false);
+    }
   };
 
   const init = async function () {
@@ -363,7 +415,7 @@ const Values = (props) => {
             height: "calc(100vh - 64px)",
           }}
         >
-          <div style={{ marginBottom: 8}}>
+          <div style={{ marginBottom: 8 }}>
             <Row>
               <Space>
                 <Col>
@@ -400,7 +452,6 @@ const Values = (props) => {
                     style={{ width: 200 }}
                   />
                 </Col>
-              
               </Space>
             </Row>
           </div>
@@ -426,7 +477,7 @@ const Values = (props) => {
             scroll={{ x: 500, y: 400 }}
             size="small"
             loading={isDataLoading}
-            style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
+            style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
             pagination={{
               hideOnSinglePage: true,
               pageSize: items ? items.length : 10,
