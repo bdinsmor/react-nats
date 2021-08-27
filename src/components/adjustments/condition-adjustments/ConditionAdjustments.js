@@ -231,7 +231,7 @@ const ConditionAdjustments = (props) => {
         setSizeClassId(querySizeClassId);
         onSelectSizeClass({value: querySizeClassId, label: querySizeClassId, key: querySizeClassId});
       } else {
-        console.log("no query params")
+       
       }
     }
     

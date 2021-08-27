@@ -208,7 +208,28 @@ const Home = (props) => {
     setCurrentPage(pageName);
   }
 
-  const init = async function () {};
+  const init = async function () {
+    if(location) {
+      const pathName = '.' + location.pathname;
+      let found = false;
+      for(var i = 0; i < listItems.length; i++) {
+        const kids = listItems[i].children;
+        if(kids) {
+          for(var j = 0; j < kids.length; j++) {
+            const kid = kids[j];
+            if(kid.link === pathName) {
+              setCurrentPage(kid.label);
+              found = true;
+              break;
+            }
+          }
+          if (found) break;
+        }
+        
+      }
+      
+    }
+  };
 
   useEffect(() => {
     init();
