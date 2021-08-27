@@ -151,7 +151,7 @@ const Options = (props) => {
       title: "Option Value",
       dataIndex: "optionValue",
       width: "100px",
-      sorter: (a, b) => a.optionValue.localeCompare(b.optionValue),
+      sorter: (a, b) => a.optionValue - b.optionValue,
       ...getColumnSearchProps("optionValue"),
     },
     {

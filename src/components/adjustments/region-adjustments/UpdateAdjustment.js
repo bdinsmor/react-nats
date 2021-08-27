@@ -40,9 +40,9 @@ const UpdateAdjustment = (props) => {
     try {
       const updates = {
         sizeClassId: props.adjustment.sizeClassId,
-        country: values.adjustment.country,
-        state: values.adjustment.state,
-        adjustmentValue: values.adjustment.adjustmentValue
+        country: values.country,
+        state: values.state,
+        adjustmentValue: values.adjustmentValue
       };
 
       await DataService.updateRegionAdjustment(isNew, updates);

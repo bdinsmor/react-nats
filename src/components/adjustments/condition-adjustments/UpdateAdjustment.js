@@ -40,8 +40,8 @@ const UpdateAdjustment = (props) => {
     try {
       const updates = {
         sizeClassId: props.adjustment.sizeClassId,
-        condition: values.adjustment.condition,
-        adjustmentFactor: values.adjustment.adjustmentFactor,
+        condition: values.condition,
+        adjustmentFactor: values.adjustmentFactor,
       };
 
       await DataService.updateConditionAdjustment(isNew, updates);
@@ -53,6 +53,7 @@ const UpdateAdjustment = (props) => {
       });
       if (props.onSaveSuccess) props.onSaveSuccess();
     } catch (e) {
+      console.error("Error: ",e)
       notification.error({
         message: "Error Updating Adjusment",
         duration: 2,

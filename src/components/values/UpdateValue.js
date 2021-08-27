@@ -120,16 +120,16 @@ const UpdateValue = (props) => {
         <Row gutter={12}>
           <Col span={12}>
             <Form.Item
-              name="Finance"
-              label="finance">
+              name="finance"
+              label="Finance">
               <Input placeholder="Finance" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              name="askingPrice"
-              label="Asking Price" >
-              <Input placeholder="Asking Price" />
+              name="auctionPrice"
+              label="Auction Price" >
+              <Input placeholder="Auction Price" />
             </Form.Item>
           </Col>          
         </Row>

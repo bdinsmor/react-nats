@@ -314,6 +314,7 @@ const ResidualValuesSizes = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.size_index = element.sizeClassId + '_' + index;
       index++;
     });
     setItems(res);
@@ -450,7 +451,7 @@ const ResidualValuesSizes = (props) => {
             columns={columns}
             dataSource={items}
             scroll={{ x: 500, y: 400 }}
-            rowKey="sizeClassId"
+            rowKey="size_index"
             style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             size="small"
             loading={isDataLoading}

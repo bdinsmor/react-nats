@@ -40,10 +40,10 @@ const UpdateAdjustment = (props) => {
     try {
       const updates = {
         sizeClassId: props.adjustment.sizeClassId,
-        manufacturerId: values.adjustment.manufacturerId,
-        modelYear: values.adjustment.modelYear,
-        fwValue: values.adjustment.fwValue,
-        swValue: values.adjustment.swValue
+        manufacturerId: values.manufacturerId,
+        modelYear: values.modelYear,
+        fwValue: values.fwValue,
+        swValue: values.swValue
       };
 
       await DataService.updateWaterAdjustment(isNew,updates);

@@ -94,12 +94,6 @@ const UpdateSpec = (props) => {
             <Form.Item
               name="specFamily"
               label="Family"
-              rules={[
-                {
-                  required: true,
-                  message: "Spec Family cannot be empty",
-                },
-              ]}
             >
               <Input placeholder="Spec Family" />
             </Form.Item>
@@ -108,12 +102,6 @@ const UpdateSpec = (props) => {
             <Form.Item
               name="specValue"
               label="Value"
-              rules={[
-                {
-                  required: true,
-                  message: "Spec Value cannot be empty",
-                },
-              ]}
             >
               <Input placeholder="Spec Value" />
             </Form.Item>

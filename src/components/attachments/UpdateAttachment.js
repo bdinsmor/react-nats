@@ -39,9 +39,9 @@ const UpdateAttachment = (props) => {
     try {
       const updates = {
         sizeClassId: props.attachment.sizeClassId,
-        modelId: values.attachment.modelId,
-        modelYear: values.attachment.modelYear,
-        vinModelNumber: values.attachment.vinModelNumber,
+        modelId: values.modelId,
+        modelYear: values.modelYear,
+        vinModelNumber: values.vinModelNumber,
       };
 
       await DataService.updateAttachment(isNew, updates);

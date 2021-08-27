@@ -40,9 +40,9 @@ const UpdateAdjustment = (props) => {
     try {
       const updates = {
         sizeClassId: props.adjustment.sizeClassId,
-        fuelType: values.adjustment.fuelType,
-        modelYear: values.adjustment.modelYear,
-        uom: values.adjustment.uom,
+        fuelType: values.fuelType,
+        modelYear: values.modelYear,
+        uom: values.uom,
 
       };
 

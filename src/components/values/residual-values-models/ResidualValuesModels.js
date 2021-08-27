@@ -107,6 +107,7 @@ const ResidualValuesModels = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.model_index = element.modelId + '_' + index;
       element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
@@ -382,7 +383,7 @@ const ResidualValuesModels = (props) => {
             columns={columns}
             dataSource={items}
             scroll={{ x: 500, y: 400 }}
-            rowKey="modelId"
+            rowKey="model_index"
             style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             size="small"
             loading={isDataLoading}
