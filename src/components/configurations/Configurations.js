@@ -138,6 +138,8 @@ const Configurations = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.config_index = element.configurationId + '_' + index;
+      element.formattedDate = dayjs(element.ts).format('lll');
       index++;
     });
     setItems(res);
@@ -155,12 +157,12 @@ const Configurations = (props) => {
     {
       title: "Configuration Id",
       dataIndex: "configurationId",
-      sorter: (a, b) => a.index - b.index,
+      sorter: (a, b) => a.configurationId - b.configurationId,
     },
     {
       title: "Size Class Id",
       dataIndex: "sizeClassId",
-      sorter: (a, b) => a.index - b.index,
+      sorter: (a, b) => a.sizeClassId - b.sizeClassId,
     },
     {
       title: "Model Id",
@@ -175,7 +177,7 @@ const Configurations = (props) => {
     {
       title: "VIN Model #",
       dataIndex: "vinModelNumber",
-      sorter: (a, b) => a.vinModelNumber - b.vinModelNumber,
+      sorter: (a, b) => a.vinModelNumber.localeCompare(b.vinModelNumber),
     },
     {
       title: "Last Modified",
@@ -185,7 +187,7 @@ const Configurations = (props) => {
     {
       title: "Last Modified By" ,
       dataIndex: "user",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -215,7 +217,25 @@ const Configurations = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
     init();
+    loadData();
   };
+
+  const loadData = async () => {
+    if (modelId && modelId !== "") {
+      setIsDataLoading(true);
+    const res = await DataService.getConfigurationsForModelId(modelId);
+    let index = 1;
+    res.forEach(function (element) {
+      element.index = index;
+      element.config_index = element.configurationId + '_' + index;
+      element.formattedDate = dayjs(element.ts).format('lll');
+      index++;
+    });
+    setItems(res);
+    setIsDataLoading(false);
+    }
+  };
+
 
   const init = async function () {
     setIsLoading(true);
@@ -290,7 +310,6 @@ const Configurations = (props) => {
                   <Button
                     type="ghost"
                     onClick={() => onAdd()}
-                    disabled={!modelId || modelId === ""}
                   >
                     Add
                   </Button>
@@ -311,7 +330,7 @@ const Configurations = (props) => {
             columns={columns}
             dataSource={items}
             scroll={{ x: 500, y: 400 }}
-            rowKey="configurationId"
+            rowKey="config_index"
             style={{width: '100%',maxWidth: 'calc(100vw - 275px)'}}
             loading={isDataLoading}
             pagination={{ hideOnSinglePage: true, pageSize: items? items.length: 10}}

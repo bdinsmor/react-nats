@@ -83,7 +83,7 @@ const UtilizationAdjustments = (props) => {
       title: "Uom",
       dataIndex: "uom",
       width: "80px",
-      sorter: (a, b) => a.uom - b.uom,
+      sorter: (a, b) => a.uom.localeCompare(b.uom),
     },
     {
       title: "Retail Adj",
@@ -131,7 +131,7 @@ const UtilizationAdjustments = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "150px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

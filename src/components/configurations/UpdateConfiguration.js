@@ -38,11 +38,11 @@ const UpdateConfiguration = (props) => {
     setIsLoading(true);
     try {
       const updates = {
-        configurationId: props.configuration.configurationId,
-        sizeClassId: props.configuration.sizeClassId,
-        modelId: values.configuration.modelId,
-        modelYear: values.configuration.modelYear,
-        vinModelNumber: values.configuration.vinModelNumber,
+        configurationId: (props.configuration.configurationId && props.configuration.configurationId !== '')? props.configuration.configurationId: values.configurationId,
+        sizeClassId: (props.configuration.sizeClassId && props.configuration.sizeClassId !== '')? props.configuration.sizeClassId: values.sizeClassId,
+        modelId: values.modelId,
+        modelYear: values.modelYear,
+        vinModelNumber: values.vinModelNumber,
       };
 
       await DataService.updateConfiguration(isNew, updates);

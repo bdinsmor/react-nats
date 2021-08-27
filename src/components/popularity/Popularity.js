@@ -165,13 +165,13 @@ const Popularity = (props) => {
       title: "Benchmark Group",
       dataIndex: "benchmarkGroup",
       width: "150px",
-      sorter: (a, b) => a.benchmarkGroup - b.benchmarkGroup,
+      sorter: (a, b) => a.benchmarkGroup.localeCompare(b.benchmarkGroup),
     },
     {
       title: "Market Popularity Label",
       dataIndex: "marketPopularityLabel",
       width: "180px",
-      sorter: (a, b) => a.marketPopularityLabel - b.marketPopularityLabel,
+      sorter: (a, b) => a.marketPopularityLabel.localeCompare(b.marketPopularityLabel),
     },
     {
       title: "Twenty",
@@ -243,7 +243,7 @@ const Popularity = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "150px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

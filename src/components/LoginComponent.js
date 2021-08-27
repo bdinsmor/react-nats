@@ -22,7 +22,7 @@ const LoginComponent = (props) => {
         AuthService.login(credentials).then(res => {
             setLoading(false);
             if (!res.errorCode) {
-                props.history.push('/dashboard');
+                props.history.push('/');
             } else {
                 if (res.errorCode === 'PASSWORD_RESET_REQUIRED') {
                     notification.error({

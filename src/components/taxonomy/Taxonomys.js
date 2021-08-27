@@ -95,8 +95,7 @@ const Taxonomys = (props) => {
     const res = await DataService.getClassifications();
     const options = res.map((item) => ({
       label: `${item.classificationName}`,
-      value: item.classificationId,
-      key: item.classificationId,
+      value: item.classificationId
     }));
     setClassifications(options);
     let index = 1;
@@ -276,7 +275,7 @@ const Taxonomys = (props) => {
       title: "Classification Name",
       dataIndex: "classificationName",
       width: '100px',
-      sorter: (a, b) => a.classificationName - b.classificationName,
+      sorter: (a, b) => a.classificationName.localeCompare(b.classificationName),
     },
     {
       title: "Last Modified",
@@ -288,7 +287,7 @@ const Taxonomys = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: '100px',
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -328,7 +327,7 @@ const Taxonomys = (props) => {
       title: "Category Name",
       dataIndex: "categoryName",
       width: "150px",
-      sorter: (a, b) => a.categoryName - b.categoryName,
+      sorter: (a, b) => a.categoryName.localeCompare(b.categoryName),
     },
     {
       title: "Last Modified",
@@ -340,7 +339,7 @@ const Taxonomys = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "100px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -394,7 +393,7 @@ const Taxonomys = (props) => {
       title: "Subtype Name",
       dataIndex: "subtypeName",
       width: "150px",
-      sorter: (a, b) => a.subtypeName - b.subtypeName,
+      sorter: (a, b) => a.subtypeName.localeCompare(b.subtypeName),
     },
     {
       title: "Last Modified",
@@ -406,7 +405,7 @@ const Taxonomys = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "100px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -446,7 +445,7 @@ const Taxonomys = (props) => {
       title: "Size Class Name",
       dataIndex: "sizeClassName",
       width: '100px',
-      sorter: (a, b) => a.sizeClassName - b.sizeClassName,
+      sorter: (a, b) => a.sizeClassName.localeCompare(b.sizeClassName),
     },
     {
       title: "Min",
@@ -464,7 +463,7 @@ const Taxonomys = (props) => {
       title: "Uom",
       dataIndex: "sizeClassUom",
       width: '50px',
-      sorter: (a, b) => a.sizeClassUom - b.sizeClassUom,
+      sorter: (a, b) => a.sizeClassUom.localeCompare(b.sizeClassUom),
     },
     {
       title: "Last Modified",
@@ -476,7 +475,7 @@ const Taxonomys = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: '150px',
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -524,7 +523,7 @@ const Taxonomys = (props) => {
       title: "Manufacturer Name",
       dataIndex: "manufacturerName",
       width: '150px',
-      sorter: (a, b) => a.manufacturerName - b.manufacturerName,
+      sorter: (a, b) => a.manufacturerName.localeCompare(b.manufacturerName),
     },
     {
       title: "Last Modified",
@@ -536,7 +535,7 @@ const Taxonomys = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: '150px',
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -576,7 +575,7 @@ const Taxonomys = (props) => {
       title: "Model Name",
       dataIndex: "modelName",
       width: '100px',
-      sorter: (a, b) => a.modelName - b.modelName,
+      sorter: (a, b) => a.modelName.localeCompare(b.modelName),
     },
     {
       title: "Last Modified",
@@ -588,7 +587,7 @@ const Taxonomys = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: '100px',
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -739,7 +738,7 @@ const Taxonomys = (props) => {
         }
         break;
       case "modelIdKey":
-        setCurrentView("modelId");
+        setCurrentView("model");
         setColumns(modelColumns);
         
         break;

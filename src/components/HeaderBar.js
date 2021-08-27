@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Popover, Row, Col, Space, Button, Typography } from 'antd';
 import { useHistory } from 'react-router-dom';
-
-import { UserOutlined} from '@ant-design/icons';
+import { UserOutlined, ImportOutlined} from '@ant-design/icons';
 import AuthService from "../services/AuthService";
 import * as _dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -38,7 +37,7 @@ const HeaderBar = (props) => {
             <Space direction="vertical">
                 <Text strong style={{ fontSize: "16px" }}>{user.email}</Text>
                 <Text type="secondary">{'Last logged in ' + dayjs(user.lastLogin).fromNow()}</Text>
-                <Button size="small" onClick={() => logout()}>Logout</Button>
+                <Button type="ghost" size="small" onClick={() => logout()}><ImportOutlined />Logout</Button>
             </Space>
         </div>
     );

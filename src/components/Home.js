@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Configurations from "./configurations/Configurations";
 
-import { Switch, Route, NavLink, useLocation } from "react-router-dom";
+import { Switch, Route, NavLink, Redirect, useLocation } from "react-router-dom";
 import { Menu, Layout, Col, Row } from "antd";
 import HeaderBar from "./HeaderBar";
 import ModelAliases from "./model-aliases/ModelAliases";
@@ -167,6 +167,7 @@ const Home = (props) => {
     },
     {
       type: "group",
+      key: 'import-group',
       children: [
         {
           label: "Import Data",
@@ -245,6 +246,7 @@ const Home = (props) => {
                       return (
                         <Menu.Item key={child.key}>
                           <NavLink
+                          key={child.key}
                           onClick={() => updateCurrentPage(child.label)}
                             activeClassName="active-link"
                             to={child.link}
@@ -271,8 +273,7 @@ const Home = (props) => {
           >
             <Content style={{ overflow: "initial" }}>
               <Switch>
-                <Route exact path="/">
-                  <Taxonomys />
+                <Route exact path="/"><Redirect to="/taxonomy" />
                 </Route>
                 <Route exact path="/taxonomy">
                   <Taxonomys />

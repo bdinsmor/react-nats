@@ -37,10 +37,12 @@ const UpdateOption = (props) => {
     try {
       const updates = {
         id: props.option.id,
-        optionId: props.option.optionId,
+        optionId: (props.option.optionId && props.option.optionId !== '')? props.option.optionId: values.optionId,
         optionName: values.optionName,
         optionValue: values.value,
         optionFamilyId: values.openFamilyId,
+        sizeClassId: props.option.sizeClassId,
+        modelYear: props.option.modelYear
       };
 
       await DataService.updateOption(isNew, updates);

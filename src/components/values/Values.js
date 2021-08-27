@@ -325,7 +325,7 @@ const Values = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "200px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
       ...getColumnSearchProps("user"),
     },
     {

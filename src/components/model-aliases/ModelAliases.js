@@ -121,6 +121,7 @@ const ModelAliases = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.model_index = element.modelId + '_' + index;
       element.formattedDate = dayjs(element.ts).format("lll");
       index++;
     });
@@ -160,7 +161,7 @@ const ModelAliases = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "150px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -213,7 +214,7 @@ const ModelAliases = (props) => {
 
   const onAdd = () => {
     setIsNew(true);
-    setItem({ modelId: modelId, modelName: selectedModel.modelName });
+    setItem({ modelId: modelId, modelName: selectedModel.label });
     setShowUpdateDrawer(true);
   };
 
@@ -302,7 +303,7 @@ const ModelAliases = (props) => {
             columns={columns}
             dataSource={items}
             scroll={{ y: 400, x: 500 }}
-            rowKey="modelId"
+            rowKey="model_index"
             style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
             loading={isDataLoading}
             pagination={{
@@ -321,6 +322,7 @@ const ModelAliases = (props) => {
       >
         <UpdateModelAlias
           modelAlias={item}
+          isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
         ></UpdateModelAlias>

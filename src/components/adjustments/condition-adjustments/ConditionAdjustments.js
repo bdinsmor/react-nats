@@ -58,7 +58,7 @@ const ConditionAdjustments = (props) => {
       title: "Condition",
       dataIndex: "condition",
       width: "80px",
-      sorter: (a, b) => a.condition - b.condition,
+      sorter: (a, b) => a.condition.localeCompare(b.condition),
     },
     {
       title: "Adjustment Factor",
@@ -76,7 +76,7 @@ const ConditionAdjustments = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "150px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

@@ -236,7 +236,7 @@ const Usage = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: '150px',
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

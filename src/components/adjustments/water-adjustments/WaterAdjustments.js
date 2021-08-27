@@ -75,8 +75,6 @@ const WaterAdjustments = (props) => {
   const [sizeClasses, setSizeClasses] = useState([]);
   const [sizeClassId, setSizeClassId] = useState("");
   const [selectedSizeClass, setSelectedSizeClass] = useState({});
-
-  const [manufacturers, setManufacturers] = useState([]);
   const [manufacturerId, setManufacturerId] = useState("");
   const [selectedManufacturer, setSelectedManufacturer] = useState({});
 
@@ -129,7 +127,7 @@ const WaterAdjustments = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: '150px',
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

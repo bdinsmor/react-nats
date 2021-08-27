@@ -115,12 +115,12 @@ const ManufacturerAliases = (props) => {
     {
       title: "Manufacturer",
       dataIndex: "manufacturerName",
-      sorter: (a, b) => a.manufacturerName - b.manufacturerName,
+      sorter: (a, b) => a.manufacturerName.localeCompare(b.manufacturerName),
     },
     {
       title: "Alias",
       dataIndex: "manufacturerAlias",
-      sorter: (a, b) => a.manufacturerAlias - b.manufacturerAlias,
+      sorter: (a, b) => a.manufacturerAlias.localeCompare(b.manufacturerAlias),
     },
 
     {
@@ -131,7 +131,7 @@ const ManufacturerAliases = (props) => {
     {
       title: "Last Modified By",
       dataIndex: "user",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
@@ -179,6 +179,7 @@ const ManufacturerAliases = (props) => {
       let index = 1;
       res.forEach(function (element) {
         element.index = index;
+        element.manu_index = element.manufacturerId + '_' + index;
         element.formattedDate = dayjs(element.ts).format("lll");
         index++;
       });
@@ -261,7 +262,7 @@ const ManufacturerAliases = (props) => {
             scroll={{ y: 400, x: 500 }}
             size="small"
             style={{ width: "100%", maxWidth: "calc(100vw - 275px)" }}
-            rowKey="manufacturerId"
+            rowKey="manu_index"
             loading={isDataLoading}
             pagination={{
               hideOnSinglePage: true,

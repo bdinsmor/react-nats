@@ -144,14 +144,14 @@ const Options = (props) => {
       title: "Option Name",
       dataIndex: "optionName",
       width: "100px",
-      sorter: (a, b) => a.optionName - b.optionName,
+      sorter: (a, b) =>  a.optionName.toString().toLowerCase().localeCompare(b.optionName.toString().toLowerCase()),
       ...getColumnSearchProps("optionName"),
     },
     {
       title: "Option Value",
       dataIndex: "optionValue",
       width: "100px",
-      sorter: (a, b) => a.optionValue - b.optionValue,
+      sorter: (a, b) => a.optionValue.localeCompare(b.optionValue),
       ...getColumnSearchProps("optionValue"),
     },
     {
@@ -180,7 +180,7 @@ const Options = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "120px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
       ...getColumnSearchProps("user"),
     },
     {

@@ -58,13 +58,13 @@ const RegionAdjusmtents = (props) => {
       title: "Country",
       dataIndex: "country",
       width: "100px",
-      sorter: (a, b) => a.country - b.country,
+      sorter: (a, b) => a.country.localeCompare(b.country),
     },
     {
       title: "State",
       dataIndex: "state",
       width: "100px",
-      sorter: (a, b) => a.state - b.state,
+      sorter: (a, b) => a.state.localeCompare(b.state),
     },
     {
       title: "Adjustment Value",
@@ -82,7 +82,7 @@ const RegionAdjusmtents = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "100px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

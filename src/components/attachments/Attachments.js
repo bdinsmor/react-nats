@@ -142,7 +142,7 @@ const Attachments = (props) => {
       title: "Subtype Name",
       dataIndex: "subtypeName",
       width: "120px",
-      sorter: (a, b) => a.subtypeName - b.subtypeName,
+      sorter: (a, b) => a.subtypeName.localeCompare(b.subtypeName),
     },
     {
       title: "Attachment Category Id",
@@ -154,7 +154,7 @@ const Attachments = (props) => {
       title: "Attachment Category Name",
       dataIndex: "categoryName",
       width: "180px",
-      sorter: (a, b) => a.categoryName - b.categoryName,
+      sorter: (a, b) => a.categoryName.localeCompare(b.categoryName),
     },
     {
       title: "Last Modified",
@@ -166,7 +166,7 @@ const Attachments = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "150px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",

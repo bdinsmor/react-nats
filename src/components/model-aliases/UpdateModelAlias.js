@@ -41,9 +41,10 @@ const UpdateModelAlias = (props) => {
       const updates = {
         id: props.modelAlias.id,
         modelId: props.modelAlias.modelId,
-        modelName: props.modelAlias.model,
+        modelName: props.modelAlias.modelName,
         modelAlias: values.modelAlias
       };
+      console.log("isNew: " + isNew);
       await DataService.updateModelAlias(isNew, updates);
       form.resetFields();
       setIsLoading(false);
@@ -106,7 +107,7 @@ const UpdateModelAlias = (props) => {
         <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              name="model"
+              name="modelName"
               label="Model"
               rules={[
                 {

@@ -129,7 +129,7 @@ const ManufacturerVins = (props) => {
       title: "Short Vin",
       dataIndex: "shortVin",
       width: "120px",
-      sorter: (a, b) => a.shortVin - b.shortVin,
+      sorter: (a, b) => a.shortVin.localeCompare(b.shortVin),
     },
     {
       title: "Cic Code",
@@ -147,7 +147,7 @@ const ManufacturerVins = (props) => {
       title: "Last Modified By",
       dataIndex: "user",
       width: "150px",
-      sorter: (a, b) => a.user - b.user,
+      sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
       title: "",
