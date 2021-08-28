@@ -11,11 +11,11 @@ import {
   Space,
   Divider,
   Typography,
+  Popconfirm,
   Skeleton,
 } from "antd";
 
-
-import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import { SaveOutlined, CloseOutlined, DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 
 const UpdateConfiguration = (props) => {
@@ -33,6 +33,28 @@ const UpdateConfiguration = (props) => {
     };
     init();
   }, [form, props.configuration, props.isNew]);
+
+
+   const onConfirmDelete = async () => {
+    setIsLoading(true);
+    try {
+
+      await DataService.deleteManufacturerAlias(props.id);
+
+      setIsLoading(false);
+      notification.success({
+        message: "Manufacturer Alias Deleted",
+        duration: 2,
+      });
+      if (props.onSaveSuccess) props.onSaveSuccess();
+    } catch (e) {
+      notification.error({
+        message: "Error Deleting Manufacturer Alias",
+        duration: 2,
+      });
+      setIsLoading(false);
+    }
+  };
 
   const save = async (values) => {
     setIsLoading(true);
@@ -146,7 +168,29 @@ const UpdateConfiguration = (props) => {
             </Form.Item>
           </Col>
         </Row>
+        <Row>
+            {!isNew && <Form.Item>
+              <Popconfirm title="Are you sure" onConfirm={() =>{onConfirmDelete()}} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
+                <Button
+                  type="danger"
+                  className="login-form-button"
+                  icon={<DeleteOutlined />}
+                >
+                  Delete
+                </Button>
+            </Popconfirm>
+          </Form.Item>}
+          <div style={{  flex: 1}}></div>
         <Space>
+          <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button
               type="primary"
@@ -158,16 +202,9 @@ const UpdateConfiguration = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
+
         </Space>
+        </Row>
       </Form>
     </Space>
   );

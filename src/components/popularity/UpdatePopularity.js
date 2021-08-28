@@ -205,17 +205,7 @@ const UpdatePopularity = (props) => {
           </Col>
         </Row>
         <Space>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="login-form-button"
-              icon={<SaveOutlined />}
-              loading={isLoading}
-            >
-              Save
-            </Button>
-          </Form.Item>
+
           <Form.Item>
             <Button
               className="login-form-button"
@@ -224,6 +214,17 @@ const UpdatePopularity = (props) => {
               onClick={() => cancel()}
             >
               Cancel
+            </Button>
+          </Form.Item>
+           <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+              icon={<SaveOutlined />}
+              loading={isLoading}
+            >
+              Save
             </Button>
           </Form.Item>
         </Space>

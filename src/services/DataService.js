@@ -5,6 +5,48 @@ import authHeaderForCSV from "./AuthHeaderForCSV";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const DataService = {
+
+    async deleteManufacturerAlias(manufacturerId) {
+        const response = await axios.delete(
+      API_URL + "/analyst/search/manufacturer-aliases/" + manufacturerId,
+      { headers: authHeader()}
+    );
+    return response.data;
+    },
+
+    async deleteModelAlias(modelId) {
+        const response = await axios.delete(
+      API_URL + "/analyst/search/model-aliases/" + modelId,
+      { headers: authHeader()}
+    );
+    return response.data;
+    },
+
+    async deleteConfiguration(configurationId) {
+        const response = await axios.delete(
+      API_URL + "/analyst/taxonomy/configurations/" + configurationId,
+      { headers: authHeader()}
+    );
+    return response.data;
+    },
+
+    async deleteManufacturerVin(manuVinId) {
+        const response = await axios.delete(
+      API_URL + "/analyst/manufacturer-vins/" + manuVinId,
+      { headers: authHeader()}
+    );
+    return response.data;
+    },
+
+     async deleteSpec(specId) {
+        const response = await axios.delete(
+      API_URL + "/analyst/specs/" + specId,
+      { headers: authHeader()}
+    );
+    return response.data;
+    },
+
+
   //GETS
   async getManufacturers(searchTerm) {
     const response = await axios.get(
@@ -301,7 +343,7 @@ const DataService = {
     });
     return response.data;
   },
-  
+
   async sync() {
     const response = await axios.post(API_URL + "/analyst/sync", null, {
       headers: authHeader(),
@@ -606,7 +648,7 @@ const DataService = {
     try {
     const response = await axios.put(url, formData, {
       headers: authHeaderForCSV(),
-    
+
     });
     return response;
   } catch (err) {

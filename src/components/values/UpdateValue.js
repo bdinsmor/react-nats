@@ -131,7 +131,7 @@ const UpdateValue = (props) => {
               label="Auction Price" >
               <Input placeholder="Auction Price" />
             </Form.Item>
-          </Col>          
+          </Col>
         </Row>
         <Row gutter={12}>
           <Col span={12}>
@@ -164,7 +164,7 @@ const UpdateValue = (props) => {
               <Input placeholder="High" />
             </Form.Item>
           </Col>
-          
+
         </Row>
         <Row gutter={12}>
           <Col span={12}>
@@ -176,6 +176,16 @@ const UpdateValue = (props) => {
           </Col>
         </Row>
         <Space>
+           <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              type="ghost"
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button
               type="primary"
@@ -187,16 +197,7 @@ const UpdateValue = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              type="ghost"
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
+
         </Space>
       </Form>
     </Space>

@@ -11,11 +11,12 @@ import {
   Space,
   Divider,
   Typography,
+  Popconfirm,
   Skeleton,
 } from "antd";
 
 
-import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import { SaveOutlined, CloseOutlined, DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 
 const UpdateManufacturerAlias = (props) => {
@@ -44,7 +45,7 @@ const UpdateManufacturerAlias = (props) => {
         manufacturerAlias: values.manufacturerAlias,
       };
 
-      await DataService.updateUser(isNew, updates);
+      await DataService.updateManufacturerAlias(isNew, updates);
       form.resetFields();
       setIsLoading(false);
       notification.success({
@@ -55,6 +56,27 @@ const UpdateManufacturerAlias = (props) => {
     } catch (e) {
       notification.error({
         message: "Error Updating Manufacturer Alias",
+        duration: 2,
+      });
+      setIsLoading(false);
+    }
+  };
+
+   const onConfirmDelete = async () => {
+    setIsLoading(true);
+    try {
+
+      await DataService.deleteManufacturerAlias(props.id);
+
+      setIsLoading(false);
+      notification.success({
+        message: "Manufacturer Alias Deleted",
+        duration: 2,
+      });
+      if (props.onSaveSuccess) props.onSaveSuccess();
+    } catch (e) {
+      notification.error({
+        message: "Error Deleting Manufacturer Alias",
         duration: 2,
       });
       setIsLoading(false);
@@ -129,7 +151,31 @@ const UpdateManufacturerAlias = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Space>
+        <Row>
+
+           {!isNew && <Form.Item>
+              <Popconfirm title="Are you sure" onConfirm={() => {onConfirmDelete()}} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
+                <Button
+                  type="danger"
+                  className="login-form-button"
+                  icon={<DeleteOutlined />}
+                >
+                  Delete
+                </Button>
+            </Popconfirm>
+          </Form.Item>}
+          <div style={{  flex: 1}}></div>
+            <Space>
+
+          <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button
               type="primary"
@@ -141,19 +187,12 @@ const UpdateManufacturerAlias = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
-        </Space>
+          </Space>
+</Row>
       </Form>
     </Space>
   );
 };
+
 
 export default UpdateManufacturerAlias;

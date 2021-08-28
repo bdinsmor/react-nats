@@ -140,6 +140,16 @@ const UpdateOption = (props) => {
         <Space>
           <Form.Item>
             <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              type="ghost"
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button
               type="primary"
               htmlType="submit"
               className="login-form-button"
@@ -149,16 +159,7 @@ const UpdateOption = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              type="ghost"
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
+
         </Space>
       </Form>
     </Space>

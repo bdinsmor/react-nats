@@ -124,8 +124,17 @@ const UpdateModel = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Space>
+           <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button
               type="primary"
@@ -137,15 +146,7 @@ const UpdateModel = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
+
         </Space>
       </Form>
     </Space>

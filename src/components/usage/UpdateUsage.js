@@ -212,6 +212,16 @@ const UpdateUsage = (props) => {
           </Col>
         </Row>
         <Space>
+           <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              type="ghost"
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button
               type="primary"
@@ -223,16 +233,7 @@ const UpdateUsage = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              type="ghost"
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
+
         </Space>
       </Form>
     </Space>

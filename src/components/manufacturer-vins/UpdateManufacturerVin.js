@@ -10,12 +10,13 @@ import {
   Form,
   Space,
   Divider,
+  Popconfirm,
   Typography,
   Skeleton,
 } from "antd";
 
 
-import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import { SaveOutlined, CloseOutlined, DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 
 const UpdateManufacturerVin = (props) => {
@@ -33,6 +34,27 @@ const UpdateManufacturerVin = (props) => {
     };
     init();
   }, [form, props.isNew, props.manufacturerVin]);
+
+ const onConfirmDelete = async () => {
+    setIsLoading(true);
+    try {
+
+      await DataService.deleteManufacturerVin(props.id);
+
+      setIsLoading(false);
+      notification.success({
+        message: "Manufacturer VIN Deleted",
+        duration: 2,
+      });
+      if (props.onSaveSuccess) props.onSaveSuccess();
+    } catch (e) {
+      notification.error({
+        message: "Error Deleting Manufacturer VIN",
+        duration: 2,
+      });
+      setIsLoading(false);
+    }
+  };
 
   const save = async (values) => {
     setIsLoading(true);
@@ -135,8 +157,30 @@ const UpdateManufacturerVin = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Space>
-          <Form.Item>
+        <Row>
+            {!isNew && <Form.Item>
+              <Popconfirm title="Are you sure" onConfirm={() =>{onConfirmDelete()}} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
+                <Button
+                  type="danger"
+                  className="login-form-button"
+                  icon={<DeleteOutlined />}
+                >
+                  Delete
+                </Button>
+            </Popconfirm>
+          </Form.Item>}
+          <div style={{  flex: 1}}></div>
+            <Space>
+              <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+              <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
@@ -147,16 +191,10 @@ const UpdateManufacturerVin = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
-        </Space>
+
+            </Space>
+        </Row>
+
       </Form>
     </Space>
   );

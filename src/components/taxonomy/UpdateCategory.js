@@ -88,7 +88,7 @@ const UpdateCategory = (props) => {
           </Col>
         </Row>
         <Divider />
-        
+
         <Row gutter={12}>
           <Col span={24}>
             <Form.Item
@@ -115,8 +115,17 @@ const UpdateCategory = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Space>
+          <Form.Item>
+            <Button
+              className="login-form-button"
+              icon={<CloseOutlined />}
+              onClick={() => cancel()}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button
               type="primary"
@@ -128,15 +137,7 @@ const UpdateCategory = (props) => {
               Save
             </Button>
           </Form.Item>
-          <Form.Item>
-            <Button
-              className="login-form-button"
-              icon={<CloseOutlined />}
-              onClick={() => cancel()}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
+
         </Space>
       </Form>
     </Space>

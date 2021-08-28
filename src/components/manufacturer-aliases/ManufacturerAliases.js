@@ -87,7 +87,7 @@ const ManufacturerAliases = (props) => {
     setSelectedManufacturer(option);
     setManufacturerId(option.value);
     setIsDataLoading(true);
-    const res = await DataService.getAliasesForManufacturer(option.value);
+    const res = await DataService.getAliasesForManufacturerId(option.value);
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
@@ -110,27 +110,32 @@ const ManufacturerAliases = (props) => {
     {
       title: "Manufacturer Id",
       dataIndex: "manufacturerId",
+      width: '200px',
       sorter: (a, b) => a.manufacturerId - b.manufacturerId,
     },
     {
       title: "Manufacturer",
-      dataIndex: "manufacturerName",
-      sorter: (a, b) => a.manufacturerName.localeCompare(b.manufacturerName),
+      dataIndex: "manufacturer",
+       width: '200px',
+      sorter: (a, b) => a.manufacturer.localeCompare(b.manufacturer),
     },
     {
       title: "Alias",
       dataIndex: "manufacturerAlias",
+       width: '150px',
       sorter: (a, b) => a.manufacturerAlias.localeCompare(b.manufacturerAlias),
     },
 
     {
       title: "Last Modified",
       dataIndex: "formattedDate",
+       width: '150px',
       sorter: (a, b) => a.formattedDate - b.formattedDate,
     },
     {
       title: "Last Modified By",
       dataIndex: "user",
+       width: '150px',
       sorter: (a, b) => a.user.localeCompare(b.user),
     },
     {
@@ -171,11 +176,13 @@ const ManufacturerAliases = (props) => {
     loadData();
   };
 
+
+
   const loadData = async () => {
     if (manufacturerId && manufacturerId !== "") {
       setIsDataLoading(true);
       setItems([]);
-      const res = await DataService.getAliasesForManufacturer(manufacturerId);
+      const res = await DataService.getAliasesForManufacturerId(manufacturerId);
       let index = 1;
       res.forEach(function (element) {
         element.index = index;
@@ -279,7 +286,7 @@ const ManufacturerAliases = (props) => {
         width={600}
       >
         <UpdateManufacturerAlias
-          manufacturer={item}
+          manufacturerAlias={item}
           isNew={isNew}
           onSaveSuccess={onUpdateSuccess}
           onCancel={() => setShowUpdateDrawer(false)}
