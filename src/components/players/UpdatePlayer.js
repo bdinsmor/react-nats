@@ -9,7 +9,7 @@ import { ReactComponent as BallSvg } from '../../baseball.svg';
 import { ReactComponent as BatSvg } from '../../bat.svg';
 import ColorPicker from 'rc-color-picker';
 import Icon from '@ant-design/icons';
-import { SaveOutlined, CloseOutlined, IdcardOutlined, FundProjectionScreenOutlined } from '@ant-design/icons';
+import { SaveOutlined, CloseOutlined, IdcardOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
