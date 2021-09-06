@@ -1,110 +1,38 @@
-import React, { useState } from 'react';
-import { notification, Input, Button, Form, Row, Col, Space } from 'antd';
-import { MailOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Row, Col, Space } from 'antd';
 import AuthService from '../services/AuthService';
-import logo from '../logo-dark.svg';
-
-import { useHistory } from "react-router-dom";
+import logo from '../revs-logo.png';
 
 const LoginComponent = (props) => {
-     const [loading, setLoading] = useState(false);
+  const login = async () => {
+    const user = await AuthService.login();
+    if (user) {
+      props.history.push('/');
+    }
+  };
 
-     const history = useHistory();
+  return (
+    <React.Fragment>
+      <Row style={{ paddingTop: 100 }}>
+        <Col flex="auto"></Col>
+        <Col flex="300px">
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <img className="rotate-y" style={{ width: '800px' }} src={logo} alt="logo" />
 
-  const resetPassword = () =>{ 
-    let path = `reset-password`; 
-    history.push(path);
-  }
-
-    const login = (values) => {
-        setLoading(true);
-        const credentials = { username: values.username, password: values.password };
-        AuthService.login(credentials).then(res => {
-            setLoading(false);
-            if (!res.errorCode) {
-                props.history.push('/');
-            } else {
-                if (res.errorCode === 'PASSWORD_RESET_REQUIRED') {
-                    notification.error({
-                        message: 'Password Reset Required',
-                        duration: 4
-                    })
-                    props.history.push('/reset-password');
-                } else {
-                    notification.error({
-                        message: res.errorMessage,
-                        duration: 4
-                    })
-                }
-            }
-        });
-    };
-
-    return (
-        
-        <React.Fragment>
-            <Row style={{ paddingTop: 100 }}>
-                <Col flex="auto"></Col>
-                <Col flex="300px">
-                    <Space direction="vertical" size="large" style={{ width: "100%" }}>
-                        <img style={{ width: "300px" }} src={logo} alt="logo" />
-                        <Form
-                            name="login"
-                            className="login-form"
-                            onFinish={login}
-                            wrapperCol={{ span: 24 }}
-                        >
-                            <Form.Item
-                                name="username"
-                                rules={[
-                                    {
-                                      type: 'email',
-                                      message: 'The input is not a valid email address',
-                                    },
-                                    {
-                                      required: true,
-                                      message: 'Please input an email address',
-                                    },
-                                  ]}
-                            >
-                                <Input
-                                size="large"
-                                    prefix={<MailOutlined className="site-form-item-icon" />}
-                                    placeholder="Email"
-                                    disabled={loading}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="password"
-                                rules={[{ required: true, message: 'Please input your Password!' }]}
-                            >
-                                <Input
-                                 size="large"
-                                    prefix={<LockOutlined className="site-form-item-icon" />}
-                                    type="password"
-                                    placeholder="Password"
-                                    disabled={loading}
-                                />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button
-                                    type="primary"
-                                    htmlType="submit"
-                                    className="login-form-button"
-                                    loading={loading}
-                                    icon={<LoginOutlined />}
-                                >
-                                    Log in
-                                </Button>
-                                <Button type="link" onClick={() => resetPassword()} style={{ float: "right" }}>Reset Password</Button>
-                            </Form.Item>
-                        </Form>
-                    </Space>
-                </Col>
-                <Col flex="auto"></Col>
+            <Row gutter={16}>
+              <div className="google-btn" onClick={() => login()}>
+                <div className="google-icon-wrapper">
+                  <img alt="los gatos revolution logo" className="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+                </div>
+                <p className="btn-text">Sign in with google</p>
+              </div>
             </Row>
-        </React.Fragment >
-    )
-}
+          </Space>
+        </Col>
+        <Col flex="auto"></Col>
+      </Row>
+    </React.Fragment>
+  );
+};
 
 export default LoginComponent;
