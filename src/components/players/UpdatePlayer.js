@@ -173,7 +173,7 @@ const UpdatePlayer = (props) => {
   };
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <Space direction="vertical" style={{ width: '100%', borderRadius: '4px' }}>
       <Skeleton active loading={isLoading}></Skeleton>
       <div hidden={isLoading}>
         <Row align="left" style={{ paddingLeft: '8px', paddingTop: '16px', backgroundColor: selectedBackgroundColor.color }}>
