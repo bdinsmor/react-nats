@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import DataService from '../../services/DataService';
+import DataService, { lineupsSubject } from '../../services/DataService';
 import { SearchOutlined } from '@ant-design/icons';
-import { Space, Row, Col, Typography, Layout, Select, Button, message } from 'antd';
+import { Space, Row, Col, Typography, Layout, Select, Button, message, notification } from 'antd';
 import dayjs from 'dayjs';
-
 import LineupCard from './LineupCard';
 
 var localizedFormat = require('dayjs/plugin/localizedFormat');
@@ -13,6 +12,7 @@ const { Content } = Layout;
 const { Text } = Typography;
 
 const Lineups = (props) => {
+  let initialLoad = true;
   const [items, setItems] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('fall');
   const [selectedYear, setSelectedYear] = useState('2021');
@@ -90,7 +90,7 @@ const Lineups = (props) => {
       }
     }
     if (saved) {
-      init();
+      getOtherData();
     }
   };
 
@@ -102,7 +102,7 @@ const Lineups = (props) => {
     setSelectedSeason(value);
   };
 
-  const init = async function () {
+  const getOtherData = async function () {
     const getPositions = async () => {
       setPositions(await DataService.getPositions());
     };
@@ -113,7 +113,6 @@ const Lineups = (props) => {
 
     getPositions();
     getAllPlayers();
-    loadData();
   };
 
   const getPositionByNumber = (number) => {
@@ -177,7 +176,46 @@ const Lineups = (props) => {
   };
 
   useEffect(() => {
-    init();
+    const subscription = lineupsSubject.getLineups().subscribe((lineups) => {
+      if (!initialLoad) {
+        const btn = (
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              if (lineups) {
+                setItems(lineups);
+              } else {
+                setItems([]);
+              }
+
+              notification.destroy();
+            }}
+          >
+            Click to Refresh
+          </Button>
+        );
+        notification.open({
+          message: 'Lineups Updated',
+          description: 'The lineups have been updated, click this message to refresh your screen',
+          btn,
+        });
+      }
+      if (initialLoad) {
+        if (lineups) {
+          setItems(lineups);
+        } else {
+          setItems([]);
+        }
+        initialLoad = false;
+      }
+    });
+    DataService.subscribeToLineups(selectedSeason, selectedYear);
+    return function cleanup() {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
   return (
