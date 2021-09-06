@@ -11,6 +11,7 @@ const positionsDb = collection(db, 'positions');
 
 const subject = new Subject();
 
+// this will be used to allow lineups.js to subscribe to changes in lineups and then prompt user for refresh
 export const lineupsSubject = {
   notify: (lineups) => subject.next(lineups),
   clear: () => subject.next(),
