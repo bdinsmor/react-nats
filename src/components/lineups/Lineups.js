@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import DataService, { lineupsSubject } from '../../services/DataService';
+import DataService, { lineupsSubject, positionsSubject, playersSubject } from '../../services/DataService';
 import { SearchOutlined } from '@ant-design/icons';
 import { Space, Row, Col, Typography, Layout, Select, Button, message, notification } from 'antd';
 import dayjs from 'dayjs';
@@ -12,7 +12,8 @@ const { Content } = Layout;
 const { Text } = Typography;
 
 const Lineups = (props) => {
-  let initialLoad = true;
+  let initialLoad = false;
+  let initialPlayersLoad = false;
   const [items, setItems] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('fall');
   const [selectedYear, setSelectedYear] = useState('2021');
@@ -69,6 +70,7 @@ const Lineups = (props) => {
           for (let j = 0; j < lineup.playing.length; j++) {
             if (lineup.playing[j].id === updatedPlayer.id) {
               let player = lineup.playing[j];
+              console.log('will update ' + player.backgroundColor + ' to ' + updatedPlayer.backgroundColor);
               player.firstName = updatedPlayer.firstName;
               player.lastName = updatedPlayer.lastName;
               player.textColor = updatedPlayer.textColor;
@@ -78,6 +80,7 @@ const Lineups = (props) => {
               player.nickname = updatedPlayer.nickname;
               lineup.playing[j] = player;
               found = true;
+
               lineup.playing = [...lineup.playing];
               break;
             }
@@ -90,7 +93,7 @@ const Lineups = (props) => {
       }
     }
     if (saved) {
-      getOtherData();
+      //  getOtherData();
     }
   };
 
@@ -176,8 +179,13 @@ const Lineups = (props) => {
   };
 
   useEffect(() => {
-    const subscription = lineupsSubject.getLineups().subscribe((lineups) => {
-      if (!initialLoad) {
+    const lineupsSubscription = lineupsSubject.getLineups().subscribe((lineups) => {
+      if (lineups) {
+        setItems(lineups);
+      } else {
+        setItems([]);
+      }
+      /* if (!initialLoad) {
         const btn = (
           <Button
             type="primary"
@@ -208,12 +216,62 @@ const Lineups = (props) => {
           setItems([]);
         }
         initialLoad = false;
+      }*/
+    });
+    const playersSubscription = playersSubject.getPlayers().subscribe((players) => {
+      if (players) {
+        setAllPlayers(players);
+      } else {
+        setAllPlayers([]);
       }
+      /*if (!initialPlayersLoad) {
+        const btn = (
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              if (players) {
+                setAllPlayers(players);
+              } else {
+                setAllPlayers([]);
+              }
+
+              notification.destroy();
+            }}
+          >
+            Click to Refresh
+          </Button>
+        );
+        notification.open({
+          message: 'Players Have Been Updated',
+          duration: 0,
+          btn,
+        });
+      }
+      if (initialPlayersLoad) {
+        if (players) {
+          setAllPlayers(players);
+        } else {
+          setAllPlayers([]);
+        }
+        initialPlayersLoad = false;
+      }*/
+    });
+    const positionsSubscription = positionsSubject.getPositions().subscribe((positions) => {
+      setPositions(positions);
     });
     DataService.subscribeToLineups(selectedSeason, selectedYear);
+    DataService.subscribeToPlayers(selectedSeason, selectedYear);
+    DataService.subscribeToPositions();
     return function cleanup() {
-      if (subscription) {
-        subscription.unsubscribe();
+      if (lineupsSubscription) {
+        lineupsSubscription.unsubscribe();
+      }
+      if (playersSubscription) {
+        playersSubscription.unsubscribe();
+      }
+      if (positionsSubscription) {
+        positionsSubscription.unsubscribe();
       }
     };
   }, []);
@@ -266,16 +324,7 @@ const Lineups = (props) => {
                     <Text type="secondary">{item.month}</Text>
                     {item.lineups &&
                       item.lineups.map(function (lineup, i) {
-                        return (
-                          <LineupCard
-                            key={lineup.key}
-                            lineup={lineup}
-                            allPlayers={allPlayers}
-                            positions={positions}
-                            onSaveLineup={onSaveLineup}
-                            onPlayerUpdated={onPlayerUpdated}
-                          />
-                        );
+                        return <LineupCard key={lineup.key} lineup={lineup} allPlayers={allPlayers} positions={positions} onSaveLineup={onSaveLineup} />;
                       })}
                   </Col>
                 );

@@ -9,13 +9,55 @@ const playersDb = collection(db, 'players');
 const lineupsDb = collection(db, 'lineups');
 const positionsDb = collection(db, 'positions');
 
-const subject = new Subject();
+const lineupsSubj = new Subject();
 
 // this will be used to allow lineups.js to subscribe to changes in lineups and then prompt user for refresh
 export const lineupsSubject = {
-  notify: (lineups) => subject.next(lineups),
-  clear: () => subject.next(),
-  getLineups: () => subject.asObservable(),
+  notify: (lineups) => lineupsSubj.next(lineups),
+  clear: () => lineupsSubj.next(),
+  getLineups: () => lineupsSubj.asObservable(),
+};
+
+const positionsSubj = new Subject();
+
+// this will be used to allow lineups.js to subscribe to changes in lineups and then prompt user for refresh
+export const positionsSubject = {
+  notify: (lineups) => positionsSubj.next(lineups),
+  clear: () => positionsSubj.next(),
+  getPositions: () => positionsSubj.asObservable(),
+};
+
+const playersSubj = new Subject();
+
+// this will be used to allow lineups.js to subscribe to changes in lineups and then prompt user for refresh
+export const playersSubject = {
+  notify: (lineups) => playersSubj.next(lineups),
+  clear: () => playersSubj.next(),
+  getPlayers: () => playersSubj.asObservable(),
+};
+
+const daysUntil = (date) => {
+  var birthday = moment(date);
+
+  // uncomment this line to simulate it is your birthday and comment the next one to test it.
+  // var today = moment("2017-03-25");
+  var today = moment().format('YYYY-MM-DD');
+
+  // calculate age of the person
+  var age = moment(today).diff(birthday, 'years');
+  moment(age).format('YYYY-MM-DD');
+
+  var nextBirthday = moment(birthday).add(age, 'years');
+  moment(nextBirthday).format('YYYY-MM-DD');
+
+  /* added one more year in case the birthday has already passed
+  to calculate date till next one. */
+  if (nextBirthday.isSame(today)) {
+    return 0;
+  } else {
+    nextBirthday = moment(birthday).add(age + 1, 'years');
+    return nextBirthday.diff(today, 'days');
+  }
 };
 
 const sortLineups = (lineups) => {
@@ -165,6 +207,17 @@ const DataService = {
     return await lineupsDb.doc(lineupId).delete();
   },
 
+  async subscribeToPositions() {
+    const q = query(positionsDb, orderBy('number'));
+    const unsubscribe = onSnapshot(q, (lineupsSnapshot) => {
+      const positions = lineupsSnapshot.docs.map((doc) => {
+        return doc.data();
+      });
+      positionsSubject.notify(positions);
+    });
+    return () => unsubscribe();
+  },
+
   async getPositions() {
     try {
       const q = query(positionsDb, orderBy('number'));
@@ -177,6 +230,20 @@ const DataService = {
   },
 
   // PLAYERS
+
+  async subscribeToPlayers() {
+    const q = query(playersDb, where('year', '==', '2021'), where('season', '==', 'fall'), orderBy('jersey'));
+    const unsubscribe = onSnapshot(q, (playersSnapshot) => {
+      const players = playersSnapshot.docs.map((doc) => {
+        const p = doc.data();
+        p.year = parseInt(p.year);
+        p.daysTilBirthday = daysUntil(p.dateOfBirth);
+        return p;
+      });
+      playersSubject.notify(players);
+    });
+    return () => unsubscribe();
+  },
 
   async getPlayers(season, year) {
     try {
@@ -204,6 +271,59 @@ const DataService = {
     }
     const playerRef = doc(db, 'players', player.id);
     await setDoc(playerRef, player);
+    await this.updateLineupsAfterPlayerUpdate(player);
+  },
+
+  async updateLineupsAfterPlayerUpdate(updatedPlayer) {
+    const lineupGroups = await this.getLineups();
+    for (let lineupGroup of lineupGroups) {
+      let found = false;
+      let lineups = lineupGroup.lineups;
+      for (let lineup of lineups) {
+        if (lineup.notPlaying) {
+          for (let i = 0; i < lineup.notPlaying.length; i++) {
+            if (lineup.notPlaying[i].id === updatedPlayer.id) {
+              let player = lineup.playing[i];
+              player.firstName = updatedPlayer.firstName;
+              player.lastName = updatedPlayer.lastName;
+              player.textColor = updatedPlayer.textColor;
+              player.backgroundColor = updatedPlayer.backgroundColor;
+              player.dateOfBirth = updatedPlayer.dateOfBirth;
+              player.jersey = updatedPlayer.jersey;
+              player.nickname = updatedPlayer.nickname;
+              lineup.notPlaying[i] = player;
+              lineup.notPlaying = [...lineup.notPlaying];
+              found = true;
+              break;
+            }
+          }
+        }
+
+        if (!found) {
+          for (let j = 0; j < lineup.playing.length; j++) {
+            if (lineup.playing[j].id === updatedPlayer.id) {
+              let player = lineup.playing[j];
+              console.log('will update ' + player.backgroundColor + ' to ' + updatedPlayer.backgroundColor);
+              player.firstName = updatedPlayer.firstName;
+              player.lastName = updatedPlayer.lastName;
+              player.textColor = updatedPlayer.textColor;
+              player.backgroundColor = updatedPlayer.backgroundColor;
+              player.dateOfBirth = updatedPlayer.dateOfBirth;
+              player.jersey = updatedPlayer.jersey;
+              player.nickname = updatedPlayer.nickname;
+              lineup.playing[j] = player;
+              found = true;
+
+              lineup.playing = [...lineup.playing];
+              break;
+            }
+          }
+        }
+        if (found) {
+          await DataService.updateLineup(lineup);
+        }
+      }
+    }
   },
 
   async deletePlayer(player) {
