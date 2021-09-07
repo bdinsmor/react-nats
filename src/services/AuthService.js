@@ -22,7 +22,7 @@ const AuthService = {
       getRedirectResult(auth)
         .then((result) => {
           if (!result) {
-            resolve(null);
+            this.login();
           }
           // This gives you a Google Access Token. You can use it to access Google APIs.
           const credential = GoogleAuthProvider.credentialFromResult(result);

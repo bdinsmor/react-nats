@@ -13,7 +13,13 @@ const LoginComponent = (props) => {
   };
 
   useEffect(() => {
+    const user = AuthService.getUser();
+    if (!user) {
+      //AuthService.login();
+    }
+
     AuthService.checkForRedirect().then((user) => {
+      console.log('user is... ' + JSON.stringify(user));
       props.history.push('/');
     });
   }, []);

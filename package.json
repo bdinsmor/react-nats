@@ -1,4 +1,6 @@
 {
+  "name": "los-gatos-revs",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.2.0",
