@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import DataService from '../../services/DataService';
+import DataService, { playersSubject } from '../../services/DataService';
 import UpdatePlayer from './UpdatePlayer';
 import { SearchOutlined } from '@ant-design/icons';
 import { Space, Row, Col, Table, Drawer, Layout, Select, Button } from 'antd';
@@ -29,42 +29,15 @@ const Players = (props) => {
     { key: '2022', label: '2022', value: '2022' },
   ];
 
-  const daysUntil = (date) => {
-    var birthday = moment(date);
-
-    // uncomment this line to simulate it is your birthday and comment the next one to test it.
-    // var today = moment("2017-03-25");
-    var today = moment().format('YYYY-MM-DD');
-
-    // calculate age of the person
-    var age = moment(today).diff(birthday, 'years');
-    moment(age).format('YYYY-MM-DD');
-
-    var nextBirthday = moment(birthday).add(age, 'years');
-    moment(nextBirthday).format('YYYY-MM-DD');
-
-    /* added one more year in case the birthday has already passed
-  to calculate date till next one. */
-    if (nextBirthday.isSame(today)) {
-      return 0;
-    } else {
-      nextBirthday = moment(birthday).add(age + 1, 'years');
-      return nextBirthday.diff(today, 'days');
-    }
-  };
-
   const loadData = async () => {
     if (!selectedSeason || selectedSeason === '' || !selectedYear || selectedYear === '') {
-      return [];
+      setItems([]);
+      return;
     }
+
     const res = await DataService.getPlayers(selectedYear, selectedSeason);
     setIsDataLoading(true);
-    let index = 1;
-    res.forEach(function (element) {
-      element.index = index;
-      element.daysTilBirthday = daysUntil(element.dateOfBirth);
-      index++;
-    });
+
     setItems(res);
     setIsDataLoading(false);
     setItems(res);
@@ -152,7 +125,6 @@ const Players = (props) => {
 
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
-    init();
   };
 
   const onCurrentYearChange = async (value) => {
@@ -161,11 +133,6 @@ const Players = (props) => {
 
   const onCurrentSeasonChange = async (value) => {
     setSelectedSeason(value);
-  };
-
-  const init = async function () {
-    setIsNew(false);
-    loadData();
   };
 
   const onAdd = async () => {
@@ -180,7 +147,25 @@ const Players = (props) => {
   };
 
   useEffect(() => {
-    init();
+    const playersSubscription = playersSubject.getPlayers().subscribe((players) => {
+      console.log('players: ' + JSON.stringify(players, null, 2));
+      if (players) {
+        let index = 1;
+        players.forEach(function (element) {
+          element.index = index;
+          index++;
+        });
+        setItems(players);
+      } else {
+        setItems([]);
+      }
+    });
+    DataService.subscribeToPlayers(selectedSeason, selectedYear);
+    return function cleanup() {
+      if (playersSubscription) {
+        playersSubscription.unsubscribe();
+      }
+    };
   }, []);
 
   return (
