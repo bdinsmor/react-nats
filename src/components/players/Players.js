@@ -5,6 +5,7 @@ import UpdatePlayer from './UpdatePlayer';
 import { SearchOutlined } from '@ant-design/icons';
 import { Space, Row, Col, Table, Drawer, Layout, Select, Button } from 'antd';
 import dayjs from 'dayjs';
+import moment from 'moment';
 
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
@@ -28,6 +29,30 @@ const Players = (props) => {
     { key: '2022', label: '2022', value: '2022' },
   ];
 
+  const daysUntil = (date) => {
+    var birthday = moment(date);
+
+    // uncomment this line to simulate it is your birthday and comment the next one to test it.
+    // var today = moment("2017-03-25");
+    var today = moment().format('YYYY-MM-DD');
+
+    // calculate age of the person
+    var age = moment(today).diff(birthday, 'years');
+    moment(age).format('YYYY-MM-DD');
+
+    var nextBirthday = moment(birthday).add(age, 'years');
+    moment(nextBirthday).format('YYYY-MM-DD');
+
+    /* added one more year in case the birthday has already passed
+  to calculate date till next one. */
+    if (nextBirthday.isSame(today)) {
+      return 0;
+    } else {
+      nextBirthday = moment(birthday).add(age + 1, 'years');
+      return nextBirthday.diff(today, 'days');
+    }
+  };
+
   const loadData = async () => {
     if (!selectedSeason || selectedSeason === '' || !selectedYear || selectedYear === '') {
       return [];
@@ -37,6 +62,7 @@ const Players = (props) => {
     let index = 1;
     res.forEach(function (element) {
       element.index = index;
+      element.daysTilBirthday = daysUntil(element.dateOfBirth);
       index++;
     });
     setItems(res);
@@ -100,7 +126,7 @@ const Players = (props) => {
           children: text,
         };
       },
-      sorter: (a, b) => a.dateOfBirth - b.dateOfBirth,
+      sorter: (a, b) => moment(a.dateOfBirth).unix() - moment(b.dateOfBirth).unix(),
     },
     {
       title: 'Days until Birthday',

@@ -197,7 +197,7 @@ const Lineups = (props) => {
         );
         notification.open({
           message: 'Lineups Updated',
-          description: 'The lineups have been updated, click this message to refresh your screen',
+          duration: 0,
           btn,
         });
       }
