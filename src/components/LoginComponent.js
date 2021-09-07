@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
 import { Row, Col, Space } from 'antd';
 import AuthService from '../services/AuthService';
 import logo from '../revs-logo.png';
@@ -10,6 +11,12 @@ const LoginComponent = (props) => {
       props.history.push('/');
     }
   };
+
+  useEffect(() => {
+    AuthService.checkForRedirect().then((user) => {
+      props.history.push('/');
+    });
+  }, []);
 
   return (
     <React.Fragment>
