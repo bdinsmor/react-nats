@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import DataService, { lineupsSubject, positionsSubject, playersSubject } from '../../services/DataService';
 import { SearchOutlined } from '@ant-design/icons';
-import { Space, Row, Col, Typography, Layout, Select, Button, message, notification } from 'antd';
+import { Space, Row, Col, Typography, Layout, Select, Button, message } from 'antd';
 import dayjs from 'dayjs';
 import LineupCard from './LineupCard';
 
@@ -12,8 +12,6 @@ const { Content } = Layout;
 const { Text } = Typography;
 
 const Lineups = (props) => {
-  let initialLoad = false;
-  let initialPlayersLoad = false;
   const [items, setItems] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('fall');
   const [selectedYear, setSelectedYear] = useState('2021');
@@ -40,7 +38,7 @@ const Lineups = (props) => {
       message.error('Unknown error occurred loading lineups');
     }
   };
-
+  /*
   const onPlayerUpdated = async (updatedPlayer) => {
     let saved = false;
     for (let lineupGroup of items) {
@@ -95,7 +93,7 @@ const Lineups = (props) => {
     if (saved) {
       //  getOtherData();
     }
-  };
+  };*/
 
   const onCurrentYearChange = async (value) => {
     setSelectedYear(value);
@@ -105,7 +103,7 @@ const Lineups = (props) => {
     setSelectedSeason(value);
   };
 
-  const getOtherData = async function () {
+  /*const getOtherData = async function () {
     const getPositions = async () => {
       setPositions(await DataService.getPositions());
     };
@@ -116,7 +114,7 @@ const Lineups = (props) => {
 
     getPositions();
     getAllPlayers();
-  };
+  };*/
 
   const getPositionByNumber = (number) => {
     var numChoices = positions.length;
