@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-
+import { OrderedListOutlined, UserOutlined } from '@ant-design/icons';
 import { Switch, Route, NavLink, Redirect, useLocation } from 'react-router-dom';
 import { Menu, Layout } from 'antd';
 import HeaderBar from './HeaderBar';
 import Lineups from './lineups/Lineups';
 import Players from './players/Players';
-
 const MenuItemGroup = Menu.ItemGroup;
 
 const { Header, Content, Sider } = Layout;
 
 const Home = (props) => {
   const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState('Lineups');
 
   const listItems = [
@@ -25,16 +25,22 @@ const Home = (props) => {
           label: 'Lineups',
           link: './lineups',
           type: 'navlink',
+          icon: <OrderedListOutlined />,
         },
         {
           key: 'players',
           label: 'Roster',
           link: './players',
           type: 'navlink',
+          icon: <UserOutlined />,
         },
       ],
     },
   ];
+
+  const onToggleChange = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   const updateCurrentPage = (pageName) => {
     setCurrentPage(pageName);
@@ -74,7 +80,11 @@ const Home = (props) => {
         </Header>
         <Layout>
           <Sider
-            width="225px"
+            collapsible
+            collapsed={isCollapsed}
+            onCollapse={() => {
+              onToggleChange();
+            }}
             style={{
               marginTop: '40px',
               overflow: 'auto',
@@ -95,9 +105,9 @@ const Home = (props) => {
               {listItems.map(function (group) {
                 return (
                   <MenuItemGroup key={group.key} title="">
-                    {group.children.map(function (child) {
+                    {group.children.map(function (child, childIter) {
                       return (
-                        <Menu.Item key={child.key}>
+                        <Menu.Item key={child.key} icon={child.icon} title={null}>
                           <NavLink key={child.key} onClick={() => updateCurrentPage(child.label)} activeClassName="active-link" to={child.link}>
                             {child.label}
                           </NavLink>
@@ -112,11 +122,11 @@ const Home = (props) => {
           <Layout
             className="site-layout"
             style={{
-              marginLeft: 225,
               width: '100%',
-              maxWidth: '80vw',
               overflow: 'auto',
               marginTop: '64px',
+              marginLeft: isCollapsed ? '75px' : '225px',
+              maxWidth: isCollapsed ? '95vw' : '80vw',
             }}
           >
             <Content style={{ overflow: 'initial' }}>

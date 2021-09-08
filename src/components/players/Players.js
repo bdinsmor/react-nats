@@ -219,9 +219,9 @@ const Players = (props) => {
                 }, // click row
               };
             }}
-            scroll={{ x: 500, y: 900 }}
+            scroll={{ x: '75vw', y: 900 }}
             rowKey="id"
-            style={{ width: '100%', maxWidth: 'calc(100vw - 275px)' }}
+            style={{ width: '100%', maxWidth: 'calc(90vw)' }}
             pagination={{
               hideOnSinglePage: true,
               pageSize: items ? items.length : 10,
