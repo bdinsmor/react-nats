@@ -114,6 +114,12 @@ const UpdatePlayer = (props) => {
                 const inning = innings[k];
                 const positionAbbr = inning.abbr;
                 const positionNumber = inning.number;
+                if (!fs[positionAbbr]) {
+                  fs[positionAbbr] = {
+                    count: 0,
+                    positionClassName: positionAbbr,
+                  };
+                }
                 let count = fs[positionAbbr].count;
                 count++;
                 fs[positionAbbr].count = count;

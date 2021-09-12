@@ -148,7 +148,6 @@ const Players = (props) => {
 
   useEffect(() => {
     const playersSubscription = playersSubject.getPlayers().subscribe((players) => {
-      console.log('players: ' + JSON.stringify(players, null, 2));
       if (players) {
         let index = 1;
         players.forEach(function (element) {

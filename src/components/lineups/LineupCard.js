@@ -15,7 +15,7 @@ const LineupCard = (props) => {
   };
 
   const onPlayerUpdated = (player) => {
-    props.onPlayerUpdated(player);
+    // props.onPlayerUpdated(player);
   };
 
   useEffect(() => {

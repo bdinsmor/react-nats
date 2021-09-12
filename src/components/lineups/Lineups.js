@@ -38,6 +38,7 @@ const Lineups = (props) => {
       message.error('Unknown error occurred loading lineups');
     }
   };
+
   /*
   const onPlayerUpdated = async (updatedPlayer) => {
     let saved = false;
@@ -156,6 +157,7 @@ const Lineups = (props) => {
         p.index = playerIndex;
         p.innings = innings;
         playersPlaying.push(p);
+        console.log(JSON.stringify(innings, null, 2));
         playerIndex++;
       });
 

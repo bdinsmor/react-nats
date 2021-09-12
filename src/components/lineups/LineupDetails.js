@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Drawer, Input, Form, Select, Row, Col, Button, Space, DatePicker } from 'antd';
 
 import { useReactToPrint } from 'react-to-print';
-import { SaveOutlined, PrinterOutlined, OrderedListOutlined, CloseOutlined } from '@ant-design/icons';
+import { SaveOutlined, PrinterOutlined, OrderedListOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import ReorderIcon from '@material-ui/icons/Reorder';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -26,7 +26,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import UpdatePlayer from '../players/UpdatePlayer';
 
 import dayjs from 'dayjs';
-var localizedFormat = require('dayjs/plugin/localizedFormat');
+let localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 const { Option } = Select;
 const { Content } = Layout;
@@ -114,9 +114,9 @@ const LineupDetails = (props) => {
     setLineup((prev) => {
       const temp = { ...prev };
       const playing = temp.playing;
-      const d = playing[result.destination.index];
-      playing[result.destination.index] = playing[result.source.index];
-      playing[result.source.index] = d;
+      const player = playing[result.source.index];
+      playing.splice(result.source.index, 1);
+      playing.splice(result.destination.index, 0, player);
       let index = 1;
       playing.forEach((p) => {
         p.index = index;
@@ -139,22 +139,29 @@ const LineupDetails = (props) => {
 
   const onPositionChange = (e, index, player, playerIndex) => {
     let newPosition = getPosition(e);
-    newPosition.inning = player.innings[index].inning;
+    const inningNumber = index + 1;
+    newPosition.inning = inningNumber;
+    player.innings = [...player.innings];
     player.innings[index] = newPosition;
-    calculatePlayerBenchInnings(player);
-    calculatePlayerOutfieldInnings(player);
-    calculatePlayerRestrictedInnings(player);
-    calculateOutfieldMet(player);
+    try {
+      calculatePlayerBenchInnings(player);
+      calculatePlayerOutfieldInnings(player);
+      calculatePlayerRestrictedInnings(player);
+      calculateOutfieldMet(player);
 
-    lineup.playing[playerIndex] = { ...player };
-    validateInnings(lineup);
-    setLineup({ ...lineup });
+      lineup.playing[playerIndex] = { ...player };
+      lineup.inningValidations[index] = { msg: validateInning(inningNumber), tooMany: checkInningForDups(inningNumber) };
+      setLineup({ ...lineup });
+    } catch (err) {
+      console.log('caught error: ', err);
+    }
   };
 
-  const validateInnings = (lineup) => {
-    for (let i = 0; i < 1; i++) {
-      lineup.inningValidations[i] = { msg: validateInning(i) };
+  const validateInnings = () => {
+    for (let i = 0; i < 6; i++) {
+      lineup.inningValidations[i] = { msg: validateInning(i + 1), tooMany: checkInningForDups(i + 1) };
     }
+    setLineup({ ...lineup });
   };
 
   const reIndex = (list) => {
@@ -194,8 +201,47 @@ const LineupDetails = (props) => {
     }
   };
 
+  const checkInningForDups = (inningNumber) => {
+    let map = {};
+    let msg = [];
+    let numInnings = 0;
+    //console.log("inning: "+ number);
+    let numPlaying = lineup.playing.length;
+    for (let i = 0; i < numPlaying; i++) {
+      let player = lineup.playing[i];
+      numInnings = player.innings.length;
+      // console.log("player: " + player.name + " has " + player.innings.length);
+      for (let j = 0; j < numInnings; j++) {
+        //.log(player.name + "\tposition: " + player.innings[j].inning)
+        if (player.innings[j].inning === inningNumber) {
+          let position = player.innings[j];
+          if (position.number > 0) {
+            let positionDisplay = getPositionDisplay(position.number);
+            if (!map[positionDisplay]) {
+              map[positionDisplay] = player.nickname;
+            } else {
+              msg.push(positionDisplay);
+            }
+          }
+        }
+      }
+    }
+    if (msg && msg.length > 0) {
+      let ret = '';
+      for (let i = 0; i < msg.length; i++) {
+        if (i > 0) {
+          ret = ret + ', ';
+        }
+        ret += msg[i];
+      }
+      return ret;
+    } else {
+      return '';
+    }
+    //return {playing: playing, sitting: sitting};
+  };
+
   const validateInning = (inning) => {
-    inning = inning + 1;
     let requiredPositions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const numPlayers = lineup.playing.length;
     if (numPlayers === 8) {
@@ -284,18 +330,19 @@ const LineupDetails = (props) => {
     const innings = player.innings;
     let pos = [];
     const numInnings = innings.length;
-    for (var i = 0; i < numInnings; i++) {
+    for (let i = 0; i < numInnings; i++) {
       if (innings[i].number === 1) {
-        var nextInning = i + 1;
+        let nextInning = i + 1;
         pos.push(nextInning + ': ' + getPositionDisplay(innings[i].number));
       }
     }
     pos = pos.sort();
-    var disp = '';
+    let disp = '';
     if (pos.length === 0) {
-      return 'NONE';
+      player.restrictedPositions = '';
+      return;
     }
-    for (var j = 0; j < pos.length; j++) {
+    for (let j = 0; j < pos.length; j++) {
       if (j > 0) {
         disp += ', ';
       }
@@ -328,13 +375,11 @@ const LineupDetails = (props) => {
     for (let i = 0; i < numPlaying; i++) {
       player = lineup.playing[i];
       numInnings = player.innings.length;
-      //console.log("player: " + player.name + " has " + player.innings.length);
+      // console.log('player: ' + player.nickname + ' has ' + player.innings.length);
       for (let j = 0; j < numInnings; j++) {
         if (player.innings[j].inning === number) {
           const position = player.innings[j];
-          if (number === 1) {
-            console.log(player.nickname + ' in inning ' + number + ' is playing ' + position.number);
-          }
+
           if (position.number > 0) {
             player.lowercasename = player.nickname.toLowerCase();
             const playingPlayer = {
@@ -355,8 +400,8 @@ const LineupDetails = (props) => {
   };
 
   const getFullPositionName = (number) => {
-    var numChoices = positions.length;
-    for (var i = 0; i < numChoices; i++) {
+    let numChoices = positions.length;
+    for (let i = 0; i < numChoices; i++) {
       if (positions[i].number === number) {
         return positions[i].className;
       }
@@ -442,6 +487,14 @@ const LineupDetails = (props) => {
                     <h5># Innings finished</h5>
                     <Form.Item name="numInningsFinished">
                       <Input placeholder="# Innings Finished" />
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <h5>&nbsp;</h5>
+                    <Form.Item>
+                      <Button type="ghost" icon={<CheckOutlined />} onClick={() => validateInnings()}>
+                        Validate
+                      </Button>
                     </Form.Item>
                   </Col>
                   <Col>
@@ -693,15 +746,63 @@ const LineupDetails = (props) => {
                           <TableCell size="small"></TableCell>
                           <TableCell size="small"></TableCell>
                           <TableCell size="small"></TableCell>
-                          <TableCell size="small">Need:</TableCell>
+                          <TableCell size="small" align="center">
+                            Need:
+                          </TableCell>
                           {lineup && lineup.inningValidations && (
                             <React.Fragment>
-                              <TableCell size="small">{lineup.inningValidations[0].msg}</TableCell>
-                              <TableCell size="small">{lineup.inningValidations[1].msg}</TableCell>
-                              <TableCell size="small">{lineup.inningValidations[2].msg}</TableCell>
-                              <TableCell size="small">{lineup.inningValidations[3].msg}</TableCell>
-                              <TableCell size="small">{lineup.inningValidations[4].msg}</TableCell>
-                              <TableCell size="small">{lineup.inningValidations[5].msg}</TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[0].msg}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[1].msg}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[2].msg}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[3].msg}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[4].msg}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[5].msg}
+                              </TableCell>
+                            </React.Fragment>
+                          )}
+
+                          <TableCell size="small"></TableCell>
+                          <TableCell size="small"></TableCell>
+                          <TableCell size="small"></TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell size="small"></TableCell>
+                          <TableCell size="small"></TableCell>
+                          <TableCell size="small"></TableCell>
+                          <TableCell size="small" align="center">
+                            Too Many:
+                          </TableCell>
+                          {lineup && lineup.inningValidations && (
+                            <React.Fragment>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[0].tooMany}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[1].tooMany}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[2].tooMany}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[3].tooMany}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[4].tooMany}
+                              </TableCell>
+                              <TableCell align="center" size="small">
+                                {lineup.inningValidations[5].tooMany}
+                              </TableCell>
                             </React.Fragment>
                           )}
 
@@ -748,7 +849,7 @@ const LineupDetails = (props) => {
                   {innings &&
                     innings.map((inning, innIndex) => {
                       return (
-                        <div className="diagram" style={{ marginLeft: '12px', marginTop: '24px' }}>
+                        <div className="diagram" key={`diagram_${innIndex}`} style={{ marginLeft: '12px', marginTop: '24px' }}>
                           <h2>{inning.number}</h2>
                           {inning.playing &&
                             inning.playing.map((p, pIndex) => {
