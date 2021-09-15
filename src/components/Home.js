@@ -56,7 +56,7 @@ const Home = (props) => {
           for (var j = 0; j < kids.length; j++) {
             const kid = kids[j];
             if (kid.link === pathName) {
-              console.log('setting page to: ' + kid.label);
+             // console.log('setting page to: ' + kid.label);
               setCurrentPage(kid.label);
               found = true;
               break;
@@ -69,8 +69,11 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    init();
   }, []);
+
+  useEffect(() => {
+    init();
+  }, [location]);
 
   return (
     <React.Fragment>

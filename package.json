@@ -12,6 +12,7 @@
     "ant-table-extensions": "^1.1.7",
     "antd": "^4.16.13",
     "axios": "^0.21.4",
+    "craco": "^0.0.3",
     "craco-antd": "^1.19.0",
     "craco-less": "^1.20.0",
     "dayjs": "^1.10.6",

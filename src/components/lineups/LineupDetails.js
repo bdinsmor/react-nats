@@ -114,7 +114,7 @@ const LineupDetails = (props) => {
     setLineup((prev) => {
       const temp = { ...prev };
       const playing = temp.playing;
-      const player = playing[result.source.index];
+      const player = {...playing[result.source.index]};
       playing.splice(result.source.index, 1);
       playing.splice(result.destination.index, 0, player);
       let index = 1;
@@ -122,7 +122,7 @@ const LineupDetails = (props) => {
         p.index = index;
         index++;
       });
-      temp.playing = playing;
+      temp.playing = [...playing];
       return temp;
     });
   };
@@ -212,11 +212,12 @@ const LineupDetails = (props) => {
       numInnings = player.innings.length;
       // console.log("player: " + player.name + " has " + player.innings.length);
       for (let j = 0; j < numInnings; j++) {
-        //.log(player.name + "\tposition: " + player.innings[j].inning)
+      //  console.log(player.nickname + "\tposition: " + player.innings[j].inning)
         if (player.innings[j].inning === inningNumber) {
           let position = player.innings[j];
           if (position.number > 0) {
             let positionDisplay = getPositionDisplay(position.number);
+           // console.log(player.nickname + " is playing " + positionDisplay + " in inning: " + inningNumber)
             if (!map[positionDisplay]) {
               map[positionDisplay] = player.nickname;
             } else {

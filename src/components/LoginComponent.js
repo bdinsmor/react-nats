@@ -19,7 +19,6 @@ const LoginComponent = (props) => {
     }
 
     AuthService.checkForRedirect().then((user) => {
-      console.log('user is... ' + JSON.stringify(user));
       props.history.push('/');
     });
   }, []);
