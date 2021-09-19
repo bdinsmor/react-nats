@@ -64,6 +64,11 @@ const printStyle = `
       padding-top: 18px !important;
       padding-bottom: 18px !important;
     }
+
+    .print-small-margins {
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
     .page-break {
     margin-top: 1rem;
     display: block;
