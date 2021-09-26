@@ -461,7 +461,6 @@ const LineupDetails = (props) => {
   useEffect(() => {
     form.setFieldsValue(props.lineup);
     setLineup(props.lineup);
-    setCurrentLineup({ date: props.date, opponent: props.opponent, location: props.location });
   }, [props.lineup]);
 
   return (
