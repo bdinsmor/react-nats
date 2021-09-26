@@ -87,6 +87,14 @@ const LineupDetails = (props) => {
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState({});
   const [currentLineup, setCurrentLineup] = useState({ date: '', opponent: '', location: '' });
+
+  const formRef = useRef(form);
+
+  // Update the form ref
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
+
   const [innings, setInnings] = useState([
     { number: 1, playing: [], sitting: [] },
     { number: 2, playing: [], sitting: [] },
@@ -446,15 +454,6 @@ const LineupDetails = (props) => {
   };
 
   useEffect(() => {
-    const values = form.getFieldsValue();
-    setCurrentLineup({
-      date: values.date,
-      oppenent: values.opponent && values.opponent !== '' ? values.opponent : '&nbsp;',
-      location: values.location,
-    });
-  }, [isPrinting]);
-
-  useEffect(() => {
     if (props.positions) {
       setPositions(props.positions);
     }
@@ -463,6 +462,7 @@ const LineupDetails = (props) => {
   useEffect(() => {
     form.setFieldsValue(props.lineup);
     setLineup(props.lineup);
+    setCurrentLineup({ date: props.date, opponent: props.opponent, location: props.location });
   }, [props.lineup]);
 
   return (
@@ -565,24 +565,6 @@ const LineupDetails = (props) => {
           <div ref={componentRef}>
             {(!showDiagram || isPrinting) && (
               <div className="page-break">
-                {isPrinting && (
-                  <Row gutter={36} style={{ width: '100%' }}>
-                    <Space>
-                      <Col>
-                        <h5>Date</h5>
-                        <div>{currentLineup.date}</div>
-                      </Col>
-                      <Col>
-                        <h5>Opponent</h5>
-                        <div>{currentLineup.opponent}</div>
-                      </Col>
-                      <Col>
-                        <h5>Location</h5>
-                        <div>{currentLineup.location}</div>
-                      </Col>
-                    </Space>
-                  </Row>
-                )}
                 <TableContainer component={Paper}>
                   <Table className={classes.table} aria-label="simple table">
                     <TableHead>
