@@ -86,7 +86,6 @@ const LineupDetails = (props) => {
   const [positions, setPositions] = useState([]);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState({});
-  const [currentLineup, setCurrentLineup] = useState({ date: '', opponent: '', location: '' });
 
   const formRef = useRef(form);
 
