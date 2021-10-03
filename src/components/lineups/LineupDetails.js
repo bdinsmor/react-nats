@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Drawer, Input, Form, Select, Row, Col, Button, Space, DatePicker } from 'antd';
 
 import { useReactToPrint } from 'react-to-print';
-import { SaveOutlined, PrinterOutlined, OrderedListOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { SaveOutlined, CopyOutlined, PrinterOutlined, OrderedListOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import ReorderIcon from '@material-ui/icons/Reorder';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -104,11 +104,19 @@ const LineupDetails = (props) => {
   ]);
 
   const FieldIcon = (props) => <Icon component={FieldSvg} {...props} style={{ fontSize: '28px', marginTop: '-3px' }} />;
+
   const saveLineup = async (formValues) => {
     const l = { ...lineup };
     l.date = dayjs(formValues.date).format('MM/DD/YYYY');
     l.opponent = formValues.opponent;
     l.location = formValues.location;
+    props.onSaveLineup(l);
+  };
+
+  const cloneLineup = () => {
+    const l = { ...lineup };
+    l.id = null;
+    l.date = dayjs(new Date()).format('MM/DD/YYYY');
     props.onSaveLineup(l);
   };
 
@@ -508,6 +516,14 @@ const LineupDetails = (props) => {
                     <Form.Item>
                       <Button htmlType="submit" icon={<SaveOutlined />}>
                         Save
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <h5>&nbsp;</h5>
+                    <Form.Item>
+                      <Button type="primary" icon={<CopyOutlined />} onClick={() => cloneLineup()}>
+                        Clone
                       </Button>
                     </Form.Item>
                   </Col>
