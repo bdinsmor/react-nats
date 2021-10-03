@@ -296,7 +296,7 @@ const UpdatePlayer = (props) => {
                     <div className="sitting">
                       <div>
                         <div style={{ padding: '3px' }} className="sitting">
-                          <span>{fieldingStats['0'] ? fieldingStats['0'].count : 0}</span>
+                          <span>{fieldingStats['BN'] ? fieldingStats['BN'].count : 0}</span>
                         </div>
                       </div>
                     </div>
