@@ -444,10 +444,15 @@ const LineupDetails = (props) => {
     onAfterPrint: () => setIsPrinting(false),
   });
 
+  useEffect(() => {
+    if (isPrinting) {
+      handlePrint();
+    }
+  }, [isPrinting]);
+
   const print = () => {
     setIsPrinting(true);
     generateDiagram();
-    handlePrint();
   };
 
   const editPlayer = (player) => {
