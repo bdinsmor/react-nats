@@ -110,6 +110,7 @@ const LineupDetails = (props) => {
     l.date = dayjs(formValues.date).format('MM/DD/YYYY');
     l.opponent = formValues.opponent;
     l.location = formValues.location;
+    l.numInningsFinished = formValues.numInningsFinished;
     props.onSaveLineup(l);
   };
 
@@ -527,7 +528,7 @@ const LineupDetails = (props) => {
                   <Col>
                     <h5>&nbsp;</h5>
                     <Form.Item>
-                      <Button type="primary" icon={<CopyOutlined />} onClick={() => cloneLineup()}>
+                      <Button type="ghost" icon={<CopyOutlined />} onClick={() => cloneLineup()}>
                         Clone
                       </Button>
                     </Form.Item>

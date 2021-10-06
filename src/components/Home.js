@@ -1,11 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import { OrderedListOutlined, UserOutlined } from '@ant-design/icons';
+import { OrderedListOutlined, BarChartOutlined, UserOutlined } from '@ant-design/icons';
 import { Switch, Route, NavLink, Redirect, useLocation } from 'react-router-dom';
 import { Menu, Layout } from 'antd';
 import HeaderBar from './HeaderBar';
 import Lineups from './lineups/Lineups';
 import Players from './players/Players';
+import Stats from './stats/Stats';
+
 const MenuItemGroup = Menu.ItemGroup;
 
 const { Header, Content, Sider } = Layout;
@@ -34,6 +36,13 @@ const Home = (props) => {
           type: 'navlink',
           icon: <UserOutlined />,
         },
+        {
+          key: 'stats',
+          label: 'Stats',
+          link: './stats',
+          type: 'navlink',
+          icon: <BarChartOutlined />,
+        },
       ],
     },
   ];
@@ -56,7 +65,7 @@ const Home = (props) => {
           for (var j = 0; j < kids.length; j++) {
             const kid = kids[j];
             if (kid.link === pathName) {
-             // console.log('setting page to: ' + kid.label);
+              // console.log('setting page to: ' + kid.label);
               setCurrentPage(kid.label);
               found = true;
               break;
@@ -68,8 +77,7 @@ const Home = (props) => {
     }
   };
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     init();
@@ -135,13 +143,16 @@ const Home = (props) => {
             <Content style={{ overflow: 'initial' }}>
               <Switch>
                 <Route exact path="/">
-                  <Redirect to="/players" />
+                  <Redirect to="/lineups" />
                 </Route>
                 <Route exact path="/lineups">
                   <Lineups />
                 </Route>
                 <Route exact path="/players">
                   <Players />
+                </Route>
+                <Route exact path="/stats">
+                  <Stats />
                 </Route>
               </Switch>
             </Content>

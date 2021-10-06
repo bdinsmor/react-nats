@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 
-import DataService from '../../services/DataService';
+import DataService, { positionsSubject } from '../../services/DataService';
 import { notification, Input, Card, Statistic, Tabs, Button, Row, DatePicker, Col, Form, InputNumber, Space, Divider, Typography, Skeleton } from 'antd';
 import moment from 'moment';
 import 'rc-color-picker/assets/index.css';
@@ -27,6 +27,7 @@ const UpdatePlayer = (props) => {
 
   const BallIcon = (props) => <Icon component={BallSvg} {...props} />;
   const BatIcon = (props) => <Icon component={BatSvg} {...props} />;
+  let positionsSubscription;
 
   useEffect(() => {
     const init = async function () {
@@ -34,6 +35,11 @@ const UpdatePlayer = (props) => {
       setStatsLoaded(false);
       if (props.positions) {
         setPositions(props.positions);
+      } else {
+        positionsSubscription = positionsSubject.getPositions().subscribe((positions) => {
+          setPositions(positions);
+        });
+        DataService.subscribeToPositions();
       }
       if (props.player.textColor) {
         setSelectedColor({ color: props.player.textColor });
@@ -53,6 +59,14 @@ const UpdatePlayer = (props) => {
     };
     init();
   }, [props.player]);
+
+  useEffect(() => {
+    return function cleanup() {
+      if (positionsSubscription) {
+        positionsSubscription.unsubscribe();
+      }
+    };
+  }, []);
 
   const onColorChange = async (value) => {
     setSelectedColor(value);
@@ -93,6 +107,7 @@ const UpdatePlayer = (props) => {
       0: 0,
     };
     const bs = {};
+
     const lineupGroups = await DataService.getLineups(props.player.season, props.player.year);
     for (let lineupGroup of lineupGroups) {
       let lineups = lineupGroup.lineups;
@@ -106,8 +121,7 @@ const UpdatePlayer = (props) => {
             } else {
               bs[order].count = bs[order].count++;
             }
-            const numInningsFinished = 6;
-            // numInningsFinished = lineup.numInningsFinished;
+            const numInningsFinished = lineup.numInningsFinished;
             let innings = player.innings;
             for (let k = 0; k < innings.length; k++) {
               if (k < numInningsFinished) {
@@ -134,6 +148,7 @@ const UpdatePlayer = (props) => {
         }
       }
     }
+
     setStatsLoaded(true);
     setFieldingStats(fs);
     setBattingOrderStats(bs);
