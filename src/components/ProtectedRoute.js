@@ -29,7 +29,6 @@ const ProtectedRoute = (props) => {
     updateAuth();
   }, []);
 
-  const Component = props.component;
   if (isLoading) {
     return (
       <React.Fragment>

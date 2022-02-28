@@ -1,9 +1,8 @@
 import React from 'react';
 import './App.less';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import LoginComponent from './components/LoginComponent';
-import ProtectedRoute from './components/ProtectedRoute';
 import Lineups from './components/lineups/Lineups';
 import Players from './components/players/Players';
 import Stats from './components/stats/Stats';

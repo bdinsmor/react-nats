@@ -1,16 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { OrderedListOutlined, BarChartOutlined, UserOutlined } from '@ant-design/icons';
-import { Routes, Route, Outlet, NavLink, Navigate, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { Menu, Layout } from 'antd';
 import HeaderBar from './HeaderBar';
-import Lineups from './lineups/Lineups';
-import Players from './players/Players';
-import Stats from './stats/Stats';
 
 const MenuItemGroup = Menu.ItemGroup;
 
-const { Header, Content, Sider } = Layout;
+const { Header, Sider } = Layout;
 
 const Home = (props) => {
   const location = useLocation();
