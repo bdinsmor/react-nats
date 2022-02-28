@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { OrderedListOutlined, BarChartOutlined, UserOutlined } from '@ant-design/icons';
-import { Switch, Route, NavLink, Redirect, useLocation } from 'react-router-dom';
+import { Routes, Route, Outlet, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { Menu, Layout } from 'antd';
 import HeaderBar from './HeaderBar';
 import Lineups from './lineups/Lineups';
@@ -77,7 +77,8 @@ const Home = (props) => {
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+  }, []);
 
   useEffect(() => {
     init();
@@ -119,7 +120,7 @@ const Home = (props) => {
                     {group.children.map(function (child, childIter) {
                       return (
                         <Menu.Item key={child.key} icon={child.icon} title={null}>
-                          <NavLink key={child.key} onClick={() => updateCurrentPage(child.label)} activeClassName="active-link" to={child.link}>
+                          <NavLink key={child.key} onClick={() => updateCurrentPage(child.label)} className={(navData) => navData.isActive ? "active-link" : "" } to={child.link}>
                             {child.label}
                           </NavLink>
                         </Menu.Item>
@@ -140,22 +141,7 @@ const Home = (props) => {
               maxWidth: isCollapsed ? '95vw' : '80vw',
             }}
           >
-            <Content style={{ overflow: 'initial' }}>
-              <Switch>
-                <Route exact path="/">
-                  <Redirect to="/lineups" />
-                </Route>
-                <Route exact path="/lineups">
-                  <Lineups />
-                </Route>
-                <Route exact path="/players">
-                  <Players />
-                </Route>
-                <Route exact path="/stats">
-                  <Stats />
-                </Route>
-              </Switch>
-            </Content>
+            <Outlet style={{ overflow: 'initial' }} />
           </Layout>
         </Layout>
       </Layout>

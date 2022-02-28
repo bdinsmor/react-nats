@@ -117,7 +117,7 @@ const DataService = {
   },
   async getLineups(season, year) {
     // can't figure out why passing in the constiables isn't working...
-    const q = query(lineupsDb, where('year', '==', 2021), where('season', '==', 'fall'), orderBy('date'));
+    const q = query(lineupsDb, where('year', '==', 2022), where('season', '==', 'spring'), orderBy('date'));
 
     const res = await getDocs(q);
     const lineups = res.docs.map((doc) => {
@@ -133,7 +133,7 @@ const DataService = {
   },
 
   async subscribeToLineups(season, year) {
-    const q = query(lineupsDb, where('year', '==', 2021), where('season', '==', 'fall'), orderBy('date'));
+    const q = query(lineupsDb, where('year', '==', 2022), where('season', '==', 'spring'), orderBy('date'));
     const unsubscribe = onSnapshot(q, (lineupsSnapshot) => {
       const lineups = lineupsSnapshot.docs.map((doc) => {
         const lineup = doc.data();
@@ -232,7 +232,7 @@ const DataService = {
   // PLAYERS
 
   async subscribeToPlayers() {
-    const q = query(playersDb, where('year', '==', '2021'), where('season', '==', 'fall'), orderBy('jersey'));
+    const q = query(playersDb, where('year', '==', '2022'), where('season', '==', 'spring'), orderBy('jersey'));
     const unsubscribe = onSnapshot(q, (playersSnapshot) => {
       const players = playersSnapshot.docs.map((doc) => {
         const p = doc.data();
@@ -247,7 +247,7 @@ const DataService = {
 
   async getPlayers(season, year) {
     try {
-      const q = query(playersDb, where('year', '==', '2021'), where('season', '==', 'fall'), orderBy('jersey'));
+      const q = query(playersDb, where('year', '==', '2022'), where('season', '==', 'spring'), orderBy('jersey'));
 
       const playersRes = await getDocs(q);
       return playersRes.docs.map((doc) => {

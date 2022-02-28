@@ -307,7 +307,7 @@ const UpdatePlayer = (props) => {
                     }
                   })}
                   <div className="sittingBox">
-                    <strong>Bench:</strong>
+                    <strong>Be Ready:</strong>
                     <div className="sitting">
                       <div>
                         <div style={{ padding: '3px' }} className="sitting">

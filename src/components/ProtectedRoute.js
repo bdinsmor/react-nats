@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { LockOutlined } from '@ant-design/icons';
 import AuthService from '../services/AuthService';
 import logo from '../revs-logo.png';
@@ -43,10 +43,11 @@ const ProtectedRoute = (props) => {
       </React.Fragment>
     );
   }
+
   if (!isAuthenticated) {
-    return <Redirect to="/login" />;
+    return <Navigate to="/login" />;
   }
-  return <Component {...props} />;
+  return props;
 };
 
 export default ProtectedRoute;

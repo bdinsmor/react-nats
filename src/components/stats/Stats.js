@@ -16,8 +16,8 @@ const Stats = (props) => {
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
-  const [selectedSeason, setSelectedSeason] = useState('fall');
-  const [selectedYear, setSelectedYear] = useState('2021');
+  const [selectedSeason, setSelectedSeason] = useState('spring');
+  const [selectedYear, setSelectedYear] = useState('2022');
 
   const seasonOptions = [
     { key: 'fall', value: 'fall', label: 'Fall' },
@@ -327,11 +327,11 @@ const Stats = (props) => {
               <Space>
                 <Col>
                   <h5>Year</h5>
-                  <Select options={yearOptions} defaultValue={2021} style={{ width: 120 }} onChange={onCurrentYearChange}></Select>
+                  <Select options={yearOptions} defaultValue={2022} style={{ width: 120 }} onChange={onCurrentYearChange}></Select>
                 </Col>
                 <Col>
                   <h5>Season</h5>
-                  <Select options={seasonOptions} defaultValue={'fall'} style={{ width: 120 }} onChange={onCurrentSeasonChange}></Select>
+                  <Select options={seasonOptions} defaultValue={'spring'} style={{ width: 120 }} onChange={onCurrentSeasonChange}></Select>
                 </Col>
                 <Col>
                   <h5>&nbsp;</h5>

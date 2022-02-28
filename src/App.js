@@ -1,21 +1,29 @@
 import React from 'react';
 import './App.less';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import LoginComponent from './components/LoginComponent';
 import ProtectedRoute from './components/ProtectedRoute';
+import Lineups from './components/lineups/Lineups';
+import Players from './components/players/Players';
+import Stats from './components/stats/Stats';
 
 const App = (props) => (
   <Router>
     <div>
-      <Switch>
-        <Route path="/login" component={LoginComponent} />
-        <ProtectedRoute path="/" component={Home} />
-        <Route>
-          <Redirect to="/login" />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="/login" element={LoginComponent} />
+      <Route
+        path="/"
+        element={<Home />}
+      >
+          <Route path="lineups" element={<Lineups />} />
+          <Route path="players" element={<Players />} />
+           <Route path="stats" element={<Stats />} />
+          <Route path="*" element={<Lineups />} />
+      </Route>
+
+      </Routes>
     </div>
   </Router>
 );

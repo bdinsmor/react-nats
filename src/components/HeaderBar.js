@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, Popover, Row, Col, Space, Button, Typography } from 'antd';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import AuthService from '../services/AuthService';
 import * as _dayjs from 'dayjs';
@@ -10,7 +10,7 @@ const dayjs = _dayjs.extend(relativeTime);
 const { Text } = Typography;
 
 const HeaderBar = (props) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [user, setUser] = useState({});
   const [title, setTitle] = useState([]);
 
