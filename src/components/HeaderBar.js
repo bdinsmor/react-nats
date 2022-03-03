@@ -11,11 +11,11 @@ const { Text } = Typography;
 
 const HeaderBar = (props) => {
   const history = useNavigate();
-  const [user, setUser] = useState({});
+  const [user] = useState({});
   const [title, setTitle] = useState([]);
 
   useEffect(() => {
-    setUser(AuthService.getUser());
+   // setUser(AuthService.getUser());
   }, []);
 
   useEffect(() => {
@@ -34,12 +34,13 @@ const HeaderBar = (props) => {
   const titleContent = (
     <Row>
       <Space>
-        <Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="large" icon={<UserOutlined />} />
+        {user && <><Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="large" icon={<UserOutlined />} />
         <Col>
           <Space direction="vertical">
             <Text transform="capitalize">{user.displayName}</Text>
           </Space>
-        </Col>
+        </Col></>
+}
       </Space>
     </Row>
   );
@@ -68,14 +69,14 @@ const HeaderBar = (props) => {
       <Col flex="auto"></Col>
       <Col style={{ marginRight: '50px' }}>
         <Popover content={userContent} title={titleContent} placement="bottom" trigger="click">
-          <Row>
+          {user && <Row>
             <Space>
               <Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="medium" icon={<UserOutlined />} />
               <Text style={{ color: 'fff', fontSize: '14px', textTransform: 'capitalize' }}>
                 <div style={{ color: '#fff' }}>{user.displayName}</div>
               </Text>
             </Space>
-          </Row>
+          </Row>}
         </Popover>
       </Col>
     </Row>
