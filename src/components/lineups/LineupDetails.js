@@ -312,9 +312,9 @@ const LineupDetails = (props) => {
     const positions = player.innings;
     const numPlayers = lineup.playing.length;
     const numPositions = positions.length;
-    let minInning = 3;
+    let minInning = 5;
     if (numPlayers < 12) {
-      minInning = 4;
+      minInning = 5;
     }
     let good = false;
     for (let i = 0; i < numPositions; i++) {
@@ -678,7 +678,7 @@ const LineupDetails = (props) => {
                                             editPlayer(row);
                                           }}
                                         >
-                                          {row.nickname}
+                                          {row.firstName.substring(0,1) + '. ' + row.lastName}
                                         </Button>
                                       </TableCell>
                                       {row.innings.map((inning, inningIndex) => (
@@ -833,7 +833,7 @@ const LineupDetails = (props) => {
                   {lineup.notPlaying.map((notP, notPlayingIndex) => {
                     return (
                       <ListItem key={`not_playing_${notPlayingIndex}`} style={{ backgroundColor: notP.backgroundColor, color: notP.textColor }}>
-                        <ListItemText primary={notP.nickname} style={{ color: notP.textColor }} />
+                        <ListItemText primary={notP.firstName.substring(0,1) + '. ' + notP.lastName} style={{ color: notP.textColor }} />
                         <ListItemSecondaryAction>
                           <IconButton
                             edge="end"
@@ -871,7 +871,7 @@ const LineupDetails = (props) => {
                             })}
                           {inning.sitting && inning.sitting.length > 0 && (
                             <div className="sittingBox">
-                              <strong>Sitting:</strong>
+                              <strong>Ready:</strong>
                               <div className="sitting">
                                 {inning.sitting.map((player, sittingIndex) => {
                                   return (
