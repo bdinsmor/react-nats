@@ -19,7 +19,7 @@ export const lineupsSubject = {
 };
 
 const positionsSubj = new Subject();
-
+// positions
 // this will be used to allow lineups.js to subscribe to changes in lineups and then prompt user for refresh
 export const positionsSubject = {
   notify: (lineups) => positionsSubj.next(lineups),
