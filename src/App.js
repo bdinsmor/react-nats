@@ -10,8 +10,6 @@ import Stats from './components/stats/Stats';
 const App = (props) => (
   <Router>
     <div>
-
-
       <Routes>
         <Route path="/login" element={LoginComponent} />
         <Route path="/" element={<Home />}>
