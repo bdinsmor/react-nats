@@ -12,16 +12,12 @@ const App = (props) => (
     <div>
       <Routes>
         <Route path="/login" element={LoginComponent} />
-      <Route
-        path="/"
-        element={<Home />}
-      >
+        <Route path="/" element={<Home />}>
           <Route path="lineups" element={<Lineups />} />
           <Route path="players" element={<Players />} />
-           <Route path="stats" element={<Stats />} />
+          <Route path="stats" element={<Stats />} />
           <Route path="*" element={<Lineups />} />
-      </Route>
-
+        </Route>
       </Routes>
     </div>
   </Router>
