@@ -5,7 +5,7 @@ import { UserOutlined } from '@ant-design/icons';
 import AuthService from '../services/AuthService';
 import * as _dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import logo from '../revscript.png';
+import logo from '../nats-logo.png';
 const dayjs = _dayjs.extend(relativeTime);
 const { Text } = Typography;
 
@@ -15,7 +15,7 @@ const HeaderBar = (props) => {
   const [title, setTitle] = useState([]);
 
   useEffect(() => {
-   // setUser(AuthService.getUser());
+    // setUser(AuthService.getUser());
   }, []);
 
   useEffect(() => {
@@ -34,13 +34,16 @@ const HeaderBar = (props) => {
   const titleContent = (
     <Row>
       <Space>
-        {user && <><Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="large" icon={<UserOutlined />} />
-        <Col>
-          <Space direction="vertical">
-            <Text transform="capitalize">{user.displayName}</Text>
-          </Space>
-        </Col></>
-}
+        {user && (
+          <>
+            <Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="large" icon={<UserOutlined />} />
+            <Col>
+              <Space direction="vertical">
+                <Text transform="capitalize">{user.displayName}</Text>
+              </Space>
+            </Col>
+          </>
+        )}
       </Space>
     </Row>
   );
@@ -69,14 +72,16 @@ const HeaderBar = (props) => {
       <Col flex="auto"></Col>
       <Col style={{ marginRight: '50px' }}>
         <Popover content={userContent} title={titleContent} placement="bottom" trigger="click">
-          {user && <Row>
-            <Space>
-              <Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="medium" icon={<UserOutlined />} />
-              <Text style={{ color: 'fff', fontSize: '14px', textTransform: 'capitalize' }}>
-                <div style={{ color: '#fff' }}>{user.displayName}</div>
-              </Text>
-            </Space>
-          </Row>}
+          {user && (
+            <Row>
+              <Space>
+                <Avatar src={user.photoURL} style={{ background: 'transparent', border: 'solid white 1px', cursor: 'pointer' }} size="medium" icon={<UserOutlined />} />
+                <Text style={{ color: 'fff', fontSize: '14px', textTransform: 'capitalize' }}>
+                  <div style={{ color: '#fff' }}>{user.displayName}</div>
+                </Text>
+              </Space>
+            </Row>
+          )}
         </Popover>
       </Col>
     </Row>

@@ -18,6 +18,7 @@ const { TabPane } = Tabs;
 const UpdatePlayer = (props) => {
   const [form] = Form.useForm();
   const [battingOrderStats, setBattingOrderStats] = useState({});
+  const [avgBattingOrder, setAvgBattingOrder] = useState({});
   const [fieldingStats, setFieldingStats] = useState({});
   const [positions, setPositions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,7 +108,9 @@ const UpdatePlayer = (props) => {
       0: 0,
     };
     const bs = {};
-
+    let avgBattingSpot = 1;
+    let totalBattingSpot = 1;
+    let numGames = 0;
     const lineupGroups = await DataService.getLineups(props.player.season, props.player.year);
     for (let lineupGroup of lineupGroups) {
       let lineups = lineupGroup.lineups;
@@ -116,6 +119,8 @@ const UpdatePlayer = (props) => {
           if (lineup.playing[j].id === props.player.id) {
             let player = lineup.playing[j];
             let order = j + 1;
+            numGames = numGames + 1;
+            totalBattingSpot = totalBattingSpot + order;
             if (!bs[order]) {
               bs[order] = { label: ordinalSuffix(order), count: 1 };
             } else {
@@ -148,10 +153,11 @@ const UpdatePlayer = (props) => {
         }
       }
     }
-
+    avgBattingSpot = totalBattingSpot / numGames;
     setStatsLoaded(true);
     setFieldingStats(fs);
     setBattingOrderStats(bs);
+    setAvgBattingOrder(avgBattingSpot);
   };
 
   const save = async (values) => {
@@ -331,15 +337,24 @@ const UpdatePlayer = (props) => {
           >
             {statsLoaded && battingOrderStats && props.player && (
               <div>
-                <h3>Batting Order Stats</h3>
+                <div>
+                  <div style={{ marginLeft: '25px', marginTop: '24px' }}>
+                    <Card>
+                      <Statistic title="Avg Spot in the Lineup" value={avgBattingOrder} valueStyle={{ color: '#3f8600' }} />
+                    </Card>
+                  </div>
+                </div>
                 <div style={{ marginLeft: '25px', marginTop: '24px' }}>
-                  {Object.keys(battingOrderStats).map((key) => {
-                    return (
-                      <Card>
-                        <Statistic title={battingOrderStats[key].label} value={battingOrderStats[key].count} valueStyle={{ color: '#3f8600' }} />
-                      </Card>
-                    );
-                  })}
+                  <h3>Batting Order Stats</h3>
+                  <div style={{ marginTop: '24px' }}>
+                    {Object.keys(battingOrderStats).map((key) => {
+                      return (
+                        <Card>
+                          <Statistic title={battingOrderStats[key].label} value={battingOrderStats[key].count} valueStyle={{ color: '#3f8600' }} />
+                        </Card>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}

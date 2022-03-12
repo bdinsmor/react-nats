@@ -109,7 +109,7 @@ const Home = (props) => {
               mode="inline"
               theme="dark"
               style={{
-                paddingTop: '64px',
+                paddingTop: '84px',
                 paddingBottom: '44px',
               }}
             >
