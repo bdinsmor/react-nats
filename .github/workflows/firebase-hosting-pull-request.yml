@@ -13,5 +13,5 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOS_GATOS_REVOLUTION }}'
-          projectId: los-gatos-revolution
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOS_GATOS_NATIONALS }}'
+          projectId: los-gatos-nationals
