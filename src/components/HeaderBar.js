@@ -5,7 +5,7 @@ import { UserOutlined } from '@ant-design/icons';
 import AuthService from '../services/AuthService';
 import * as _dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import logo from '../nats-logo.png';
+
 const dayjs = _dayjs.extend(relativeTime);
 const { Text } = Typography;
 
@@ -61,12 +61,9 @@ const HeaderBar = (props) => {
 
   return (
     <Row>
-      <Col style={{ width: '200px', marginTop: '15px' }}>
-        <img className="logo-header logo-white" src={logo} alt="logo" />
-      </Col>
-      <Col span={6}>
+      <Col span={6} offset={3}>
         <Typography style={{ color: 'fff', fontSize: '22px', textTransform: 'capitalize' }}>
-          <div style={{ color: '#fff' }}>{title}</div>
+          <div style={{ color: '#fff', maxHeight: '46px' }}>{title}</div>
         </Typography>
       </Col>
       <Col flex="auto"></Col>

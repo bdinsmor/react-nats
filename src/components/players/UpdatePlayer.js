@@ -131,8 +131,11 @@ const UpdatePlayer = (props) => {
             for (let k = 0; k < innings.length; k++) {
               if (k < numInningsFinished) {
                 const inning = innings[k];
-                const positionAbbr = inning.abbr;
+                let positionAbbr = inning.abbr;
                 const positionNumber = inning.number;
+                if (positionNumber === 0) {
+                  positionAbbr = 'bench';
+                }
                 if (!fs[positionAbbr]) {
                   fs[positionAbbr] = {
                     count: 0,
@@ -154,10 +157,10 @@ const UpdatePlayer = (props) => {
       }
     }
     avgBattingSpot = totalBattingSpot / numGames;
+    setAvgBattingOrder(avgBattingSpot);
     setStatsLoaded(true);
     setFieldingStats(fs);
     setBattingOrderStats(bs);
-    setAvgBattingOrder(avgBattingSpot);
   };
 
   const save = async (values) => {
@@ -313,11 +316,11 @@ const UpdatePlayer = (props) => {
                     }
                   })}
                   <div className="sittingBox">
-                    <strong>Be Ready:</strong>
+                    <strong>On Bench:</strong>
                     <div className="sitting">
                       <div>
                         <div style={{ padding: '3px' }} className="sitting">
-                          <span>{fieldingStats['BN'] ? fieldingStats['BN'].count : 0}</span>
+                          <span>{fieldingStats['bench'] ? fieldingStats['bench'].count : 0}</span>
                         </div>
                       </div>
                     </div>
@@ -349,7 +352,7 @@ const UpdatePlayer = (props) => {
                   <div style={{ marginTop: '24px' }}>
                     {Object.keys(battingOrderStats).map((key) => {
                       return (
-                        <Card>
+                        <Card key={battingOrderStats[key].label}>
                           <Statistic title={battingOrderStats[key].label} value={battingOrderStats[key].count} valueStyle={{ color: '#3f8600' }} />
                         </Card>
                       );

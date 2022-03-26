@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import DataService, { playersSubject } from '../../services/DataService';
 import UpdatePlayer from './UpdatePlayer';
-import { SearchOutlined } from '@ant-design/icons';
-import { Space, Row, Col, Table, Drawer, Layout, Select, Button } from 'antd';
+import { Table, Drawer, Layout, Button } from 'antd';
 import dayjs from 'dayjs';
 import moment from 'moment';
 
@@ -17,9 +16,9 @@ const Players = (props) => {
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({});
-  const [selectedSeason, setSelectedSeason] = useState('spring');
-  const [selectedYear, setSelectedYear] = useState('2022');
-
+  //const [selectedSeason, setSelectedSeason] = useState('spring');
+  //const [selectedYear, setSelectedYear] = useState('2022');
+  /*
   const seasonOptions = [
     { key: 'fall', value: 'fall', label: 'Fall' },
     { key: 'spring', value: 'spring', label: 'Spring' },
@@ -41,7 +40,7 @@ const Players = (props) => {
     setItems(res);
     setIsDataLoading(false);
     setItems(res);
-  };
+  };*/
 
   const columns = [
     {
@@ -126,7 +125,7 @@ const Players = (props) => {
   const onUpdateSuccess = () => {
     setShowUpdateDrawer(false);
   };
-
+  /*
   const onCurrentYearChange = async (value) => {
     setSelectedYear(value);
   };
@@ -134,12 +133,12 @@ const Players = (props) => {
   const onCurrentSeasonChange = async (value) => {
     setSelectedSeason(value);
   };
-
+*/
   const onAdd = async () => {
     setIsNew(true);
     setItem({
-      year: selectedYear,
-      season: selectedSeason,
+      year: 2022,
+      season: 'spring',
       nickname: '',
       jersey: 1,
     });
@@ -147,6 +146,7 @@ const Players = (props) => {
   };
 
   useEffect(() => {
+    setIsDataLoading(false);
     const playersSubscription = playersSubject.getPlayers().subscribe((players) => {
       if (players) {
         let index = 1;
@@ -159,7 +159,7 @@ const Players = (props) => {
         setItems([]);
       }
     });
-    DataService.subscribeToPlayers(selectedSeason, selectedYear);
+    DataService.subscribeToPlayers('spring', 2022);
     return function cleanup() {
       if (playersSubscription) {
         playersSubscription.unsubscribe();
@@ -182,26 +182,6 @@ const Players = (props) => {
             height: 'calc(100vh - 64px)',
           }}
         >
-          <div style={{ marginBottom: 8 }}>
-            <Row gutter={12}>
-              <Space>
-                <Col>
-                  <h5>Year</h5>
-                  <Select options={yearOptions} defaultValue={2022} style={{ width: 120 }} onChange={onCurrentYearChange}></Select>
-                </Col>
-                <Col>
-                  <h5>Season</h5>
-                  <Select options={seasonOptions} defaultValue={'spring'} style={{ width: 120 }} onChange={onCurrentSeasonChange}></Select>
-                </Col>
-                <Col>
-                  <h5>&nbsp;</h5>
-                  <Button type="ghost" onClick={() => loadData()} icon={<SearchOutlined />}>
-                    Load Roster
-                  </Button>
-                </Col>
-              </Space>
-            </Row>
-          </div>
           <div style={{ marginBottom: '8px' }}>
             <Button type="primary" onClick={() => onAdd()}>
               Add Player

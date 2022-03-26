@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import DataService, { lineupsSubject, positionsSubject, playersSubject } from '../../services/DataService';
-import { SearchOutlined } from '@ant-design/icons';
-import { Space, Row, Col, Typography, Layout, Select, Button, message } from 'antd';
+import DataService, { lineupsSubject, positionsSubject, playersSubject, settingsSubject } from '../../services/DataService';
+import { Col, Typography, Layout, Button, message } from 'antd';
 import dayjs from 'dayjs';
 import LineupCard from './LineupCard';
 
@@ -17,14 +16,15 @@ const Lineups = (props) => {
   const [selectedYear, setSelectedYear] = useState('2022');
   const [positions, setPositions] = useState([]);
   const [allPlayers, setAllPlayers] = useState([]);
-  const seasonOptions = [
+  const [settings, setSettings] = useState({});
+  /* const seasonOptions = [
     { key: 'fall', value: 'fall', label: 'Fall' },
     { key: 'spring', value: 'spring', label: 'Spring' },
   ];
   const yearOptions = [
     { key: '2021', value: '2021', label: '2021' },
     { key: '2022', label: '2022', value: '2022' },
-  ];
+  ];*/
 
   const loadData = async () => {
     if (!selectedSeason || selectedSeason === '' || !selectedYear || selectedYear === '') {
@@ -96,13 +96,13 @@ const Lineups = (props) => {
     }
   };*/
 
-  const onCurrentYearChange = async (value) => {
+  /* const onCurrentYearChange = async (value) => {
     setSelectedYear(value);
   };
 
   const onCurrentSeasonChange = async (value) => {
     setSelectedSeason(value);
-  };
+  };*/
 
   /*const getOtherData = async function () {
     const getPositions = async () => {
@@ -157,20 +157,25 @@ const Lineups = (props) => {
         p.index = playerIndex;
         p.innings = innings;
         playersPlaying.push(p);
-        console.log(JSON.stringify(innings, null, 2));
         playerIndex++;
       });
 
+      const validations = [];
+      console.log(JSON.stringify(settings, null, 2));
+      for (let i = 0; i < settings.numInnings; i++) {
+        validations.push({ msg: '' });
+      }
+
       const newLineup = {
         date: dayjs(new Date()).format('MM/DD/YYYY'),
-        location: 'Balzer Field',
+        location: settings.fieldName,
         opponent: '',
         season: selectedSeason,
         year: parseInt(selectedYear),
         playing: playersPlaying,
-        inningValidations: [{ msg: '' }, { msg: '' }, { msg: '' }, { msg: '' }, { msg: '' }, { msg: '' }],
+        inningValidations: validations,
+        settings: settings,
       };
-      // console.log('new Linup');
       await DataService.updateLineup(newLineup);
       loadData();
     } catch (err) {
@@ -260,9 +265,15 @@ const Lineups = (props) => {
     const positionsSubscription = positionsSubject.getPositions().subscribe((positions) => {
       setPositions(positions);
     });
+    const settingsSubscription = settingsSubject.getSettings().subscribe((settings) => {
+      setSettings(settings);
+    });
     DataService.subscribeToLineups(selectedSeason, selectedYear);
     DataService.subscribeToPlayers(selectedSeason, selectedYear);
     DataService.subscribeToPositions();
+    DataService.subscribeToSettings();
+    setSelectedSeason('spring');
+    setSelectedYear(2022);
     return function cleanup() {
       if (lineupsSubscription) {
         lineupsSubscription.unsubscribe();
@@ -272,6 +283,9 @@ const Lineups = (props) => {
       }
       if (positionsSubscription) {
         positionsSubscription.unsubscribe();
+      }
+      if (settingsSubscription) {
+        settingsSubscription.unsubscribe();
       }
     };
   }, []);
@@ -291,7 +305,7 @@ const Lineups = (props) => {
             height: 'calc(100vh - 64px)',
           }}
         >
-          <div style={{ marginBottom: 8 }}>
+          {/* <div style={{ marginBottom: 8 }}>
             <Row gutter={12}>
               <Space>
                 <Col>
@@ -310,7 +324,7 @@ const Lineups = (props) => {
                 </Col>
               </Space>
             </Row>
-          </div>
+        </div>*/}
           <div style={{ marginBottom: '38px' }}>
             <Button type="primary" onClick={() => onAdd()}>
               Add Lineup
@@ -324,7 +338,7 @@ const Lineups = (props) => {
                     <Text type="secondary">{item.month}</Text>
                     {item.lineups &&
                       item.lineups.map(function (lineup, i) {
-                        return <LineupCard key={lineup.key} lineup={lineup} allPlayers={allPlayers} positions={positions} onSaveLineup={onSaveLineup} />;
+                        return <LineupCard key={lineup.key} lineup={lineup} allPlayers={allPlayers} settings={settings} positions={positions} onSaveLineup={onSaveLineup} />;
                       })}
                   </Col>
                 );

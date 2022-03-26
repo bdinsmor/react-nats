@@ -9,6 +9,7 @@ const { Text } = Typography;
 const { Panel } = Collapse;
 const LineupCard = (props) => {
   const [lineup, setLineup] = useState({});
+  const [settings, setSettings] = useState({});
 
   const onSaveLineup = (lineup) => {
     props.onSaveLineup(lineup);
@@ -20,7 +21,8 @@ const LineupCard = (props) => {
 
   useEffect(() => {
     setLineup(props.lineup);
-  }, [props.lineup]);
+    setSettings(props.settings);
+  }, [props.lineup, props.settings]);
 
   const headerContent = (
     <div>
@@ -38,7 +40,14 @@ const LineupCard = (props) => {
     <div className="lineup-card">
       <Collapse>
         <Panel header={headerContent} key={lineup.id} showArrow={false}>
-          <LineupDetails lineup={lineup} allPlayers={props.allPlayers} positions={props.positions} onSaveLineup={onSaveLineup} onPlayerUpdated={onPlayerUpdated} />
+          <LineupDetails
+            lineup={lineup}
+            settings={settings}
+            allPlayers={props.allPlayers}
+            positions={props.positions}
+            onSaveLineup={onSaveLineup}
+            onPlayerUpdated={onPlayerUpdated}
+          />
         </Panel>
       </Collapse>
     </div>

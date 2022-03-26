@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import { OrderedListOutlined, BarChartOutlined, UserOutlined } from '@ant-design/icons';
+import { OrderedListOutlined, BarChartOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, Layout } from 'antd';
+import { Menu, Layout, Col } from 'antd';
 import HeaderBar from './HeaderBar';
-
+import logo from '../nats-logo.png';
 const MenuItemGroup = Menu.ItemGroup;
 
 const { Header, Sider } = Layout;
@@ -40,6 +40,13 @@ const Home = (props) => {
           link: './stats',
           type: 'navlink',
           icon: <BarChartOutlined />,
+        },
+        {
+          key: 'settings',
+          label: 'Settings',
+          link: './settings',
+          type: 'navlink',
+          icon: <SettingOutlined />,
         },
       ],
     },
@@ -97,19 +104,21 @@ const Home = (props) => {
               onToggleChange();
             }}
             style={{
-              marginTop: '40px',
+              marginTop: '50px',
               overflow: 'auto',
               height: '100vh',
               position: 'fixed',
               left: 0,
             }}
           >
+            <Col style={{ width: '200px', marginTop: '15px', marginLeft: '40px' }}>
+              <img className="logo-header logo-white" src={logo} alt="logo" />
+            </Col>
             <Menu
               className="nav-menu"
               mode="inline"
               theme="dark"
               style={{
-                paddingTop: '84px',
                 paddingBottom: '44px',
               }}
             >

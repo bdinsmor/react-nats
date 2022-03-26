@@ -6,6 +6,7 @@ import LoginComponent from './components/LoginComponent';
 import Lineups from './components/lineups/Lineups';
 import Players from './components/players/Players';
 import Stats from './components/stats/Stats';
+import Settings from './components/settings/Settings';
 
 const App = (props) => (
   <Router>
@@ -16,6 +17,7 @@ const App = (props) => (
           <Route path="lineups" element={<Lineups />} />
           <Route path="players" element={<Players />} />
           <Route path="stats" element={<Stats />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="*" element={<Lineups />} />
         </Route>
       </Routes>

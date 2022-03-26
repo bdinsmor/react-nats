@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Drawer, Input, Form, Select, Row, Col, Button, Space, DatePicker } from 'antd';
+import { Layout, Drawer, Input, Form, Select, Row, Col, Button, Tooltip, Space, DatePicker } from 'antd';
 
 import { useReactToPrint } from 'react-to-print';
-import { SaveOutlined, CopyOutlined, PrinterOutlined, OrderedListOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { SaveOutlined, CopyOutlined, SettingOutlined, PrinterOutlined, OrderedListOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import ReorderIcon from '@material-ui/icons/Reorder';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -24,6 +24,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { ReactComponent as FieldSvg } from '../../diamond.svg';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import UpdatePlayer from '../players/UpdatePlayer';
+import UpdateDisplayPreferences from './UpdateDisplayPreferences';
 
 import dayjs from 'dayjs';
 let localizedFormat = require('dayjs/plugin/localizedFormat');
@@ -85,23 +86,36 @@ const LineupDetails = (props) => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [positions, setPositions] = useState([]);
   const [showUpdateDrawer, setShowUpdateDrawer] = useState(false);
+  const [showDisplayPreferences, setShowDisplayPreferences] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState({});
 
   const formRef = useRef(form);
 
-  // Update the form ref
-  useEffect(() => {
-    formRef.current = form;
-  }, [form]);
-
-  const [innings, setInnings] = useState([
+  const sixInnings = [
     { number: 1, playing: [], sitting: [] },
     { number: 2, playing: [], sitting: [] },
     { number: 3, playing: [], sitting: [] },
     { number: 4, playing: [], sitting: [] },
     { number: 5, playing: [], sitting: [] },
     { number: 6, playing: [], sitting: [] },
-  ]);
+  ];
+
+  const sevenInnings = [
+    { number: 1, playing: [], sitting: [] },
+    { number: 2, playing: [], sitting: [] },
+    { number: 3, playing: [], sitting: [] },
+    { number: 4, playing: [], sitting: [] },
+    { number: 5, playing: [], sitting: [] },
+    { number: 6, playing: [], sitting: [] },
+    { number: 7, playing: [], sitting: [] },
+  ];
+
+  // Update the form ref
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
+
+  const [innings, setInnings] = useState(sixInnings);
 
   const FieldIcon = (props) => <Icon component={FieldSvg} {...props} style={{ fontSize: '28px', marginTop: '-3px' }} />;
 
@@ -181,7 +195,7 @@ const LineupDetails = (props) => {
   };
 
   const validateInnings = () => {
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < lineup.settings.numInnings; i++) {
       lineup.inningValidations[i] = { msg: validateInning(i + 1), tooMany: checkInningForDups(i + 1) };
     }
     setLineup({ ...lineup });
@@ -227,7 +241,7 @@ const LineupDetails = (props) => {
   const checkInningForDups = (inningNumber) => {
     let map = {};
     let msg = [];
-    let numInnings = 0;
+    let numInnings = props.settings.numInnings;
     //console.log("inning: "+ number);
     let numPlaying = lineup.playing.length;
     for (let i = 0; i < numPlaying; i++) {
@@ -461,9 +475,18 @@ const LineupDetails = (props) => {
     setShowUpdateDrawer(true);
   };
 
+  const changeDisplayPreferences = () => {
+    setShowDisplayPreferences(true);
+  };
+
   const onUpdatePlayerSuccess = (updatedPlayer) => {
     setShowUpdateDrawer(false);
     props.onPlayerUpdated(updatedPlayer);
+  };
+
+  const onUpdateDisplayPreferencesSuccess = (updatedLineup) => {
+    setShowDisplayPreferences(false);
+    props.lineup = { ...updatedLineup };
   };
 
   useEffect(() => {
@@ -475,6 +498,11 @@ const LineupDetails = (props) => {
   useEffect(() => {
     form.setFieldsValue(props.lineup);
     setLineup(props.lineup);
+    if (props.lineup.settings.numInnings === 6) {
+      setInnings(sixInnings);
+    } else {
+      setInnings(sevenInnings);
+    }
   }, [props.lineup]);
 
   return (
@@ -531,6 +559,14 @@ const LineupDetails = (props) => {
                       <Button type="ghost" icon={<CopyOutlined />} onClick={() => cloneLineup()}>
                         Clone
                       </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <h5>&nbsp;</h5>
+                    <Form.Item>
+                      <Tooltip title="Update Display Preferences">
+                        <Button shape="circle" icon={<SettingOutlined />} onClick={() => changeDisplayPreferences()} />
+                      </Tooltip>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -617,6 +653,11 @@ const LineupDetails = (props) => {
                         <TableCell size="small" align="center">
                           6th Inning
                         </TableCell>
+                        {lineup.settings && lineup.settings.numInnings === 7 && (
+                          <TableCell size="small" align="center">
+                            7th Inning
+                          </TableCell>
+                        )}
                         {!isPrinting && (
                           <TableCell size="small" className="no-print">
                             # Outfield
@@ -678,7 +719,13 @@ const LineupDetails = (props) => {
                                             editPlayer(row);
                                           }}
                                         >
-                                          {row.firstName.substring(0,1) + '. ' + row.lastName}
+                                          {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'FirstName' && row.firstName}
+                                          {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'LastName' && row.lastName}
+                                          {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'Nickname' && row.nickname}
+                                          {lineup.settings &&
+                                            lineup.settings.playerNameDisplay &&
+                                            lineup.settings.playerNameDisplay === 'FirstInitialLastName' &&
+                                            row.firstName.substring(0, 1) + '. ' + row.lastName}
                                         </Button>
                                       </TableCell>
                                       {row.innings.map((inning, inningIndex) => (
@@ -779,6 +826,11 @@ const LineupDetails = (props) => {
                               <TableCell align="center" size="small">
                                 {lineup.inningValidations[5].msg}
                               </TableCell>
+                              {lineup.settings && lineup.settings.numInnings === 7 && (
+                                <TableCell align="center" size="small">
+                                  {lineup.inningValidations[6].msg}
+                                </TableCell>
+                              )}
                             </React.Fragment>
                           )}
 
@@ -813,6 +865,11 @@ const LineupDetails = (props) => {
                               <TableCell align="center" size="small">
                                 {lineup.inningValidations[5].tooMany}
                               </TableCell>
+                              {lineup.settings && lineup.settings.numInnings === 7 && (
+                                <TableCell align="center" size="small">
+                                  {lineup.inningValidations[6].tooMany}
+                                </TableCell>
+                              )}
                             </React.Fragment>
                           )}
 
@@ -833,7 +890,20 @@ const LineupDetails = (props) => {
                   {lineup.notPlaying.map((notP, notPlayingIndex) => {
                     return (
                       <ListItem key={`not_playing_${notPlayingIndex}`} style={{ backgroundColor: notP.backgroundColor, color: notP.textColor }}>
-                        <ListItemText primary={notP.firstName.substring(0,1) + '. ' + notP.lastName} style={{ color: notP.textColor }} />
+                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'FirstName' && (
+                          <ListItemText primary={notP.firstName} style={{ color: notP.textColor }} />
+                        )}
+                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'LastName' && (
+                          <ListItemText primary={notP.lastName} style={{ color: notP.textColor }} />
+                        )}
+                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'Nickname' && (
+                          <ListItemText primary={notP.nickname} style={{ color: notP.textColor }} />
+                        )}
+
+                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'FirstInitialLastName' && (
+                          <ListItemText primary={notP.firstName.substring(0, 1) + '. ' + notP.lastName} style={{ color: notP.textColor }} />
+                        )}
+
                         <ListItemSecondaryAction>
                           <IconButton
                             edge="end"
@@ -865,7 +935,13 @@ const LineupDetails = (props) => {
                             inning.playing.map((p, pIndex) => {
                               return (
                                 <span key={`label_${p.player.nickname}_${pIndex}`} className={`playerlabel ${p.positionClassName}`} style={p.style}>
-                                  {p.player.nickname}
+                                  {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'FirstName' && p.player.firstName}
+                                  {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'LastName' && p.player.lastName}
+                                  {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'Nickname' && p.player.nickname}
+                                  {lineup.settings &&
+                                    lineup.settings.playerNameDisplay &&
+                                    lineup.settings.playerNameDisplay === 'FirstInitialLastName' &&
+                                    p.player.firstName.substring(0, 1) + '. ' + p.player.lastName}
                                 </span>
                               );
                             })}
@@ -877,7 +953,13 @@ const LineupDetails = (props) => {
                                   return (
                                     <div key={`sitting_box_${player.nickname}_${sittingIndex}`}>
                                       <div style={{ padding: '3px', backgroundColor: player.backgroundColor, color: player.textColor }} className="sitting">
-                                        {player.nickname}
+                                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'FirstName' && player.firstName}
+                                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'LastName' && player.lastName}
+                                        {lineup.settings && lineup.settings.playerNameDisplay && lineup.settings.playerNameDisplay === 'Nickname' && player.nickname}
+                                        {lineup.settings &&
+                                          lineup.settings.playerNameDisplay &&
+                                          lineup.settings.playerNameDisplay === 'FirstInitialLastName' &&
+                                          player.firstName.substring(0, 1) + '. ' + player.lastName}
                                       </div>
                                     </div>
                                   );
@@ -896,6 +978,9 @@ const LineupDetails = (props) => {
       </Layout>
       <Drawer placement="right" closable={false} onClose={() => setShowUpdateDrawer(false)} visible={showUpdateDrawer} width={600}>
         <UpdatePlayer player={selectedPlayer} positions={positions} onSaveSuccess={onUpdatePlayerSuccess} onCancel={() => setShowUpdateDrawer(false)}></UpdatePlayer>
+      </Drawer>
+      <Drawer placement="right" closable={false} onClose={() => setShowDisplayPreferences(false)} visible={showDisplayPreferences} width={600}>
+        <UpdateDisplayPreferences lineup={lineup} onSaveSuccess={onUpdateDisplayPreferencesSuccess} onCancel={() => setShowDisplayPreferences(false)}></UpdateDisplayPreferences>
       </Drawer>
     </React.Fragment>
   );

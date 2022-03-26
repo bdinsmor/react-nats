@@ -8,6 +8,16 @@ const db = getFirestore(firebaseApp);
 const playersDb = collection(db, 'players');
 const lineupsDb = collection(db, 'lineups');
 const positionsDb = collection(db, 'positions');
+const settingsDb = collection(db, 'settings');
+
+const settingsSubj = new Subject();
+
+// this will be used to allow lineups.js to subscribe to changes in lineups and then prompt user for refresh
+export const settingsSubject = {
+  notify: (settings) => settingsSubj.next(settings),
+  clear: () => settingsSubj.next(),
+  getSettings: () => settingsSubj.asObservable(),
+};
 
 const lineupsSubj = new Subject();
 
@@ -124,6 +134,17 @@ const DataService = {
       const lineup = doc.data();
       try {
         lineup.date = moment(lineup.date, 'MM/DD/YYYY');
+        if (!lineup.settings) {
+          lineup.settings = {
+            numFielders: 9,
+            numInnings: 6,
+            outfieldInning: 4,
+            outfieldRule: 'yes',
+            playerNameDisplay: 'Nickname',
+            fieldName: 'Balzer Field',
+            continuousBatting: 'yes',
+          };
+        }
       } catch (err) {
         console.log('caught error: ', err);
       }
@@ -139,6 +160,17 @@ const DataService = {
         const lineup = doc.data();
         try {
           lineup.date = moment(lineup.date, 'MM/DD/YYYY');
+          if (!lineup.settings) {
+            lineup.settings = {
+              numFielders: 9,
+              numInnings: 6,
+              outfieldInning: 4,
+              outfieldRule: 'yes',
+              playerNameDisplay: 'Nickname',
+              fieldName: 'Balzer Field',
+              continuousBatting: 'yes',
+            };
+          }
         } catch (err) {
           console.log('caught error: ', err);
         }
@@ -190,6 +222,18 @@ const DataService = {
     return await lineupsDb.doc(lineupId);
   },
 
+  async updatePosition(position) {
+    if (!position.id) {
+      position.id = uuidv4();
+    }
+    try {
+      const ref = doc(db, 'positions', position.id);
+      await setDoc(ref, position);
+    } catch (err) {
+      console.error('caught error: ', err, JSON.stringify(position, null, 2));
+    }
+  },
+
   async updateLineup(lineup) {
     if (!lineup.id) {
       lineup.id = uuidv4();
@@ -201,6 +245,20 @@ const DataService = {
     } catch (err) {
       console.error('caught error: ', err, JSON.stringify(lineup, null, 2));
     }
+  },
+
+  async updatePositions(positions) {
+    const q = query(lineupsDb, orderBy('number'));
+    const unsubscribe = onSnapshot(q, (positionsSnapshot) => {
+      positionsSnapshot.docs.map((doc) => {
+        return doc.delete();
+      });
+
+      positions.forEach(async (position) => {
+        await this.updatePosition(position);
+      });
+    });
+    return () => unsubscribe();
   },
 
   async deleteLineup(lineupId) {
@@ -265,6 +323,26 @@ const DataService = {
     return await playersDb.doc(playerId);
   },
 
+  async updateSettings(settings) {
+    if (!settings.id) {
+      settings.id = uuidv4();
+    }
+    const settingsRef = doc(db, 'settings', settings.id);
+    await setDoc(settingsRef, settings);
+  },
+
+  async subscribeToSettings() {
+    const q = query(settingsDb);
+    const unsubscribe = onSnapshot(q, (settingsSnapshot) => {
+      let s = settingsSnapshot.docs.map((doc) => {
+        return doc.data();
+      });
+      s = s[0];
+      settingsSubject.notify(s);
+    });
+    return () => unsubscribe();
+  },
+
   async updatePlayer(player) {
     if (!player.id) {
       player.id = uuidv4();
@@ -303,7 +381,6 @@ const DataService = {
           for (let j = 0; j < lineup.playing.length; j++) {
             if (lineup.playing[j].id === updatedPlayer.id) {
               let player = lineup.playing[j];
-              console.log('will update ' + player.backgroundColor + ' to ' + updatedPlayer.backgroundColor);
               player.firstName = updatedPlayer.firstName;
               player.lastName = updatedPlayer.lastName;
               player.textColor = updatedPlayer.textColor;
